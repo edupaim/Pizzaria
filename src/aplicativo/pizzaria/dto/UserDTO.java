@@ -1,0 +1,48 @@
+package aplicativo.pizzaria.dto;
+
+public class UserDTO {
+
+    Integer id;
+    String login;
+    String senha;
+    Integer tipo;
+
+    public UserDTO() {
+        this.id = null;
+        this.login = null;
+        this.senha = null;
+        this.tipo = null;
+    }
+
+    public Integer getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(Integer tipo) {
+        this.tipo = tipo;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
+}
