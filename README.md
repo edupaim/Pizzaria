@@ -10,7 +10,7 @@ DAOS:
 - Usuario
 
 BO:
-1. Usuario
+- Usuario
   1. Logar
   2. Cadastrar
   3. Listar
