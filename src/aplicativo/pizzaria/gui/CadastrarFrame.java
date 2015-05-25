@@ -39,6 +39,8 @@ public class CadastrarFrame extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         TxtSenha = new javax.swing.JPasswordField();
         TxtSenhaR = new javax.swing.JPasswordField();
+        jLabel4 = new javax.swing.JLabel();
+        TxtTipo = new javax.swing.JTextField();
         ButCadastrar = new javax.swing.JButton();
         ButSair = new javax.swing.JButton();
 
@@ -52,6 +54,8 @@ public class CadastrarFrame extends javax.swing.JFrame {
 
         jLabel3.setText("Repita senha");
 
+        jLabel4.setText("Tipo");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -60,17 +64,22 @@ public class CadastrarFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(TxtSenhaR, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
                             .addComponent(jLabel2))
                         .addGap(54, 54, 54)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(TxtUser)
-                            .addComponent(TxtSenha, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)))
+                            .addComponent(TxtSenha, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel3)
+                        .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(TxtSenhaR, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(TxtTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
 
@@ -91,7 +100,10 @@ public class CadastrarFrame extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(TxtSenhaR, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(17, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(TxtTipo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         ButCadastrar.setText("Cadastrar");
@@ -144,8 +156,10 @@ public class CadastrarFrame extends javax.swing.JFrame {
         user.setLogin(TxtUser.getText());
         user.setSenha(String.copyValueOf(TxtSenha.getPassword()));
         UserBO cadastroBo = new UserBO();
+        String senhar = String.copyValueOf(TxtSenhaR.getPassword());
+        user.setTipo(Integer.parseInt(TxtTipo.getText()));
         try {
-            if (cadastroBo.cadastrar(user, String.copyValueOf(TxtSenhaR.getPassword()))) {
+            if (cadastroBo.cadastrar(user, senhar)) {
                 MensagensUtil.addMsg(CadastrarFrame.this, "Cadastro efetuado com sucesso!");
                 CadastrarFrame.this.dispose();
                 MainFrame mainFrame = new MainFrame();
@@ -200,10 +214,12 @@ public class CadastrarFrame extends javax.swing.JFrame {
     private javax.swing.JButton ButSair;
     private javax.swing.JPasswordField TxtSenha;
     private javax.swing.JPasswordField TxtSenhaR;
+    private javax.swing.JTextField TxtTipo;
     private javax.swing.JTextField TxtUser;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }

@@ -23,8 +23,9 @@ public class AlterarFrame extends javax.swing.JFrame {
         initComponents();
     }
 
-    public void dadosCampos(Integer id, String login) {
+    public void dadosCampos(Integer id, int tipo, String login) {
         TxtId.setText(String.valueOf(id));
+        TxtTipo.setText(String.valueOf(tipo));
         TxtLogin.setText(login);
     }
 
@@ -48,6 +49,8 @@ public class AlterarFrame extends javax.swing.JFrame {
         TxtId = new javax.swing.JTextField();
         TxtSenhaN = new javax.swing.JPasswordField();
         TxtSenhaN2 = new javax.swing.JPasswordField();
+        jLabel6 = new javax.swing.JLabel();
+        TxtTipo = new javax.swing.JTextField();
         ButSair = new javax.swing.JButton();
         ButAlterar = new javax.swing.JButton();
         ButExcluir = new javax.swing.JButton();
@@ -70,6 +73,8 @@ public class AlterarFrame extends javax.swing.JFrame {
         jLabel5.setText("Repita senha:");
 
         TxtId.setEditable(false);
+
+        jLabel6.setText("Tipo:");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -97,7 +102,11 @@ public class AlterarFrame extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(TxtSenhaN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(TxtSenhaN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(TxtTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
 
@@ -109,6 +118,10 @@ public class AlterarFrame extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(TxtId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(TxtTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
@@ -287,11 +300,13 @@ public class AlterarFrame extends javax.swing.JFrame {
     private javax.swing.JTextField TxtSenha;
     private javax.swing.JPasswordField TxtSenhaN;
     private javax.swing.JPasswordField TxtSenhaN2;
+    private javax.swing.JTextField TxtTipo;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }

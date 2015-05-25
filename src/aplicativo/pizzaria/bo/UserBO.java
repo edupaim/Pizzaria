@@ -9,13 +9,32 @@ import java.util.List;
 
 public class UserBO {
 
-    public boolean cadastrar(UserDTO user, String senha) throws NegocioException {
+    public boolean logar(UserDTO user) throws NegocioException {
         boolean resul = false;
         try {
             if (user.getLogin() == null || "".equals(user.getLogin())) {
                 throw new NegocioException("Login Obrigatório");
             } else if (user.getSenha() == null || "".equals(user.getSenha())) {
                 throw new NegocioException("Senha Obrigatório");
+            } else {
+                UserDAO userDAO = new UserDAO();
+                resul = userDAO.logar(user);
+            }
+        } catch (NegocioException | PersistenciaException ex) {
+            throw new NegocioException(ex.getMessage());
+        }
+        return resul;
+    }
+
+    public boolean cadastrar(UserDTO user, String senha) throws NegocioException {
+        boolean resul = false;
+        try {
+            if (user.getLogin() == null || "".equals(user.getLogin())) {
+                throw new NegocioException("Login Obrigatório.");
+            } else if (user.getSenha() == null || "".equals(user.getSenha())) {
+                throw new NegocioException("Senha Obrigatório.");
+            } else if (0 > user.getTipo()) {
+                throw new NegocioException("Tipo deve ser maior que zero.");
             } else if (!senha.equals(user.getSenha())) {
                 throw new NegocioException("Repita a senha corretamente.");
             } else {
@@ -86,22 +105,5 @@ public class UserBO {
             throw new NegocioException(ex.getMessage());
         }
         return lista;
-    }
-    
-    public boolean logar(UserDTO user) throws NegocioException {
-        boolean resul = false;
-        try {
-            if(user.getLogin() == null || "".equals(user.getLogin())){
-                throw new NegocioException("Login Obrigatório");
-            } else if (user.getSenha() == null || "".equals(user.getSenha())){
-                throw new NegocioException("Senha Obrigatório");
-            } else {
-                UserDAO userDAO = new UserDAO();
-                resul = userDAO.logar(user);   
-            }
-        } catch( NegocioException | PersistenciaException ex) {
-            throw new NegocioException(ex.getMessage());
-        }
-        return resul;
     }
 }

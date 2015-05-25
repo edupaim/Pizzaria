@@ -40,7 +40,7 @@ public class ListaFrame extends javax.swing.JFrame {
                 tbl.addRow(new String[1]);
                 TblUser.setValueAt(user.getId(), i, 0);
                 TblUser.setValueAt(user.getLogin(), i, 1);
-                TblUser.setValueAt(user.getSenha(), i, 2);
+                TblUser.setValueAt(user.getTipo(), i, 2);
                 i++;
             }
         } catch (NegocioException ex) {
@@ -57,7 +57,7 @@ public class ListaFrame extends javax.swing.JFrame {
                 tbl.addRow(new String[1]);
                 TblUser.setValueAt(user.getId(), i, 0);
                 TblUser.setValueAt(user.getLogin(), i, 1);
-                TblUser.setValueAt(user.getSenha(), i, 2);
+                TblUser.setValueAt(user.getTipo(), i, 2);
                 i++;
             }
         } else {
@@ -90,11 +90,11 @@ public class ListaFrame extends javax.swing.JFrame {
 
             },
             new String [] {
-                "ID", "Usuário", "Senha"
+                "ID", "Usuário", "Tipo"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class
             };
             boolean[] canEdit = new boolean [] {
                 false, false, false
@@ -191,8 +191,9 @@ public class ListaFrame extends javax.swing.JFrame {
         AlterarFrame alterarFrame = new AlterarFrame();
         alterarFrame.setLocationRelativeTo(null);
         alterarFrame.setVisible(true);
-        alterarFrame.dadosCampos((Integer) TblUser.getValueAt(linha, 0),
-                (String) TblUser.getValueAt(linha, 1));
+        alterarFrame.dadosCampos((Integer)TblUser.getValueAt(linha, 0),
+                (Integer)TblUser.getValueAt(linha, 2)
+                ,(String)TblUser.getValueAt(linha, 1));
     }//GEN-LAST:event_TblUserMouseClicked
 
     private void ButBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButBuscarActionPerformed

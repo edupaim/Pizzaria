@@ -84,7 +84,7 @@
                   <Table columnCount="3" rowCount="0">
                     <Column editable="false" title="ID" type="java.lang.Integer"/>
                     <Column editable="false" title="Usu&#xe1;rio" type="java.lang.String"/>
-                    <Column editable="false" title="Senha" type="java.lang.String"/>
+                    <Column editable="false" title="Tipo" type="java.lang.Integer"/>
                   </Table>
                 </Property>
               </Properties>
