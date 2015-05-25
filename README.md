@@ -1,31 +1,27 @@
 # Pizzaria
-** Sistema de gerenciamento de Pizzaria **
+# *Sistema de gerenciamento de Pizzaria*
 
-@ Desenvolvido até o momento
+### Desenvolvido até o momento
 
 DTOS:
-
--Usuario
+- Usuario
 
 DAOS:
-
--Usuario
+- Usuario
 
 BO:
-
--Usuario
---Logar
---Cadastrar
---Listar
---ListarFiltrada
---Excluir
---AlterarSenha
+- Usuario
+* Logar
+* Cadastrar
+* Listar
+* ListarFiltrada
+* Excluir
+* AlterarSenha
 
 Frames:
-
--Login
--Menu
--Cadastro
--Listagem
--Alteração
--Busca
+- Login
+- Menu
+- Cadastro
+- Listagem
+- Alteração
+- Busca
