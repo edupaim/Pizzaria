@@ -9,35 +9,39 @@ import java.util.List;
 
 public class UserBO {
 
-    public boolean logar(UserDTO user) throws NegocioException {
-        boolean resul = false;
+    public UserDTO logar(String login, String senha) throws NegocioException {
+        UserDTO user = null;
         try {
-            if (user.getLogin() == null || "".equals(user.getLogin())) {
-                throw new NegocioException("Login Obrigatório");
-            } else if (user.getSenha() == null || "".equals(user.getSenha())) {
-                throw new NegocioException("Senha Obrigatório");
+            if (login == null || "".equals(login)) {
+                throw new NegocioException("Login obrigatório.");
+            } else if (senha == null || "".equals(senha)) {
+                throw new NegocioException("Senha obrigatória.");
             } else {
                 UserDAO userDAO = new UserDAO();
-                resul = userDAO.logar(user);
+                user = userDAO.logar(login, senha);
             }
         } catch (NegocioException | PersistenciaException ex) {
             throw new NegocioException(ex.getMessage());
         }
-        return resul;
+        return user;
     }
 
-    public boolean cadastrar(UserDTO user, String senha) throws NegocioException {
+    public boolean cadastrar(String login, String senha, String senhar, String tipo) throws NegocioException {
         boolean resul = false;
         try {
-            if (user.getLogin() == null || "".equals(user.getLogin())) {
-                throw new NegocioException("Login Obrigatório.");
-            } else if (user.getSenha() == null || "".equals(user.getSenha())) {
-                throw new NegocioException("Senha Obrigatório.");
-            } else if (0 > user.getTipo()) {
-                throw new NegocioException("Tipo deve ser maior que zero.");
-            } else if (!senha.equals(user.getSenha())) {
+            if (login == null || "".equals(login)) {
+                throw new NegocioException("Login obrigatório.");
+            } else if (senha == null || "".equals(senha)) {
+                throw new NegocioException("Senha obrigatória.");
+            } else if (tipo == null || "".equals(tipo)) {
+                throw new NegocioException("Tipo obrigatório.");
+            } else if (!senha.equals(senhar)) {
                 throw new NegocioException("Repita a senha corretamente.");
             } else {
+                UserDTO user = new UserDTO();
+                user.setLogin(login);
+                user.setSenha(senha);
+                user.setTipo(Integer.parseInt(tipo));
                 UserDAO userDAO = new UserDAO();
                 userDAO.inserir(user);
                 resul = true;
@@ -55,11 +59,14 @@ public class UserBO {
                 throw new NegocioException("Login obrigatório");
             } else if (user.getSenha() == null || "".equals(user.getSenha())) {
                 throw new NegocioException("Senha antiga obrigatório");
+            } else if (senha1 == null || "".equals(senha1)) {
+                throw new NegocioException("Senha nova obrigatório");
             } else if (!senha1.equals(senha2)) {
                 throw new NegocioException("Repita a senha corretamente.");
             } else {
+                user.setSenha(senha1);
                 UserDAO userDAO = new UserDAO();
-                userDAO.alterar(user);
+                userDAO.alterarSenha(user);
                 resul = true;
             }
         } catch (NegocioException | PersistenciaException ex) {
@@ -79,26 +86,35 @@ public class UserBO {
         return lista;
     }
 
-    public boolean excluir(UserDTO user) throws NegocioException {
+    public boolean excluir(String login, String senha) throws NegocioException {
+        UserDTO user = new UserDTO();
         UserDAO userDao = new UserDAO();
+        boolean resul = false;
         try {
-            userDao.deletar(user.getId());
-            return true;
+            user = logar(login, senha);
+            if (user != null) {
+                userDao.deletar(user.getId());
+                resul = true;
+            }
         } catch (PersistenciaException ex) {
             throw new NegocioException(ex.getMessage());
         }
+        return resul;
     }
 
-    public List<UserDTO> listarFiltrada(int id, String login) throws NegocioException {
+    public List<UserDTO> listarFiltrada(String id, String login, String tipo) throws NegocioException {
         UserDTO user = new UserDTO();
         List<UserDTO> lista = new ArrayList<>();
         UserDAO userDao = new UserDAO();
         try {
-            if (id >= 0) {
-                user.setId(id);
+            if (id != null && !"".equals(id)) {
+                user.setId(Integer.parseInt(id));
             }
-            if (login != null || !"".equals(login)) {
+            if (login != null && !"".equals(login)) {
                 user.setLogin(login);
+            }
+            if (tipo != null && !"".equals(tipo)) {
+                user.setTipo(Integer.parseInt(tipo));
             }
             lista = userDao.listaFiltrar(user);
         } catch (PersistenciaException ex) {

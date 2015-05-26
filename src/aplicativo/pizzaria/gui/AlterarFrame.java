@@ -208,13 +208,12 @@ public class AlterarFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_ButSairActionPerformed
 
     private void ButExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButExcluirActionPerformed
-        UserDTO user = new UserDTO();
-        user.setId(Integer.parseInt(TxtId.getText()));
-        user.setLogin(TxtLogin.getText());
-        user.setSenha(TxtSenha.getText());
+        Integer id = Integer.parseInt(TxtId.getText());
+        String login = TxtLogin.getText();
+        String senha = TxtSenha.getText();
         UserBO excluirBo = new UserBO();
         try {
-            if (excluirBo.excluir(user)) {
+            if (excluirBo.excluir(login, senha)) {
                 MensagensUtil.addMsg(AlterarFrame.this, "Excluido com sucesso!");
                 AlterarFrame.this.dispose();
                 ListaFrame listaFrame = new ListaFrame();

@@ -7,7 +7,7 @@ public interface GenericoDAO<DTO> {
 
     void inserir(DTO obj) throws PersistenciaException;
 
-    void atualizar(DTO obj) throws PersistenciaException;
+    void atualizar(Integer id, DTO obj) throws PersistenciaException;
 
     void deletar(Integer id) throws PersistenciaException;
 

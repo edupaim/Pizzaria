@@ -6,7 +6,6 @@
 package aplicativo.pizzaria.gui;
 
 import aplicativo.pizzaria.bo.UserBO;
-import aplicativo.pizzaria.dto.UserDTO;
 import aplicativo.pizzaria.exception.NegocioException;
 import aplicativo.pizzaria.util.MensagensUtil;
 
@@ -152,14 +151,13 @@ public class CadastrarFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_ButSairActionPerformed
 
     private void ButCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButCadastrarActionPerformed
-        UserDTO user = new UserDTO();
-        user.setLogin(TxtUser.getText());
-        user.setSenha(String.copyValueOf(TxtSenha.getPassword()));
         UserBO cadastroBo = new UserBO();
         String senhar = String.copyValueOf(TxtSenhaR.getPassword());
-        user.setTipo(Integer.parseInt(TxtTipo.getText()));
+        String tipo = TxtTipo.getText();
+        String login = TxtUser.getText();
+        String senha = String.copyValueOf(TxtSenha.getPassword());
         try {
-            if (cadastroBo.cadastrar(user, senhar)) {
+            if (cadastroBo.cadastrar(login, senha, senhar, tipo)) {
                 MensagensUtil.addMsg(CadastrarFrame.this, "Cadastro efetuado com sucesso!");
                 CadastrarFrame.this.dispose();
                 MainFrame mainFrame = new MainFrame();

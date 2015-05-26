@@ -137,20 +137,21 @@ public class LoginFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_ButSairActionPerformed
 
     private void ButLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButLoginActionPerformed
-        UserDTO userLogin = new UserDTO();
-        userLogin.setLogin(TextLogin.getText());
-        userLogin.setSenha(String.copyValueOf(TextPsw.getPassword()));
+        String login = TextLogin.getText();
+        String senha = (String.copyValueOf(TextPsw.getPassword()));
         UserBO loginBo = new UserBO();
+        UserDTO userLogin = null;
         try {
-            if(loginBo.logar(userLogin)){
+            userLogin = loginBo.logar(login, senha);
+            if(userLogin == null){
+                MensagensUtil.addMsg(LoginFrame.this, "Dados inválidos!");
+            }
+            else {
                 MensagensUtil.addMsg(LoginFrame.this, "Login com sucesso!");
                 LoginFrame.this.dispose();
                 MainFrame mainFrame = new MainFrame();
                 mainFrame.setLocationRelativeTo(null);
                 mainFrame.setVisible(true);
-            }
-            else {
-                MensagensUtil.addMsg(LoginFrame.this, "Dados inválidos!");
             }
         } catch (NegocioException ex) {
             ex.printStackTrace();
