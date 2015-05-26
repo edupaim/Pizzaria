@@ -41,7 +41,7 @@ public class BuscarFrame extends javax.swing.JFrame {
         TxtId = new javax.swing.JTextField();
         TxtLogin = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        TxtTipo = new javax.swing.JTextField();
+        CBoxTipo = new javax.swing.JComboBox();
         ButSair = new javax.swing.JButton();
         ButBuscar = new javax.swing.JButton();
 
@@ -54,6 +54,8 @@ public class BuscarFrame extends javax.swing.JFrame {
         jLabel1.setText("Usuário:");
 
         jLabel3.setText("Tipo:");
+
+        CBoxTipo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Administrador", "Gerente", "Atendente", "Pizzaiolo", "Garçom" }));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -70,11 +72,8 @@ public class BuscarFrame extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(TxtTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(CBoxTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
-
-        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {TxtId, TxtTipo});
-
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
@@ -84,7 +83,7 @@ public class BuscarFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(TxtTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(CBoxTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
@@ -143,8 +142,8 @@ public class BuscarFrame extends javax.swing.JFrame {
         List<UserDTO> lista = new ArrayList<>();
         String id = TxtId.getText();
         String login = TxtLogin.getText();
-        String tipo = TxtTipo.getText();
         try {
+            Integer tipo = buscarBO.escolherTipo(CBoxTipo.getSelectedItem() + "");
             lista = buscarBO.listarFiltrada(id, login, tipo);
             BuscarFrame.this.dispose();
             ListaFrame listaFrame = new ListaFrame();
@@ -194,9 +193,9 @@ public class BuscarFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton ButBuscar;
     private javax.swing.JButton ButSair;
+    private javax.swing.JComboBox CBoxTipo;
     private javax.swing.JTextField TxtId;
     private javax.swing.JTextField TxtLogin;
-    private javax.swing.JTextField TxtTipo;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

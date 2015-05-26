@@ -24,7 +24,7 @@ public class AlterarFrame extends javax.swing.JFrame {
 
     public void dadosCampos(Integer id, int tipo, String login) {
         TxtId.setText(String.valueOf(id));
-        TxtTipo.setText(String.valueOf(tipo));
+        CBoxTipo.setSelectedIndex(tipo);
         TxtLogin.setText(login);
     }
 
@@ -49,7 +49,7 @@ public class AlterarFrame extends javax.swing.JFrame {
         TxtSenhaN = new javax.swing.JPasswordField();
         TxtSenhaN2 = new javax.swing.JPasswordField();
         jLabel6 = new javax.swing.JLabel();
-        TxtTipo = new javax.swing.JTextField();
+        CBoxTipo = new javax.swing.JComboBox();
         ButSair = new javax.swing.JButton();
         ButAlterar = new javax.swing.JButton();
         ButExcluir = new javax.swing.JButton();
@@ -74,6 +74,8 @@ public class AlterarFrame extends javax.swing.JFrame {
         TxtId.setEditable(false);
 
         jLabel6.setText("Tipo:");
+
+        CBoxTipo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Administrador", "Gerente", "Atendente", "Pizzaiolo", "Garçom" }));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -105,7 +107,7 @@ public class AlterarFrame extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(TxtTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(CBoxTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
 
@@ -120,7 +122,7 @@ public class AlterarFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
-                    .addComponent(TxtTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(CBoxTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
@@ -231,12 +233,12 @@ public class AlterarFrame extends javax.swing.JFrame {
         String id = TxtId.getText();
         String login = TxtLogin.getText();
         String senha = TxtSenha.getText();
-        String tipo = TxtTipo.getText();
-        UserBO cadastroBo = new UserBO();
+        String tipo = CBoxTipo.getSelectedItem()+"";
+        UserBO alterarBo = new UserBO();
         String senhan = String.copyValueOf(TxtSenhaN.getPassword());
         String senhan2 = String.copyValueOf(TxtSenhaN2.getPassword());
         try {
-            if (cadastroBo.alterar(id, login, senha, tipo, senhan, senhan2)) {
+            if (alterarBo.alterar(id, login, senha, tipo, senhan, senhan2)) {
                 MensagensUtil.addMsg(AlterarFrame.this, "Alterado com sucesso!");
                 AlterarFrame.this.dispose();
                 MainFrame mainFrame = new MainFrame();
@@ -292,12 +294,12 @@ public class AlterarFrame extends javax.swing.JFrame {
     private javax.swing.JButton ButBuscar;
     private javax.swing.JButton ButExcluir;
     private javax.swing.JButton ButSair;
+    private javax.swing.JComboBox CBoxTipo;
     private javax.swing.JTextField TxtId;
     private javax.swing.JTextField TxtLogin;
     private javax.swing.JTextField TxtSenha;
     private javax.swing.JPasswordField TxtSenhaN;
     private javax.swing.JPasswordField TxtSenhaN2;
-    private javax.swing.JTextField TxtTipo;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

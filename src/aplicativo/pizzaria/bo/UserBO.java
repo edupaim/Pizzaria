@@ -28,6 +28,7 @@ public class UserBO {
 
     public boolean cadastrar(String login, String senha, String senhar, String tipo) throws NegocioException {
         boolean resul = false;
+        Integer tip = null;
         try {
             if (login == null || "".equals(login)) {
                 throw new NegocioException("Login obrigatório.");
@@ -38,29 +39,11 @@ public class UserBO {
             } else if (!senha.equals(senhar)) {
                 throw new NegocioException("Repita a senha corretamente.");
             } else {
-                switch (tipo) {
-                    case "Administrador":
-                        tipo = "1";
-                        break;
-                    case "Gerente":
-                        tipo = "2";
-                        break;
-                    case "Atendente":
-                        tipo = "3";
-                        break;
-                    case "Pizzaiolo":
-                        tipo = "4";
-                        break;
-                    case "Garçom":
-                        tipo = "5";
-                        break;
-                    default:
-                        throw new NegocioException("Tipo incorreto.");
-                }
+                tip = escolherTipo(tipo);
                 UserDTO user = new UserDTO();
                 user.setLogin(login);
                 user.setSenha(senha);
-                user.setTipo(Integer.parseInt(tipo));
+                user.setTipo(tip);
                 UserDAO userDAO = new UserDAO();
                 userDAO.inserir(user);
                 resul = true;
@@ -74,6 +57,7 @@ public class UserBO {
     public boolean alterar(String id, String login, String senha, String tipo, String s1, String s2) throws NegocioException {
         UserDTO user = null;
         boolean resul = false;
+        Integer tip = escolherTipo(tipo);
         try {
             if ("".equals(id)) {
                 throw new NegocioException("Selecione um usuário na lista.");
@@ -81,10 +65,6 @@ public class UserBO {
                 throw new NegocioException("Login obrigatório.");
             } else if ("".equals(senha)) {
                 throw new NegocioException("Senha antiga obrigatória.");
-            } else if ("".equals(tipo)) {
-                throw new NegocioException("Tipo obrigatório.");
-            } else if (Integer.parseInt(tipo) < 0 || Integer.parseInt(tipo) >= 100) {
-                throw new NegocioException("Tipo incorreto.");
             } else if (!"".equals(s1) || !"".equals(s2)) {
                 if (!s1.equals(s2)) {
                     throw new NegocioException("Repita a senha corretamente.");
@@ -92,7 +72,7 @@ public class UserBO {
                     user = new UserDTO();
                     user.setLogin(login);
                     user.setSenha(s1);
-                    user.setTipo(Integer.parseInt(tipo));
+                    user.setTipo(tip);
                     UserDAO userDAO = new UserDAO();
                     userDAO.alterarSenha(user);
                     resul = true;
@@ -101,7 +81,7 @@ public class UserBO {
                 user = new UserDTO();
                 user.setLogin(login);
                 user.setSenha(senha);
-                user.setTipo(Integer.parseInt(tipo));
+                user.setTipo(tip);
                 UserDAO userDAO = new UserDAO();
                 userDAO.atualizar(Integer.parseInt(id), user);
                 resul = true;
@@ -139,7 +119,7 @@ public class UserBO {
         return resul;
     }
 
-    public List<UserDTO> listarFiltrada(String id, String login, String tipo) throws NegocioException {
+    public List<UserDTO> listarFiltrada(String id, String login, Integer tipo) throws NegocioException {
         UserDTO user = new UserDTO();
         List<UserDTO> lista = new ArrayList<>();
         UserDAO userDao = new UserDAO();
@@ -150,13 +130,35 @@ public class UserBO {
             if (login != null && !"".equals(login)) {
                 user.setLogin(login);
             }
-            if (tipo != null && !"".equals(tipo)) {
-                user.setTipo(Integer.parseInt(tipo));
-            }
+            user.setTipo(tipo);
             lista = userDao.listaFiltrar(user);
         } catch (PersistenciaException ex) {
             throw new NegocioException(ex.getMessage());
         }
         return lista;
+    }
+
+    public Integer escolherTipo(String tipo) throws NegocioException{
+        Integer resul = null;
+        switch (tipo) {
+            case "Administrador":
+                resul = 0;
+                break;
+            case "Gerente":
+                resul = 1;
+                break;
+            case "Atendente":
+                resul = 2;
+                break;
+            case "Pizzaiolo":
+                resul = 3;
+                break;
+            case "Garçom":
+                resul = 4;
+                break;
+            default:
+                throw new NegocioException("Tipo incorreto.");
+        }
+        return resul;
     }
 }
