@@ -39,7 +39,7 @@ public class CadastrarFrame extends javax.swing.JFrame {
         TxtSenha = new javax.swing.JPasswordField();
         TxtSenhaR = new javax.swing.JPasswordField();
         jLabel4 = new javax.swing.JLabel();
-        TxtTipo = new javax.swing.JTextField();
+        CBoxTipo = new javax.swing.JComboBox();
         ButCadastrar = new javax.swing.JButton();
         ButSair = new javax.swing.JButton();
 
@@ -54,6 +54,8 @@ public class CadastrarFrame extends javax.swing.JFrame {
         jLabel3.setText("Repita senha");
 
         jLabel4.setText("Tipo");
+
+        CBoxTipo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Administrador", "Gerente", "Atendente", "Pizzaiolo", "Garçom" }));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -78,7 +80,8 @@ public class CadastrarFrame extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(TxtTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(CBoxTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(51, 51, 51)))
                 .addContainerGap())
         );
 
@@ -102,7 +105,7 @@ public class CadastrarFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(TxtTipo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(CBoxTipo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         ButCadastrar.setText("Cadastrar");
@@ -153,7 +156,7 @@ public class CadastrarFrame extends javax.swing.JFrame {
     private void ButCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButCadastrarActionPerformed
         UserBO cadastroBo = new UserBO();
         String senhar = String.copyValueOf(TxtSenhaR.getPassword());
-        String tipo = TxtTipo.getText();
+        String tipo = CBoxTipo.getSelectedItem()+"";
         String login = TxtUser.getText();
         String senha = String.copyValueOf(TxtSenha.getPassword());
         try {
@@ -188,13 +191,7 @@ public class CadastrarFrame extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(CadastrarFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(CadastrarFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(CadastrarFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(CadastrarFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
@@ -210,9 +207,9 @@ public class CadastrarFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton ButCadastrar;
     private javax.swing.JButton ButSair;
+    private javax.swing.JComboBox CBoxTipo;
     private javax.swing.JPasswordField TxtSenha;
     private javax.swing.JPasswordField TxtSenhaR;
-    private javax.swing.JTextField TxtTipo;
     private javax.swing.JTextField TxtUser;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

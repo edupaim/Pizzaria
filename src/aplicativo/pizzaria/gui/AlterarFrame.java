@@ -6,7 +6,6 @@
 package aplicativo.pizzaria.gui;
 
 import aplicativo.pizzaria.bo.UserBO;
-import aplicativo.pizzaria.dto.UserDTO;
 import aplicativo.pizzaria.exception.NegocioException;
 import aplicativo.pizzaria.util.MensagensUtil;
 
@@ -208,7 +207,6 @@ public class AlterarFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_ButSairActionPerformed
 
     private void ButExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButExcluirActionPerformed
-        Integer id = Integer.parseInt(TxtId.getText());
         String login = TxtLogin.getText();
         String senha = TxtSenha.getText();
         UserBO excluirBo = new UserBO();
@@ -230,16 +228,16 @@ public class AlterarFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_ButExcluirActionPerformed
 
     private void ButAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButAlterarActionPerformed
-        UserDTO user = new UserDTO();
-        user.setId(Integer.parseInt(TxtId.getText()));
-        user.setLogin(TxtLogin.getText());
-        user.setSenha(TxtSenha.getText());
+        String id = TxtId.getText();
+        String login = TxtLogin.getText();
+        String senha = TxtSenha.getText();
+        String tipo = TxtTipo.getText();
         UserBO cadastroBo = new UserBO();
         String senhan = String.copyValueOf(TxtSenhaN.getPassword());
         String senhan2 = String.copyValueOf(TxtSenhaN2.getPassword());
         try {
-            if (cadastroBo.alterarSenha(user, senhan, senhan2)) {
-                MensagensUtil.addMsg(AlterarFrame.this, "Senha alterada com sucesso!");
+            if (cadastroBo.alterar(id, login, senha, tipo, senhan, senhan2)) {
+                MensagensUtil.addMsg(AlterarFrame.this, "Alterado com sucesso!");
                 AlterarFrame.this.dispose();
                 MainFrame mainFrame = new MainFrame();
                 mainFrame.setLocationRelativeTo(null);

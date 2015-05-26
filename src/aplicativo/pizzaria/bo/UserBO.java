@@ -38,6 +38,25 @@ public class UserBO {
             } else if (!senha.equals(senhar)) {
                 throw new NegocioException("Repita a senha corretamente.");
             } else {
+                switch (tipo) {
+                    case "Administrador":
+                        tipo = "1";
+                        break;
+                    case "Gerente":
+                        tipo = "2";
+                        break;
+                    case "Atendente":
+                        tipo = "3";
+                        break;
+                    case "Pizzaiolo":
+                        tipo = "4";
+                        break;
+                    case "Garçom":
+                        tipo = "5";
+                        break;
+                    default:
+                        throw new NegocioException("Tipo incorreto.");
+                }
                 UserDTO user = new UserDTO();
                 user.setLogin(login);
                 user.setSenha(senha);
@@ -52,21 +71,39 @@ public class UserBO {
         return resul;
     }
 
-    public boolean alterarSenha(UserDTO user, String senha1, String senha2) throws NegocioException {
+    public boolean alterar(String id, String login, String senha, String tipo, String s1, String s2) throws NegocioException {
+        UserDTO user = null;
         boolean resul = false;
         try {
-            if (user.getLogin() == null || "".equals(user.getLogin())) {
-                throw new NegocioException("Login obrigatório");
-            } else if (user.getSenha() == null || "".equals(user.getSenha())) {
-                throw new NegocioException("Senha antiga obrigatório");
-            } else if (senha1 == null || "".equals(senha1)) {
-                throw new NegocioException("Senha nova obrigatório");
-            } else if (!senha1.equals(senha2)) {
-                throw new NegocioException("Repita a senha corretamente.");
+            if ("".equals(id)) {
+                throw new NegocioException("Selecione um usuário na lista.");
+            } else if ("".equals(login)) {
+                throw new NegocioException("Login obrigatório.");
+            } else if ("".equals(senha)) {
+                throw new NegocioException("Senha antiga obrigatória.");
+            } else if ("".equals(tipo)) {
+                throw new NegocioException("Tipo obrigatório.");
+            } else if (Integer.parseInt(tipo) < 0 || Integer.parseInt(tipo) >= 100) {
+                throw new NegocioException("Tipo incorreto.");
+            } else if (!"".equals(s1) || !"".equals(s2)) {
+                if (!s1.equals(s2)) {
+                    throw new NegocioException("Repita a senha corretamente.");
+                } else {
+                    user = new UserDTO();
+                    user.setLogin(login);
+                    user.setSenha(s1);
+                    user.setTipo(Integer.parseInt(tipo));
+                    UserDAO userDAO = new UserDAO();
+                    userDAO.alterarSenha(user);
+                    resul = true;
+                }
             } else {
-                user.setSenha(senha1);
+                user = new UserDTO();
+                user.setLogin(login);
+                user.setSenha(senha);
+                user.setTipo(Integer.parseInt(tipo));
                 UserDAO userDAO = new UserDAO();
-                userDAO.alterarSenha(user);
+                userDAO.atualizar(Integer.parseInt(id), user);
                 resul = true;
             }
         } catch (NegocioException | PersistenciaException ex) {

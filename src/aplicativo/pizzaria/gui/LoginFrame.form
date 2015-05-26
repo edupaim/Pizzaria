@@ -108,11 +108,13 @@
         </Component>
         <Component class="javax.swing.JTextField" name="TextLogin">
           <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="Digite o usu&#xe1;rio"/>
             <Property name="name" type="java.lang.String" value="TextLogin" noResource="true"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JPasswordField" name="TextPsw">
           <Properties>
+            <Property name="toolTipText" type="java.lang.String" value="Digite a senha"/>
             <Property name="name" type="java.lang.String" value="TextPsw" noResource="true"/>
           </Properties>
         </Component>
@@ -121,6 +123,7 @@
     <Component class="javax.swing.JButton" name="ButSair">
       <Properties>
         <Property name="text" type="java.lang.String" value="Sair"/>
+        <Property name="toolTipText" type="java.lang.String" value="Sair"/>
         <Property name="name" type="java.lang.String" value="ButSair" noResource="true"/>
       </Properties>
       <Events>
@@ -130,6 +133,7 @@
     <Component class="javax.swing.JButton" name="ButLogin">
       <Properties>
         <Property name="text" type="java.lang.String" value="Entrar"/>
+        <Property name="toolTipText" type="java.lang.String" value="Entrar"/>
         <Property name="name" type="java.lang.String" value="ButLogin" noResource="true"/>
       </Properties>
       <Events>
