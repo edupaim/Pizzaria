@@ -67,6 +67,7 @@ public class UserBO {
                 throw new NegocioException("Senha antiga obrigatória.");
             } else {
                 user = new UserDTO();
+                user.setId(Integer.parseInt(id));
                 user.setLogin(login);
                 user.setTipo(tip);
                 UserDAO userDAO = new UserDAO();
