@@ -19,7 +19,7 @@ public class UserBO {
                 throw new NegocioException("Senha obrigatória.");
             } else {
                 UserDAO userDAO = new UserDAO();
-                user = userDAO.logar(login, senha);
+                user = userDAO.logar(login.trim(), senha.trim());
                 if (user != null) {
                     Main.setUsuarioLogado(user);
                 }
@@ -45,8 +45,8 @@ public class UserBO {
             } else {
                 tip = escolherTipo(tipo);
                 UserDTO user = new UserDTO();
-                user.setLogin(login);
-                user.setSenha(senha);
+                user.setLogin(login.trim());
+                user.setSenha(senha.trim());
                 user.setTipo(tip);
                 UserDAO userDAO = new UserDAO();
                 userDAO.inserir(user);
@@ -72,19 +72,19 @@ public class UserBO {
             } else {
                 user = new UserDTO();
                 user.setId(Integer.parseInt(id));
-                user.setLogin(login);
+                user.setLogin(login.trim());
                 user.setTipo(tip);
                 UserDAO userDAO = new UserDAO();
                 if (!"".equals(s1) || !"".equals(s2)) {
                     if (!s1.equals(s2)) {
                         throw new NegocioException("Repita a senha corretamente.");
                     } else {
-                        user.setSenha(s1);
+                        user.setSenha(s1.trim());
                         userDAO.alterarSenha(user);
                         resul = true;
                     }
                 } else {
-                    user.setSenha(senha);
+                    user.setSenha(senha.trim());
                     userDAO.atualizar(Integer.parseInt(id), user);
                     resul = true;
                 }
@@ -132,7 +132,7 @@ public class UserBO {
                 user.setId(Integer.parseInt(id));
             }
             if (login != null && !"".equals(login)) {
-                user.setLogin(login);
+                user.setLogin(login.trim());
             }
             user.setTipo(tipo);
             lista = userDao.listaFiltro(user);

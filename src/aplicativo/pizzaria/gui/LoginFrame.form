@@ -54,7 +54,6 @@
             <TitledBorder title="Login"/>
           </Border>
         </Property>
-        <Property name="toolTipText" type="java.lang.String" value=""/>
         <Property name="name" type="java.lang.String" value="jPanel1" noResource="true"/>
       </Properties>
 
@@ -109,7 +108,7 @@
         </Component>
         <Component class="javax.swing.JTextField" name="TextLogin">
           <Properties>
-            <Property name="toolTipText" type="java.lang.String" value=""/>
+            <Property name="toolTipText" type="java.lang.String" value="" noResource="true"/>
             <Property name="name" type="java.lang.String" value="TextLogin" noResource="true"/>
           </Properties>
         </Component>

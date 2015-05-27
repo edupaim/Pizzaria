@@ -64,8 +64,6 @@ public class AlterarFrame extends javax.swing.JFrame {
 
         jLabel2.setText("Login:");
 
-        TxtLogin.setEditable(false);
-
         jLabel3.setText("Senha:");
 
         jLabel4.setText("Nova senha:");

@@ -46,7 +46,6 @@ public class LoginFrame extends javax.swing.JFrame {
         setResizable(false);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Login"));
-        jPanel1.setToolTipText("");
         jPanel1.setName("jPanel1"); // NOI18N
 
         jLabel3.setText("Usúario");
@@ -55,7 +54,7 @@ public class LoginFrame extends javax.swing.JFrame {
         jLabel4.setText("Senha");
         jLabel4.setName("jLabel4"); // NOI18N
 
-        TextLogin.setToolTipText("");
+        TextLogin.setToolTipText(""); // NOI18N
         TextLogin.setName("TextLogin"); // NOI18N
 
         TextPsw.setToolTipText("");
