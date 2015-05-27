@@ -65,27 +65,26 @@ public class UserBO {
                 throw new NegocioException("Login obrigatório.");
             } else if ("".equals(senha)) {
                 throw new NegocioException("Senha antiga obrigatória.");
-            } else if (!"".equals(s1) || !"".equals(s2)) {
-                if (!s1.equals(s2)) {
-                    throw new NegocioException("Repita a senha corretamente.");
-                } else {
-                    user = new UserDTO();
-                    user.setLogin(login);
-                    user.setSenha(s1);
-                    user.setTipo(tip);
-                    UserDAO userDAO = new UserDAO();
-                    userDAO.alterarSenha(user);
-                    resul = true;
-                }
             } else {
                 user = new UserDTO();
                 user.setLogin(login);
-                user.setSenha(senha);
                 user.setTipo(tip);
                 UserDAO userDAO = new UserDAO();
-                userDAO.atualizar(Integer.parseInt(id), user);
-                resul = true;
+                if (!"".equals(s1) || !"".equals(s2)) {
+                    if (!s1.equals(s2)) {
+                        throw new NegocioException("Repita a senha corretamente.");
+                    } else {
+                        user.setSenha(s1);
+                        userDAO.alterarSenha(user);
+                        resul = true;
+                    }
+                } else {
+                    user.setSenha(senha);
+                    userDAO.atualizar(Integer.parseInt(id), user);
+                    resul = true;
+                }
             }
+
         } catch (NegocioException | PersistenciaException ex) {
             throw new NegocioException(ex.getMessage());
         }
@@ -138,7 +137,7 @@ public class UserBO {
         return lista;
     }
 
-    public Integer escolherTipo(String tipo) throws NegocioException{
+    public Integer escolherTipo(String tipo) throws NegocioException {
         Integer resul = null;
         switch (tipo) {
             case "Administrador":
