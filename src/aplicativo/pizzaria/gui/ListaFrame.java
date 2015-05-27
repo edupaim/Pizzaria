@@ -11,8 +11,6 @@ import aplicativo.pizzaria.exception.NegocioException;
 import aplicativo.pizzaria.util.MensagensUtil;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -41,9 +39,10 @@ public class ListaFrame extends javax.swing.JFrame {
             for (UserDTO user : lista) {
                 tbl.addRow(new String[1]);
                 TblUser.setValueAt(user.getId(), i, 0);
-                TblUser.setValueAt(user.getLogin(), i, 1);
+                TblUser.setValueAt(user.getNome(), i, 1);
+                TblUser.setValueAt(user.getLogin(), i, 2);
                 try {
-                    TblUser.setValueAt(UserBO.tipo(user.getTipo()), i, 2);
+                    TblUser.setValueAt(UserBO.tipo(user.getTipo()), i, 3);
                 } catch (NegocioException ex) {
                     ex.printStackTrace();
                     MensagensUtil.addMsg(ListaFrame.this, ex.getMessage());
@@ -63,9 +62,10 @@ public class ListaFrame extends javax.swing.JFrame {
             for (UserDTO user : consulta) {
                 tbl.addRow(new String[1]);
                 TblUser.setValueAt(user.getId(), i, 0);
-                TblUser.setValueAt(user.getLogin(), i, 1);
+                TblUser.setValueAt(user.getNome(), i, 1);
+                TblUser.setValueAt(user.getLogin(), i, 2);
                 try {
-                    TblUser.setValueAt(UserBO.tipo(user.getTipo()), i, 2);
+                    TblUser.setValueAt(UserBO.tipo(user.getTipo()), i, 3);
                 } catch (NegocioException ex) {
                     ex.printStackTrace();
                     MensagensUtil.addMsg(ListaFrame.this, ex.getMessage());
@@ -103,14 +103,14 @@ public class ListaFrame extends javax.swing.JFrame {
 
             },
             new String [] {
-                "ID", "Usuário", "Tipo"
+                "ID", "Nome", "Login", "Tipo"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false
+                false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -206,7 +206,8 @@ public class ListaFrame extends javax.swing.JFrame {
         alterarFrame.setVisible(true);
         try {
             alterarFrame.dadosCampos((Integer) TblUser.getValueAt(linha, 0),
-                    UserBO.escolherTipo((String) TblUser.getValueAt(linha, 2)),
+                    UserBO.escolherTipo((String) TblUser.getValueAt(linha, 3)),
+                    (String) TblUser.getValueAt(linha, 2),
                     (String) TblUser.getValueAt(linha, 1));
         } catch (NegocioException ex) {
             ex.printStackTrace();

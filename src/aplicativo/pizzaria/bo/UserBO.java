@@ -30,12 +30,14 @@ public class UserBO {
         return user;
     }
 
-    public boolean cadastrar(String login, String senha, String senhar, String tipo) throws NegocioException {
+    public boolean cadastrar(String login, String nome, String senha, String senhar, String tipo) throws NegocioException {
         boolean resul = false;
         Integer tip = null;
         try {
             if (login == null || "".equals(login)) {
                 throw new NegocioException("Login obrigatório.");
+            } else if (nome == null || "".equals(nome)) {
+                throw new NegocioException("Nome obrigatório.");
             } else if (senha == null || "".equals(senha)) {
                 throw new NegocioException("Senha obrigatória.");
             } else if (tipo == null || "".equals(tipo)) {
@@ -46,6 +48,7 @@ public class UserBO {
                 tip = escolherTipo(tipo);
                 UserDTO user = new UserDTO();
                 user.setLogin(login.trim());
+                user.setNome(nome.trim());
                 user.setSenha(senha.trim());
                 user.setTipo(tip);
                 UserDAO userDAO = new UserDAO();
@@ -58,7 +61,7 @@ public class UserBO {
         return resul;
     }
 
-    public boolean alterar(String id, String login, String senha, String tipo, String s1, String s2) throws NegocioException {
+    public boolean alterar(String id, String login, String nome, String senha, String tipo, String s1, String s2) throws NegocioException {
         UserDTO user = null;
         boolean resul = false;
         Integer tip = escolherTipo(tipo);
@@ -67,12 +70,15 @@ public class UserBO {
                 throw new NegocioException("Selecione um usuário na lista.");
             } else if ("".equals(login)) {
                 throw new NegocioException("Login obrigatório.");
+            } else if ("".equals(nome)) {
+                throw new NegocioException("Nome obrigatório.");
             } else if ("".equals(senha)) {
                 throw new NegocioException("Senha antiga obrigatória.");
             } else {
                 user = new UserDTO();
                 user.setId(Integer.parseInt(id));
                 user.setLogin(login.trim());
+                user.setNome(nome.trim());
                 user.setTipo(tip);
                 UserDAO userDAO = new UserDAO();
                 if (!"".equals(s1) || !"".equals(s2)) {
@@ -123,7 +129,7 @@ public class UserBO {
         return resul;
     }
 
-    public List<UserDTO> busca(String id, String login, Integer tipo) throws NegocioException {
+    public List<UserDTO> busca(String id, String login, String nome, Integer tipo) throws NegocioException {
         UserDTO user = new UserDTO();
         List<UserDTO> lista = new ArrayList<>();
         UserDAO userDao = new UserDAO();
@@ -133,6 +139,9 @@ public class UserBO {
             }
             if (login != null && !"".equals(login)) {
                 user.setLogin(login.trim());
+            }
+            if (nome != null && !"".equals(nome)) {
+                user.setNome(nome.trim());
             }
             user.setTipo(tipo);
             lista = userDao.listaFiltro(user);

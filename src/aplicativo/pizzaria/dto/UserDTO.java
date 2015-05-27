@@ -3,9 +3,18 @@ package aplicativo.pizzaria.dto;
 public class UserDTO {
 
     Integer id;
+    String nome;
     String login;
     String senha;
     Integer tipo;
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
 
     public UserDTO() {
         this.id = null;

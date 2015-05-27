@@ -42,12 +42,13 @@ public class UserDAO implements GenericoDAO<UserDTO> {
     @Override
     public void inserir(UserDTO userDto) throws PersistenciaException {
         Connection con = ConexaoUtil.abrirConexao();
-        String sql = "insert into user(login, senha, tipo) values(?,?,?) ";
+        String sql = "insert into user(login, senha, tipo, nome) values(?,?,?,?) ";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, userDto.getLogin());
             ps.setString(2, userDto.getSenha());
             ps.setInt(3, userDto.getTipo());
+            ps.setString(4, userDto.getNome());
             ps.execute();
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -62,14 +63,16 @@ public class UserDAO implements GenericoDAO<UserDTO> {
         Connection con = ConexaoUtil.abrirConexao();
         String sql = "update user set login = ?, ";
         sql += "senha = ?, ";
-        sql += "tipo = ? ";
+        sql += "tipo = ?, ";
+        sql += "nome = ? ";
         sql += "where id_user = ? ";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, user.getLogin());
             ps.setString(2, user.getSenha());
             ps.setInt(3, user.getTipo());
-            ps.setInt(4, id);
+            ps.setString(4, user.getNome());
+            ps.setInt(5, id);
             ps.execute();
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -107,6 +110,7 @@ public class UserDAO implements GenericoDAO<UserDTO> {
                 UserDTO user = new UserDTO();
                 user.setId(rs.getInt(1));
                 user.setLogin(rs.getString(2));
+                user.setNome(rs.getString(5));
                 user.setSenha(rs.getString(3));
                 user.setTipo(rs.getInt(4));
                 lista.add(user);
@@ -133,6 +137,7 @@ public class UserDAO implements GenericoDAO<UserDTO> {
                 user = new UserDTO();
                 user.setId(rs.getInt(1));
                 user.setLogin(rs.getString(2));
+                user.setNome(rs.getString(5));
                 user.setSenha(rs.getString(3));
                 user.setTipo(rs.getInt(4));
             }
@@ -189,6 +194,15 @@ public class UserDAO implements GenericoDAO<UserDTO> {
             }
             sql += "tipo like ? ";
         }
+        if (user.getNome() != null) {
+            if (ultimo) {
+                sql += "and ";
+            } else {
+                sql += "where ";
+                ultimo = true;
+            }
+            sql += "nome like ? ";
+        }
         try {
             PreparedStatement ps = con.prepareStatement(sql);
             if (user.getId() != null) {
@@ -200,11 +214,15 @@ public class UserDAO implements GenericoDAO<UserDTO> {
             if (user.getTipo() != null) {
                 ps.setInt(++cont, user.getTipo());
             }
+            if (user.getNome() != null) {
+                ps.setInt(++cont, user.getNome());
+            }
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 UserDTO aux = new UserDTO();
                 aux.setId(rs.getInt(1));
                 aux.setLogin(rs.getString(2));
+                aux.setNome(rs.getString(5));
                 aux.setSenha(rs.getString(3));
                 aux.setTipo(rs.getInt(4));
                 lista.add(aux);

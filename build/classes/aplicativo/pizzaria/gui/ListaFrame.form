@@ -82,9 +82,10 @@
             <Component class="javax.swing.JTable" name="TblUser">
               <Properties>
                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                  <Table columnCount="3" rowCount="0">
+                  <Table columnCount="4" rowCount="0">
                     <Column editable="false" title="ID" type="java.lang.Integer"/>
-                    <Column editable="false" title="Usu&#xe1;rio" type="java.lang.String"/>
+                    <Column editable="false" title="Nome" type="java.lang.String"/>
+                    <Column editable="false" title="Login" type="java.lang.String"/>
                     <Column editable="false" title="Tipo" type="java.lang.Integer"/>
                   </Table>
                 </Property>
