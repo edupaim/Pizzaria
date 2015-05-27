@@ -26,7 +26,7 @@ public class ListaFrame extends javax.swing.JFrame {
         initComponents();
     }
 
-    public void atualizarTabela() {
+    public final void atualizarTabela() {
         UserBO listaBo = new UserBO();
         List<UserDTO> lista = new ArrayList<>();
         DefaultTableModel tbl = (DefaultTableModel) TblUser.getModel();
