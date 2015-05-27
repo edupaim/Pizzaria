@@ -4,6 +4,7 @@ import aplicativo.pizzaria.dao.UserDAO;
 import aplicativo.pizzaria.dto.UserDTO;
 import aplicativo.pizzaria.exception.NegocioException;
 import aplicativo.pizzaria.exception.PersistenciaException;
+import aplicativo.pizzaria.main.Main;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +20,9 @@ public class UserBO {
             } else {
                 UserDAO userDAO = new UserDAO();
                 user = userDAO.logar(login, senha);
+                if (user != null) {
+                    Main.setUsuarioLogado(user);
+                }
             }
         } catch (NegocioException | PersistenciaException ex) {
             throw new NegocioException(ex.getMessage());
@@ -119,7 +123,7 @@ public class UserBO {
         return resul;
     }
 
-    public List<UserDTO> listarFiltrada(String id, String login, Integer tipo) throws NegocioException {
+    public List<UserDTO> busca(String id, String login, Integer tipo) throws NegocioException {
         UserDTO user = new UserDTO();
         List<UserDTO> lista = new ArrayList<>();
         UserDAO userDao = new UserDAO();
@@ -131,7 +135,7 @@ public class UserBO {
                 user.setLogin(login);
             }
             user.setTipo(tipo);
-            lista = userDao.listaFiltrar(user);
+            lista = userDao.listaFiltro(user);
         } catch (PersistenciaException ex) {
             throw new NegocioException(ex.getMessage());
         }

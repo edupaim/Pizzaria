@@ -55,10 +55,10 @@ public class LoginFrame extends javax.swing.JFrame {
         jLabel4.setText("Senha");
         jLabel4.setName("jLabel4"); // NOI18N
 
-        TextLogin.setToolTipText("Digite o usuário");
+        TextLogin.setToolTipText("");
         TextLogin.setName("TextLogin"); // NOI18N
 
-        TextPsw.setToolTipText("Digite a senha");
+        TextPsw.setToolTipText("");
         TextPsw.setName("TextPsw"); // NOI18N
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -94,7 +94,7 @@ public class LoginFrame extends javax.swing.JFrame {
         );
 
         ButSair.setText("Sair");
-        ButSair.setToolTipText("Sair");
+        ButSair.setToolTipText("");
         ButSair.setName("ButSair"); // NOI18N
         ButSair.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -103,7 +103,7 @@ public class LoginFrame extends javax.swing.JFrame {
         });
 
         ButLogin.setText("Entrar");
-        ButLogin.setToolTipText("Entrar");
+        ButLogin.setToolTipText("");
         ButLogin.setName("ButLogin"); // NOI18N
         ButLogin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -154,7 +154,7 @@ public class LoginFrame extends javax.swing.JFrame {
             else {
                 MensagensUtil.addMsg(LoginFrame.this, "Login com sucesso!");
                 LoginFrame.this.dispose();
-                MainFrame mainFrame = new MainFrame();
+                MenuFrame mainFrame = new MenuFrame();
                 mainFrame.setLocationRelativeTo(null);
                 mainFrame.setVisible(true);
             }

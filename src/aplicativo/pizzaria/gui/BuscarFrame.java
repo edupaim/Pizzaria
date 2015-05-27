@@ -133,7 +133,7 @@ public class BuscarFrame extends javax.swing.JFrame {
 
     private void ButSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButSairActionPerformed
         BuscarFrame.this.dispose();
-        MainFrame mainFrame = new MainFrame();
+        MenuFrame mainFrame = new MenuFrame();
         mainFrame.setLocationRelativeTo(null);
         mainFrame.setVisible(true);
     }//GEN-LAST:event_ButSairActionPerformed
@@ -145,7 +145,7 @@ public class BuscarFrame extends javax.swing.JFrame {
         String login = TxtLogin.getText();
         try {
             Integer tipo = buscarBO.escolherTipo(CBoxTipo.getSelectedItem() + "");
-            lista = buscarBO.listarFiltrada(id, login, tipo);
+            lista = buscarBO.busca(id, login, tipo);
             BuscarFrame.this.dispose();
             ListaFrame listaFrame = new ListaFrame();
             listaFrame.setLocationRelativeTo(null);

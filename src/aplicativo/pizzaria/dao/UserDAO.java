@@ -161,7 +161,7 @@ public class UserDAO implements GenericoDAO<UserDTO> {
         return false;
     }
 
-    public List<UserDTO> listaFiltrar(UserDTO user) throws PersistenciaException {
+    public List<UserDTO> listaFiltro(UserDTO user) throws PersistenciaException {
         Connection con = ConexaoUtil.abrirConexao();
         List<UserDTO> lista = new ArrayList<>();
         String sql = "select * from user ";

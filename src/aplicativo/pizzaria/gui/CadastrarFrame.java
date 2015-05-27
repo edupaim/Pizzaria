@@ -148,7 +148,7 @@ public class CadastrarFrame extends javax.swing.JFrame {
 
     private void ButSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButSairActionPerformed
         CadastrarFrame.this.dispose();
-        MainFrame mainFrame = new MainFrame();
+        MenuFrame mainFrame = new MenuFrame();
         mainFrame.setLocationRelativeTo(null);
         mainFrame.setVisible(true);
     }//GEN-LAST:event_ButSairActionPerformed
@@ -163,7 +163,7 @@ public class CadastrarFrame extends javax.swing.JFrame {
             if (cadastroBo.cadastrar(login, senha, senhar, tipo)) {
                 MensagensUtil.addMsg(CadastrarFrame.this, "Cadastro efetuado com sucesso!");
                 CadastrarFrame.this.dispose();
-                MainFrame mainFrame = new MainFrame();
+                MenuFrame mainFrame = new MenuFrame();
                 mainFrame.setLocationRelativeTo(null);
                 mainFrame.setVisible(true);
             } else {

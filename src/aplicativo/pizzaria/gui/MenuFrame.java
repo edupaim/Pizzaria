@@ -6,17 +6,21 @@
 
 package aplicativo.pizzaria.gui;
 
+import aplicativo.pizzaria.dto.UserDTO;
+import aplicativo.pizzaria.main.Main;
+
 /**
  *
  * @author eduardo
  */
-public class MainFrame extends javax.swing.JFrame {
+public class MenuFrame extends javax.swing.JFrame {
 
     /**
      * Creates new form MainFrame
      */
-    public MainFrame() {
+    public MenuFrame() {
         initComponents();
+        LbLogin.setText(Main.getUsuarioLogado().getLogin());
     }
 
     /**
@@ -31,9 +35,10 @@ public class MainFrame extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         ButCadastrar = new javax.swing.JButton();
         ButListar = new javax.swing.JButton();
-        ButAlterar = new javax.swing.JButton();
         ButAlterar1 = new javax.swing.JButton();
         ButSair = new javax.swing.JButton();
+        LbLogin = new javax.swing.JLabel();
+        Label = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Principal");
@@ -57,14 +62,6 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
-        ButAlterar.setText("Alterar");
-        ButAlterar.setToolTipText("");
-        ButAlterar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ButAlterarActionPerformed(evt);
-            }
-        });
-
         ButAlterar1.setText("Buscar");
         ButAlterar1.setToolTipText("");
         ButAlterar1.addActionListener(new java.awt.event.ActionListener() {
@@ -82,23 +79,20 @@ public class MainFrame extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(ButCadastrar)
                     .addComponent(ButListar)
-                    .addComponent(ButAlterar)
                     .addComponent(ButAlterar1))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {ButAlterar, ButAlterar1, ButCadastrar, ButListar});
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {ButAlterar1, ButCadastrar, ButListar});
 
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(ButCadastrar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ButListar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ButAlterar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(ButAlterar1))
         );
 
@@ -110,19 +104,29 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
+        LbLogin.setText("Login");
+
+        Label.setText("Usuário:");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(ButSair))
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(ButSair, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addComponent(Label)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(LbLogin))
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LbLogin)
+                    .addComponent(Label))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(ButSair))
@@ -136,14 +140,14 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_ButSairActionPerformed
 
     private void ButCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButCadastrarActionPerformed
-        MainFrame.this.dispose();
+        MenuFrame.this.dispose();
         CadastrarFrame cadastrarFrame = new CadastrarFrame();
         cadastrarFrame.setLocationRelativeTo(null);
         cadastrarFrame.setVisible(true);
     }//GEN-LAST:event_ButCadastrarActionPerformed
 
     private void ButListarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButListarActionPerformed
-        MainFrame.this.dispose();
+        MenuFrame.this.dispose();
         ListaFrame listaFrame =  new ListaFrame();
         listaFrame.setLocationRelativeTo(null);
         listaFrame.setVisible(true);
@@ -151,18 +155,11 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_ButListarActionPerformed
 
     private void ButAlterar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButAlterar1ActionPerformed
-        MainFrame.this.dispose();
+        MenuFrame.this.dispose();
         BuscarFrame buscarFrame = new BuscarFrame();
         buscarFrame.setLocationRelativeTo(null);
         buscarFrame.setVisible(true);
     }//GEN-LAST:event_ButAlterar1ActionPerformed
-
-    private void ButAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButAlterarActionPerformed
-        MainFrame.this.dispose();
-        AlterarFrame alterarFrame = new AlterarFrame();
-        alterarFrame.setLocationRelativeTo(null);
-        alterarFrame.setVisible(true);
-    }//GEN-LAST:event_ButAlterarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -181,30 +178,31 @@ public class MainFrame extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(MenuFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(MenuFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(MenuFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(MenuFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new MainFrame().setVisible(true);
+                new MenuFrame().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton ButAlterar;
     private javax.swing.JButton ButAlterar1;
     private javax.swing.JButton ButCadastrar;
     private javax.swing.JButton ButListar;
     private javax.swing.JButton ButSair;
+    private javax.swing.JLabel Label;
+    private javax.swing.JLabel LbLogin;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }
