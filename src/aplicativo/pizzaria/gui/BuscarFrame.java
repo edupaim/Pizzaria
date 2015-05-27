@@ -8,10 +8,9 @@ package aplicativo.pizzaria.gui;
 import aplicativo.pizzaria.bo.UserBO;
 import aplicativo.pizzaria.dto.UserDTO;
 import aplicativo.pizzaria.exception.NegocioException;
+import aplicativo.pizzaria.util.MensagensUtil;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -144,7 +143,7 @@ public class BuscarFrame extends javax.swing.JFrame {
         String id = TxtId.getText();
         String login = TxtLogin.getText();
         try {
-            Integer tipo = buscarBO.escolherTipo(CBoxTipo.getSelectedItem() + "");
+            Integer tipo = UserBO.escolherTipo(CBoxTipo.getSelectedItem() + "");
             lista = buscarBO.busca(id, login, tipo);
             BuscarFrame.this.dispose();
             ListaFrame listaFrame = new ListaFrame();
@@ -152,7 +151,8 @@ public class BuscarFrame extends javax.swing.JFrame {
             listaFrame.setVisible(true);
             listaFrame.atualizarTabela(lista);
         } catch (NegocioException ex) {
-            Logger.getLogger(BuscarFrame.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
+            MensagensUtil.addMsg(BuscarFrame.this, ex.getMessage());
         }
     }//GEN-LAST:event_ButBuscarActionPerformed
 

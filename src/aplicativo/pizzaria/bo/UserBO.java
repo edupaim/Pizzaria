@@ -142,7 +142,7 @@ public class UserBO {
         return lista;
     }
 
-    public Integer escolherTipo(String tipo) throws NegocioException {
+    public static Integer escolherTipo(String tipo) throws NegocioException {
         Integer resul = null;
         switch (tipo) {
             case "Administrador":
@@ -159,6 +159,30 @@ public class UserBO {
                 break;
             case "Garçom":
                 resul = 4;
+                break;
+            default:
+                throw new NegocioException("Tipo incorreto.");
+        }
+        return resul;
+    }
+    
+    public static String tipo(Integer tipo) throws NegocioException {
+        String resul = null;
+        switch (tipo) {
+            case 0:
+                resul = "Administrador";
+                break;
+            case 1:
+                resul = "Gerente";
+                break;
+            case 2:
+                resul = "Atendente";
+                break;
+            case 3:
+                resul = "Pizzaiolo";
+                break;
+            case 4:
+                resul = "Garçom";
                 break;
             default:
                 throw new NegocioException("Tipo incorreto.");

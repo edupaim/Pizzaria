@@ -6,8 +6,10 @@
 
 package aplicativo.pizzaria.gui;
 
-import aplicativo.pizzaria.dto.UserDTO;
+import aplicativo.pizzaria.bo.UserBO;
+import aplicativo.pizzaria.exception.NegocioException;
 import aplicativo.pizzaria.main.Main;
+import aplicativo.pizzaria.util.MensagensUtil;
 
 /**
  *
@@ -21,6 +23,14 @@ public class MenuFrame extends javax.swing.JFrame {
     public MenuFrame() {
         initComponents();
         LbLogin.setText(Main.getUsuarioLogado().getLogin());
+        try {
+            String tipo = UserBO.tipo(Main.getUsuarioLogado().getTipo());
+            LbTipo.setText(tipo);
+        } catch (NegocioException ex) {
+            ex.printStackTrace();
+            MensagensUtil.addMsg(MenuFrame.this, ex.getMessage());
+        }
+        
     }
 
     /**
@@ -32,17 +42,40 @@ public class MenuFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel2 = new javax.swing.JPanel();
+        LbLogin = new javax.swing.JLabel();
+        LbTipo = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         ButCadastrar = new javax.swing.JButton();
         ButListar = new javax.swing.JButton();
         ButAlterar1 = new javax.swing.JButton();
         ButSair = new javax.swing.JButton();
-        LbLogin = new javax.swing.JLabel();
-        Label = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Principal");
         setResizable(false);
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Usuário"));
+
+        LbLogin.setText("Login");
+
+        LbTipo.setText("Tipo");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(LbLogin)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(LbTipo))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(LbLogin)
+                .addComponent(LbTipo))
+        );
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Menu"));
 
@@ -104,28 +137,21 @@ public class MenuFrame extends javax.swing.JFrame {
             }
         });
 
-        LbLogin.setText("Login");
-
-        Label.setText("Usuário:");
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(ButSair, javax.swing.GroupLayout.Alignment.TRAILING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addComponent(Label)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(LbLogin))
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(ButSair))
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(LbLogin)
-                    .addComponent(Label))
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -201,8 +227,9 @@ public class MenuFrame extends javax.swing.JFrame {
     private javax.swing.JButton ButCadastrar;
     private javax.swing.JButton ButListar;
     private javax.swing.JButton ButSair;
-    private javax.swing.JLabel Label;
     private javax.swing.JLabel LbLogin;
+    private javax.swing.JLabel LbTipo;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     // End of variables declaration//GEN-END:variables
 }

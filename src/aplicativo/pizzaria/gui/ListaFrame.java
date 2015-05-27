@@ -11,6 +11,8 @@ import aplicativo.pizzaria.exception.NegocioException;
 import aplicativo.pizzaria.util.MensagensUtil;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -40,7 +42,12 @@ public class ListaFrame extends javax.swing.JFrame {
                 tbl.addRow(new String[1]);
                 TblUser.setValueAt(user.getId(), i, 0);
                 TblUser.setValueAt(user.getLogin(), i, 1);
-                TblUser.setValueAt(user.getTipo(), i, 2);
+                try {
+                    TblUser.setValueAt(UserBO.tipo(user.getTipo()), i, 2);
+                } catch (NegocioException ex) {
+                    ex.printStackTrace();
+                    MensagensUtil.addMsg(ListaFrame.this, ex.getMessage());
+                }
                 i++;
             }
         } catch (NegocioException ex) {
@@ -57,7 +64,12 @@ public class ListaFrame extends javax.swing.JFrame {
                 tbl.addRow(new String[1]);
                 TblUser.setValueAt(user.getId(), i, 0);
                 TblUser.setValueAt(user.getLogin(), i, 1);
-                TblUser.setValueAt(user.getTipo(), i, 2);
+                try {
+                    TblUser.setValueAt(UserBO.tipo(user.getTipo()), i, 2);
+                } catch (NegocioException ex) {
+                    ex.printStackTrace();
+                    MensagensUtil.addMsg(ListaFrame.this, ex.getMessage());
+                }
                 i++;
             }
         } else {
@@ -192,9 +204,14 @@ public class ListaFrame extends javax.swing.JFrame {
         AlterarFrame alterarFrame = new AlterarFrame();
         alterarFrame.setLocationRelativeTo(null);
         alterarFrame.setVisible(true);
-        alterarFrame.dadosCampos((Integer)TblUser.getValueAt(linha, 0),
-                (Integer)TblUser.getValueAt(linha, 2)
-                ,(String)TblUser.getValueAt(linha, 1));
+        try {
+            alterarFrame.dadosCampos((Integer) TblUser.getValueAt(linha, 0),
+                    UserBO.escolherTipo((String) TblUser.getValueAt(linha, 2)),
+                    (String) TblUser.getValueAt(linha, 1));
+        } catch (NegocioException ex) {
+            ex.printStackTrace();
+            MensagensUtil.addMsg(ListaFrame.this, ex.getMessage());
+        }
     }//GEN-LAST:event_TblUserMouseClicked
 
     private void ButBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButBuscarActionPerformed
