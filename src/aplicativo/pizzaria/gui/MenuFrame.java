@@ -22,7 +22,7 @@ public class MenuFrame extends javax.swing.JFrame {
      */
     public MenuFrame() {
         initComponents();
-        LbLogin.setText(Main.getUsuarioLogado().getLogin());
+        LbLogin.setText(Main.getUsuarioLogado().getNome());
         try {
             String tipo = UserBO.tipo(Main.getUsuarioLogado().getTipo());
             LbTipo.setText(tipo);

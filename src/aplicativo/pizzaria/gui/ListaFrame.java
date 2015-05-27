@@ -207,8 +207,8 @@ public class ListaFrame extends javax.swing.JFrame {
         try {
             alterarFrame.dadosCampos((Integer) TblUser.getValueAt(linha, 0),
                     UserBO.escolherTipo((String) TblUser.getValueAt(linha, 3)),
-                    (String) TblUser.getValueAt(linha, 2),
-                    (String) TblUser.getValueAt(linha, 1));
+                    (String) TblUser.getValueAt(linha, 1),
+                    (String) TblUser.getValueAt(linha, 2));
         } catch (NegocioException ex) {
             ex.printStackTrace();
             MensagensUtil.addMsg(ListaFrame.this, ex.getMessage());

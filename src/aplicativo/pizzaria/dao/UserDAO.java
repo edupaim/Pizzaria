@@ -27,6 +27,7 @@ public class UserDAO implements GenericoDAO<UserDTO> {
                 user = new UserDTO();
                 user.setId(rs.getInt(1));
                 user.setLogin(rs.getString(2));
+                user.setNome(rs.getString(5));
                 user.setSenha(rs.getString(3));
                 user.setTipo(rs.getInt(4));
             }
