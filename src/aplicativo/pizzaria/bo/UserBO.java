@@ -10,6 +10,23 @@ import java.util.List;
 
 public class UserBO {
 
+    public UserDTO verificar(String login, String senha) throws NegocioException {
+        UserDTO user = null;
+        try {
+            if (login == null || "".equals(login)) {
+                throw new NegocioException("Login obrigatório.");
+            } else if (senha == null || "".equals(senha)) {
+                throw new NegocioException("Senha obrigatória.");
+            } else {
+                UserDAO userDAO = new UserDAO();
+                user = userDAO.logar(login.trim(), senha.trim());
+            }
+        } catch (NegocioException | PersistenciaException ex) {
+            throw new NegocioException(ex.getMessage());
+        }
+        return user;
+    }
+    
     public UserDTO logar(String login, String senha) throws NegocioException {
         UserDTO user = null;
         try {
@@ -118,7 +135,7 @@ public class UserBO {
         UserDAO userDao = new UserDAO();
         boolean resul = false;
         try {
-            user = logar(login, senha);
+            user = verificar(login, senha);
             if (user != null) {
                 userDao.deletar(user.getId());
                 resul = true;
