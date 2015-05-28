@@ -191,17 +191,14 @@ public class UserBO {
             case "Administrador":
                 resul = 0;
                 break;
-            case "Gerente":
+            case "Atendente":
                 resul = 1;
                 break;
-            case "Atendente":
+            case "Pizzaiolo":
                 resul = 2;
                 break;
-            case "Pizzaiolo":
+            case "Entregador":
                 resul = 3;
-                break;
-            case "Garçom":
-                resul = 4;
                 break;
             case "Nenhum":
                 resul = null;
@@ -219,16 +216,13 @@ public class UserBO {
                 resul = "Administrador";
                 break;
             case 1:
-                resul = "Gerente";
-                break;
-            case 2:
                 resul = "Atendente";
                 break;
-            case 3:
+            case 2:
                 resul = "Pizzaiolo";
                 break;
-            case 4:
-                resul = "Garçom";
+            case 3:
+                resul = "Entregador";
                 break;
             default:
                 throw new NegocioException("Tipo incorreto.");
