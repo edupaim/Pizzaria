@@ -214,7 +214,7 @@ public class AlterarFrame extends javax.swing.JFrame {
 
     private void ButSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButSairActionPerformed
         AlterarFrame.this.dispose();
-        MenuFrame mainFrame = new MenuFrame();
+        MainFrame mainFrame = new MainFrame();
         mainFrame.setLocationRelativeTo(null);
         mainFrame.setVisible(true);
     }//GEN-LAST:event_ButSairActionPerformed
@@ -253,7 +253,7 @@ public class AlterarFrame extends javax.swing.JFrame {
             if (alterarBo.alterar(id, login, nome, senha, tipo, senhan, senhan2)) {
                 MensagensUtil.addMsg(AlterarFrame.this, "Alterado com sucesso!");
                 AlterarFrame.this.dispose();
-                MenuFrame mainFrame = new MenuFrame();
+                MainFrame mainFrame = new MainFrame();
                 mainFrame.setLocationRelativeTo(null);
                 mainFrame.setVisible(true);
             } else {

@@ -19,7 +19,6 @@ public class Main {
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(LoginFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-
         LoginFrame loginFrame = new LoginFrame();
         loginFrame.setLocationRelativeTo(null);
         loginFrame.setVisible(true);

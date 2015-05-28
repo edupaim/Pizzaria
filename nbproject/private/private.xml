@@ -3,14 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/eduardo/NetBeansProjects/Pizzaria/src/aplicativo/pizzaria/bo/UserBO.java</file>
-            <file>file:/home/eduardo/NetBeansProjects/Pizzaria/src/aplicativo/pizzaria/gui/AlterarFrame.java</file>
-            <file>file:/home/eduardo/NetBeansProjects/Pizzaria/src/aplicativo/pizzaria/dao/UserDAO.java</file>
+            <file>file:/home/eduardo/NetBeansProjects/Pizzaria/src/aplicativo/pizzaria/main/Main.java</file>
             <file>file:/home/eduardo/NetBeansProjects/Pizzaria/src/aplicativo/pizzaria/gui/MenuFrame.java</file>
-            <file>file:/home/eduardo/NetBeansProjects/Pizzaria/src/aplicativo/pizzaria/gui/CadastrarFrame.java</file>
-            <file>file:/home/eduardo/NetBeansProjects/Pizzaria/src/aplicativo/pizzaria/gui/ListaFrame.java</file>
-            <file>file:/home/eduardo/NetBeansProjects/Pizzaria/src/aplicativo/pizzaria/gui/LoginFrame.java</file>
-            <file>file:/home/eduardo/NetBeansProjects/Pizzaria/src/aplicativo/pizzaria/gui/BuscarFrame.java</file>
+            <file>file:/home/eduardo/NetBeansProjects/Pizzaria/src/aplicativo/pizzaria/util/MensagensUtil.java</file>
         </group>
     </open-files>
 </project-private>

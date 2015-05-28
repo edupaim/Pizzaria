@@ -190,7 +190,7 @@ public class ListaFrame extends javax.swing.JFrame {
 
     private void ButSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButSairActionPerformed
         ListaFrame.this.dispose();
-        MenuFrame mainFrame = new MenuFrame();
+        MainFrame mainFrame = new MainFrame();
         mainFrame.setLocationRelativeTo(null);
         mainFrame.setVisible(true);
     }//GEN-LAST:event_ButSairActionPerformed
