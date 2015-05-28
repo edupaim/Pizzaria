@@ -29,33 +29,41 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                  <Component id="Usuario" alignment="0" max="32767" attributes="0"/>
-                  <Component id="Tipo" alignment="0" max="32767" attributes="0"/>
-                  <Component id="Menu" alignment="0" min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="1" attributes="0">
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                      <Component id="ButSair" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" attributes="0">
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="TabPane" min="-2" pref="425" max="-2" attributes="0"/>
+                          <Group type="102" attributes="0">
+                              <Component id="Usuario" linkSize="5" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="32767" attributes="0"/>
+                              <Component id="Tipo" linkSize="5" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                  </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="TabPane" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="0" attributes="0">
+          <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="TabPane" max="-2" attributes="0"/>
-                  <Group type="102" attributes="0">
-                      <Component id="Usuario" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="Tipo" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="Menu" min="-2" max="-2" attributes="0"/>
-                  </Group>
+                  <Component id="Usuario" min="-2" max="-2" attributes="0"/>
+                  <Component id="Tipo" min="-2" max="-2" attributes="0"/>
               </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="TabPane" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="32767" attributes="0"/>
+              <Component id="ButSair" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -107,7 +115,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
                   <Component id="LbTipo" alignment="1" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace pref="20" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -125,78 +133,13 @@
         </Component>
       </SubComponents>
     </Container>
-    <Container class="javax.swing.JPanel" name="Menu">
+    <Container class="javax.swing.JTabbedPane" name="TabPane">
       <Properties>
-        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-          <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Menu"/>
-          </Border>
+        <Property name="tabLayoutPolicy" type="int" value="1"/>
+        <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
+          <Color id="Cursor Padr&#xe3;o"/>
         </Property>
       </Properties>
-
-      <Layout>
-        <DimensionLayout dim="0">
-          <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="ButCadastrar" linkSize="1" alignment="0" min="-2" max="-2" attributes="0"/>
-              <Component id="ButListar" linkSize="1" alignment="0" min="-2" max="-2" attributes="0"/>
-              <Component id="ButBuscar" linkSize="1" alignment="0" min="-2" max="-2" attributes="0"/>
-              <Component id="ButSair" linkSize="1" alignment="0" min="-2" max="-2" attributes="0"/>
-          </Group>
-        </DimensionLayout>
-        <DimensionLayout dim="1">
-          <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
-                  <Component id="ButCadastrar" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="ButListar" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="ButBuscar" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="ButSair" min="-2" max="-2" attributes="0"/>
-              </Group>
-          </Group>
-        </DimensionLayout>
-      </Layout>
-      <SubComponents>
-        <Component class="javax.swing.JButton" name="ButCadastrar">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Cadastrar Usu&#xe1;rio"/>
-            <Property name="toolTipText" type="java.lang.String" value=""/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ButCadastrarActionPerformed"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JButton" name="ButListar">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Listar"/>
-            <Property name="toolTipText" type="java.lang.String" value=""/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ButListarActionPerformed"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JButton" name="ButBuscar">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Buscar"/>
-            <Property name="toolTipText" type="java.lang.String" value=""/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ButBuscarActionPerformed"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JButton" name="ButSair">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Sair"/>
-            <Property name="toolTipText" type="java.lang.String" value=""/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ButSairActionPerformed"/>
-          </Events>
-        </Component>
-      </SubComponents>
-    </Container>
-    <Container class="javax.swing.JTabbedPane" name="TabPane">
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
       <SubComponents>
@@ -204,7 +147,7 @@
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                <TitledBorder title="Cadastrar"/>
+                <TitledBorder title="Usu&#xe1;rio"/>
               </Border>
             </Property>
           </Properties>
@@ -224,29 +167,28 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="LabSenhaRC" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="83" max="32767" attributes="0"/>
-                              <Component id="TxtSenhaRC" linkSize="3" min="-2" pref="175" max="-2" attributes="0"/>
+                              <EmptySpace pref="93" max="32767" attributes="0"/>
+                              <Component id="TxtSenhaRC" linkSize="7" min="-2" pref="170" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="LabTipoC" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="32767" attributes="0"/>
                               <Component id="CBoxTipoC" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <Group type="102" attributes="0">
+                          <Group type="102" alignment="1" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="LabLoginC" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="LabSenhaC" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="LabNomeC" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="TxtUserC" linkSize="3" alignment="1" min="-2" pref="175" max="-2" attributes="0"/>
-                                  <Component id="TxtSenhaC" linkSize="3" alignment="1" min="-2" pref="175" max="-2" attributes="0"/>
+                                  <Group type="103" alignment="1" groupAlignment="0" max="-2" attributes="0">
+                                      <Component id="TxtUserC" linkSize="7" alignment="1" pref="170" max="32767" attributes="0"/>
+                                      <Component id="TxtSenhaC" linkSize="7" max="32767" attributes="0"/>
+                                  </Group>
+                                  <Component id="TxtNomeC" linkSize="7" alignment="1" min="-2" pref="200" max="-2" attributes="0"/>
                               </Group>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="LabNomeC" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="32767" attributes="0"/>
-                              <Component id="TxtNomeC" linkSize="3" min="-2" pref="136" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -352,7 +294,7 @@
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                <TitledBorder title="Registros"/>
+                <TitledBorder title="Tabela"/>
               </Border>
             </Property>
           </Properties>
@@ -367,7 +309,7 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="ScrollPaneTab" pref="370" max="32767" attributes="0"/>
+                  <Component id="ScrollPaneTab" pref="405" max="32767" attributes="0"/>
                   <Group type="102" attributes="0">
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       <Component id="ButBuscarL" min="-2" max="-2" attributes="0"/>
@@ -380,7 +322,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="ScrollPaneTab" pref="233" max="32767" attributes="0"/>
+                      <Component id="ScrollPaneTab" pref="254" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="ButAtualizarL" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -458,7 +400,7 @@
                           <Group type="102" alignment="1" attributes="0">
                               <Component id="LabIdA" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="32767" attributes="0"/>
-                              <Component id="TxtIdA" min="-2" pref="45" max="-2" attributes="0"/>
+                              <Component id="TxtIdA" min="-2" pref="50" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="LabTipoA" min="-2" max="-2" attributes="0"/>
@@ -473,7 +415,7 @@
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="LabNomeA" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="32767" attributes="0"/>
-                              <Component id="TxtNomeA" linkSize="2" min="-2" pref="105" max="-2" attributes="0"/>
+                              <Component id="TxtNomeA" linkSize="2" min="-2" pref="200" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="LabSenhaA" min="-2" max="-2" attributes="0"/>
@@ -482,7 +424,7 @@
                           </Group>
                           <Group type="102" attributes="0">
                               <Component id="LabSenhaNRA" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="104" max="32767" attributes="0"/>
+                              <EmptySpace pref="89" max="32767" attributes="0"/>
                               <Component id="TxtSenhaN2A" linkSize="2" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
@@ -657,7 +599,7 @@
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                <TitledBorder title="Buscar"/>
+                <TitledBorder title="Usu&#xe1;rio"/>
               </Border>
             </Property>
           </Properties>
@@ -680,12 +622,12 @@
                           <Component id="LabTipoB" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="LabNomeB" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="155" max="32767" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="TxtNomeB" alignment="1" min="-2" pref="145" max="-2" attributes="0"/>
-                          <Component id="TxtIdB" alignment="1" min="-2" pref="50" max="-2" attributes="0"/>
+                      <EmptySpace pref="135" max="32767" attributes="0"/>
+                      <Group type="103" groupAlignment="1" attributes="0">
                           <Component id="CBoxTipoB" alignment="1" min="-2" max="-2" attributes="0"/>
-                          <Component id="TxtLoginB" alignment="1" min="-2" pref="145" max="-2" attributes="0"/>
+                          <Component id="TxtLoginB" linkSize="8" alignment="1" max="32767" attributes="0"/>
+                          <Component id="TxtNomeB" linkSize="8" min="-2" pref="200" max="-2" attributes="0"/>
+                          <Component id="TxtIdB" alignment="1" min="-2" pref="50" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -718,7 +660,7 @@
                           <Component id="LabLoginB" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="TxtLoginB" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="113" max="32767" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                       <Component id="ButBuscarB" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -776,5 +718,14 @@
         </Container>
       </SubComponents>
     </Container>
+    <Component class="javax.swing.JButton" name="ButSair">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Sair"/>
+        <Property name="toolTipText" type="java.lang.String" value=""/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ButSairActionPerformed"/>
+      </Events>
+    </Component>
   </SubComponents>
 </Form>
