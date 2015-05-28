@@ -2,11 +2,11 @@ package aplicativo.pizzaria.dto;
 
 public class UserDTO {
 
-    Integer id;
-    String nome;
-    String login;
-    String senha;
-    Integer tipo;
+    private Integer id;
+    private String nome;
+    private String login;
+    private String senha;
+    private Integer tipo;
 
     public String getNome() {
         return nome;

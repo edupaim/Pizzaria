@@ -26,7 +26,7 @@ public class UserBO {
         }
         return user;
     }
-    
+
     public UserDTO logar(String login, String senha) throws NegocioException {
         UserDTO user = null;
         try {
@@ -136,9 +136,14 @@ public class UserBO {
         boolean resul = false;
         try {
             user = verificar(login, senha);
-            if (user != null) {
+            if (user == null){
+                return false;
+            } 
+            if (!Main.getUsuarioLogado().getId().equals(user.getId())){
                 userDao.deletar(user.getId());
                 resul = true;
+            } else {
+                throw new NegocioException("Cuidado, usuário logado.");
             }
         } catch (PersistenciaException ex) {
             throw new NegocioException(ex.getMessage());
@@ -186,12 +191,15 @@ public class UserBO {
             case "Garçom":
                 resul = 4;
                 break;
+            case "Nenhum":
+                resul = null;
+                break;
             default:
                 throw new NegocioException("Tipo incorreto.");
         }
         return resul;
     }
-    
+
     public static String tipo(Integer tipo) throws NegocioException {
         String resul = null;
         switch (tipo) {

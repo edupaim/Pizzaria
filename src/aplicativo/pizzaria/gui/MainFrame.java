@@ -33,9 +33,14 @@ public class MainFrame extends javax.swing.JFrame {
             ex.printStackTrace();
             MensagensUtil.addMsg(MainFrame.this, ex.getMessage());
         }
+        if (Main.getUsuarioLogado().getTipo() >= 2) {
+            TabPane.setEnabledAt(0, false);
+            TabPane.setEnabledAt(3, false);
+        }
+        atualizarTabela();
     }
 
-    public void dadosCampos(Integer id, int tipo, String nome, String login) {
+    public void atualizarCampos(Integer id, int tipo, String nome, String login) {
         TxtIdA.setText(String.valueOf(id));
         CBoxTipoA.setSelectedIndex(tipo);
         TxtNomeA.setText(nome);
@@ -126,26 +131,6 @@ public class MainFrame extends javax.swing.JFrame {
         ScrollPaneTab = new javax.swing.JScrollPane();
         TblUser = new javax.swing.JTable();
         ButAtualizarL = new javax.swing.JButton();
-        ButBuscarL = new javax.swing.JButton();
-        Alterar = new javax.swing.JPanel();
-        LabIdA = new javax.swing.JLabel();
-        LabLoginA = new javax.swing.JLabel();
-        LabSenhaA = new javax.swing.JLabel();
-        LabSenhaNA = new javax.swing.JLabel();
-        LabSenhaNRA = new javax.swing.JLabel();
-        LabTipoA = new javax.swing.JLabel();
-        LabNomeA = new javax.swing.JLabel();
-        TxtLoginA = new javax.swing.JTextField();
-        TxtSenhaA = new javax.swing.JTextField();
-        TxtIdA = new javax.swing.JTextField();
-        TxtSenhaNA = new javax.swing.JPasswordField();
-        TxtSenhaN2A = new javax.swing.JPasswordField();
-        CBoxTipoA = new javax.swing.JComboBox();
-        TxtNomeA = new javax.swing.JTextField();
-        ButBuscarA = new javax.swing.JButton();
-        ButExcluirA = new javax.swing.JButton();
-        ButAlterarA = new javax.swing.JButton();
-        ButListarA = new javax.swing.JButton();
         Buscar = new javax.swing.JPanel();
         LabIdB = new javax.swing.JLabel();
         LabLoginB = new javax.swing.JLabel();
@@ -156,7 +141,25 @@ public class MainFrame extends javax.swing.JFrame {
         CBoxTipoB = new javax.swing.JComboBox();
         TxtNomeB = new javax.swing.JTextField();
         ButBuscarB = new javax.swing.JButton();
+        Alterar = new javax.swing.JPanel();
+        LabIdA = new javax.swing.JLabel();
+        LabLoginA = new javax.swing.JLabel();
+        LabSenhaA = new javax.swing.JLabel();
+        LabSenhaNA = new javax.swing.JLabel();
+        LabSenhaNRA = new javax.swing.JLabel();
+        LabTipoA = new javax.swing.JLabel();
+        LabNomeA = new javax.swing.JLabel();
+        TxtLoginA = new javax.swing.JTextField();
+        TxtIdA = new javax.swing.JTextField();
+        TxtSenhaNA = new javax.swing.JPasswordField();
+        TxtSenhaN2A = new javax.swing.JPasswordField();
+        CBoxTipoA = new javax.swing.JComboBox();
+        TxtNomeA = new javax.swing.JTextField();
+        ButExcluirA = new javax.swing.JButton();
+        ButAlterarA = new javax.swing.JButton();
+        TxtSenhaA = new javax.swing.JPasswordField();
         ButSair = new javax.swing.JButton();
+        ButLogout = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Principal");
@@ -173,7 +176,7 @@ public class MainFrame extends javax.swing.JFrame {
             UsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(UsuarioLayout.createSequentialGroup()
                 .addComponent(LbLogin)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(60, Short.MAX_VALUE))
         );
         UsuarioLayout.setVerticalGroup(
             UsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -190,7 +193,7 @@ public class MainFrame extends javax.swing.JFrame {
             TipoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(TipoLayout.createSequentialGroup()
                 .addComponent(LbTipo)
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addContainerGap(68, Short.MAX_VALUE))
         );
         TipoLayout.setVerticalGroup(
             TipoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -323,13 +326,6 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
-        ButBuscarL.setText("Buscar");
-        ButBuscarL.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ButBuscarLActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout ListaLayout = new javax.swing.GroupLayout(Lista);
         Lista.setLayout(ListaLayout);
         ListaLayout.setHorizontalGroup(
@@ -337,161 +333,18 @@ public class MainFrame extends javax.swing.JFrame {
             .addComponent(ScrollPaneTab, javax.swing.GroupLayout.DEFAULT_SIZE, 405, Short.MAX_VALUE)
             .addGroup(ListaLayout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(ButBuscarL)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ButAtualizarL))
         );
         ListaLayout.setVerticalGroup(
             ListaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ListaLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(ScrollPaneTab, javax.swing.GroupLayout.DEFAULT_SIZE, 254, Short.MAX_VALUE)
+                .addComponent(ScrollPaneTab, javax.swing.GroupLayout.DEFAULT_SIZE, 264, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(ListaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(ButAtualizarL)
-                    .addComponent(ButBuscarL)))
+                .addComponent(ButAtualizarL))
         );
 
         TabPane.addTab("Registros", Lista);
-
-        Alterar.setBorder(javax.swing.BorderFactory.createTitledBorder("Usuário"));
-
-        LabIdA.setText("ID:");
-
-        LabLoginA.setText("Login:");
-
-        LabSenhaA.setText("Senha:");
-
-        LabSenhaNA.setText("Nova senha:");
-
-        LabSenhaNRA.setText("Repita senha:");
-
-        LabTipoA.setText("Tipo:");
-
-        LabNomeA.setText("Nome:");
-
-        TxtIdA.setEditable(false);
-
-        CBoxTipoA.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Administrador", "Gerente", "Atendente", "Pizzaiolo", "Garçom" }));
-
-        ButBuscarA.setText("Buscar");
-        ButBuscarA.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ButBuscarAActionPerformed(evt);
-            }
-        });
-
-        ButExcluirA.setText("Excluir");
-        ButExcluirA.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ButExcluirAActionPerformed(evt);
-            }
-        });
-
-        ButAlterarA.setText("Alterar");
-        ButAlterarA.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ButAlterarAActionPerformed(evt);
-            }
-        });
-
-        ButListarA.setText("Listar");
-        ButListarA.setToolTipText("");
-        ButListarA.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ButListarAActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout AlterarLayout = new javax.swing.GroupLayout(Alterar);
-        Alterar.setLayout(AlterarLayout);
-        AlterarLayout.setHorizontalGroup(
-            AlterarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(AlterarLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(AlterarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, AlterarLayout.createSequentialGroup()
-                        .addComponent(LabIdA)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(TxtIdA, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(AlterarLayout.createSequentialGroup()
-                        .addComponent(LabTipoA)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(CBoxTipoA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(AlterarLayout.createSequentialGroup()
-                        .addComponent(LabLoginA)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(TxtLoginA, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(AlterarLayout.createSequentialGroup()
-                        .addComponent(LabNomeA)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(TxtNomeA, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(AlterarLayout.createSequentialGroup()
-                        .addComponent(LabSenhaA)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(TxtSenhaA, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(AlterarLayout.createSequentialGroup()
-                        .addComponent(LabSenhaNRA)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 89, Short.MAX_VALUE)
-                        .addComponent(TxtSenhaN2A, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(AlterarLayout.createSequentialGroup()
-                        .addComponent(LabSenhaNA)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(TxtSenhaNA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, AlterarLayout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(ButListarA)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ButBuscarA)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ButExcluirA)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ButAlterarA))
-        );
-
-        AlterarLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {TxtLoginA, TxtNomeA, TxtSenhaA, TxtSenhaN2A, TxtSenhaNA});
-
-        AlterarLayout.setVerticalGroup(
-            AlterarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(AlterarLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(AlterarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(LabIdA)
-                    .addComponent(TxtIdA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(AlterarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(LabTipoA)
-                    .addComponent(CBoxTipoA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(AlterarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(LabNomeA)
-                    .addComponent(TxtNomeA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(AlterarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(LabLoginA)
-                    .addComponent(TxtLoginA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(AlterarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(LabSenhaA)
-                    .addComponent(TxtSenhaA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(AlterarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(LabSenhaNA)
-                    .addComponent(TxtSenhaNA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(AlterarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(LabSenhaNRA)
-                    .addComponent(TxtSenhaN2A, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(AlterarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(ButAlterarA)
-                    .addComponent(ButExcluirA)
-                    .addComponent(ButBuscarA)
-                    .addComponent(ButListarA)))
-        );
-
-        TabPane.addTab("Alterar", Alterar);
 
         Buscar.setBorder(javax.swing.BorderFactory.createTitledBorder("Usuário"));
 
@@ -503,7 +356,8 @@ public class MainFrame extends javax.swing.JFrame {
 
         LabNomeB.setText("Nome:");
 
-        CBoxTipoB.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Administrador", "Gerente", "Atendente", "Pizzaiolo", "Garçom" }));
+        CBoxTipoB.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Administrador", "Gerente", "Atendente", "Pizzaiolo", "Garçom", "Nenhum" }));
+        CBoxTipoB.setToolTipText("");
 
         ButBuscarB.setText("Buscar");
         ButBuscarB.addActionListener(new java.awt.event.ActionListener() {
@@ -562,11 +416,137 @@ public class MainFrame extends javax.swing.JFrame {
 
         TabPane.addTab("Buscar", Buscar);
 
+        Alterar.setBorder(javax.swing.BorderFactory.createTitledBorder("Usuário"));
+
+        LabIdA.setText("ID:");
+
+        LabLoginA.setText("Login:");
+
+        LabSenhaA.setText("Senha:");
+
+        LabSenhaNA.setText("Nova senha:");
+
+        LabSenhaNRA.setText("Repita senha:");
+
+        LabTipoA.setText("Tipo:");
+
+        LabNomeA.setText("Nome:");
+
+        TxtIdA.setEditable(false);
+
+        CBoxTipoA.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Administrador", "Gerente", "Atendente", "Pizzaiolo", "Garçom" }));
+
+        ButExcluirA.setText("Excluir");
+        ButExcluirA.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ButExcluirAActionPerformed(evt);
+            }
+        });
+
+        ButAlterarA.setText("Alterar");
+        ButAlterarA.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ButAlterarAActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout AlterarLayout = new javax.swing.GroupLayout(Alterar);
+        Alterar.setLayout(AlterarLayout);
+        AlterarLayout.setHorizontalGroup(
+            AlterarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(AlterarLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(AlterarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, AlterarLayout.createSequentialGroup()
+                        .addComponent(LabIdA)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(TxtIdA, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(AlterarLayout.createSequentialGroup()
+                        .addComponent(LabTipoA)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(CBoxTipoA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(AlterarLayout.createSequentialGroup()
+                        .addComponent(LabLoginA)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(TxtLoginA, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(AlterarLayout.createSequentialGroup()
+                        .addComponent(LabNomeA)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(TxtNomeA, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(AlterarLayout.createSequentialGroup()
+                        .addComponent(LabSenhaA)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(TxtSenhaA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(AlterarLayout.createSequentialGroup()
+                        .addComponent(LabSenhaNRA)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 89, Short.MAX_VALUE)
+                        .addComponent(TxtSenhaN2A, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(AlterarLayout.createSequentialGroup()
+                        .addComponent(LabSenhaNA)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(TxtSenhaNA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, AlterarLayout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(ButExcluirA)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(ButAlterarA))
+        );
+
+        AlterarLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {TxtLoginA, TxtNomeA, TxtSenhaA, TxtSenhaN2A, TxtSenhaNA});
+
+        AlterarLayout.setVerticalGroup(
+            AlterarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(AlterarLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(AlterarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabIdA)
+                    .addComponent(TxtIdA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(AlterarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabTipoA)
+                    .addComponent(CBoxTipoA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(AlterarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabNomeA)
+                    .addComponent(TxtNomeA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(AlterarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabLoginA)
+                    .addComponent(TxtLoginA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(AlterarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabSenhaA)
+                    .addComponent(TxtSenhaA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(AlterarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabSenhaNA)
+                    .addComponent(TxtSenhaNA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(AlterarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabSenhaNRA)
+                    .addComponent(TxtSenhaN2A, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
+                .addGroup(AlterarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(ButAlterarA)
+                    .addComponent(ButExcluirA)))
+        );
+
+        TabPane.addTab("Alterar", Alterar);
+
         ButSair.setText("Sair");
         ButSair.setToolTipText("");
         ButSair.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ButSairActionPerformed(evt);
+            }
+        });
+
+        ButLogout.setText("Logout");
+        ButLogout.setToolTipText("");
+        ButLogout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ButLogoutActionPerformed(evt);
             }
         });
 
@@ -579,14 +559,15 @@ public class MainFrame extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(ButLogout)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(ButSair))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(TabPane, javax.swing.GroupLayout.PREFERRED_SIZE, 425, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(Usuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(Tipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(Usuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(Tipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(TabPane, javax.swing.GroupLayout.PREFERRED_SIZE, 425, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -603,7 +584,9 @@ public class MainFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(TabPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(ButSair)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(ButSair)
+                    .addComponent(ButLogout))
                 .addContainerGap())
         );
 
@@ -616,29 +599,36 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void TblUserMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TblUserMouseClicked
         Integer linha = TblUser.getSelectedRow();
-        TabPane.setSelectedIndex(2);
-        try {
-            dadosCampos((Integer) TblUser.getValueAt(linha, 0),
-                    UserBO.escolherTipo((String) TblUser.getValueAt(linha, 3)),
-                    (String) TblUser.getValueAt(linha, 1),
-                    (String) TblUser.getValueAt(linha, 2));
-        } catch (NegocioException ex) {
-            ex.printStackTrace();
-            MensagensUtil.addMsg(MainFrame.this, ex.getMessage());
+        if (Main.getUsuarioLogado().getTipo() < 2) {
+            TabPane.setSelectedIndex(3);
+            try {
+                atualizarCampos((Integer) TblUser.getValueAt(linha, 0),
+                        UserBO.escolherTipo((String) TblUser.getValueAt(linha, 3)),
+                        (String) TblUser.getValueAt(linha, 1),
+                        (String) TblUser.getValueAt(linha, 2));
+                /*TxtIdA.setText(String.valueOf((Integer) TblUser.getValueAt(linha, 0)));
+                 CBoxTipoA.setSelectedIndex(UserBO.escolherTipo((String) TblUser.getValueAt(linha, 3)));
+                 TxtNomeA.setText((String) TblUser.getValueAt(linha, 1));
+                 TxtLoginA.setText((String) TblUser.getValueAt(linha, 2));*/
+            } catch (NegocioException ex) {
+                ex.printStackTrace();
+                MensagensUtil.addMsg(MainFrame.this, ex.getMessage());
+            }
         }
     }//GEN-LAST:event_TblUserMouseClicked
 
     private void ButCadastroCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButCadastroCActionPerformed
-        UserBO cadastroBo = new UserBO();
         String nome = TxtNomeC.getText();
         String login = TxtUserC.getText();
         String senha = String.copyValueOf(TxtSenhaC.getPassword());
         String senhar = String.copyValueOf(TxtSenhaRC.getPassword());
         String tipo = CBoxTipoC.getSelectedItem() + "";
+        UserBO cadastroBo = new UserBO();
         try {
             if (cadastroBo.cadastrar(login, nome, senha, senhar, tipo)) {
                 MensagensUtil.addMsg(MainFrame.this, "Cadastro efetuado com sucesso!");
                 TabPane.setSelectedIndex(1);
+                atualizarTabela();
             } else {
                 MensagensUtil.addMsg(MainFrame.this, "Falha no cadastro.");
             }
@@ -652,17 +642,9 @@ public class MainFrame extends javax.swing.JFrame {
         atualizarTabela();
     }//GEN-LAST:event_ButAtualizarLActionPerformed
 
-    private void ButBuscarLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButBuscarLActionPerformed
-        TabPane.setSelectedIndex(3);
-    }//GEN-LAST:event_ButBuscarLActionPerformed
-
-    private void ButBuscarAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButBuscarAActionPerformed
-        TabPane.setSelectedIndex(3);
-    }//GEN-LAST:event_ButBuscarAActionPerformed
-
     private void ButExcluirAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButExcluirAActionPerformed
         String login = TxtLoginA.getText();
-        String senha = TxtSenhaA.getText();
+        String senha = String.copyValueOf(TxtSenhaA.getPassword());
         UserBO excluirBo = new UserBO();
         try {
             if (excluirBo.excluir(login, senha)) {
@@ -682,7 +664,7 @@ public class MainFrame extends javax.swing.JFrame {
         String id = TxtIdA.getText();
         String login = TxtLoginA.getText();
         String nome = TxtNomeA.getText();
-        String senha = TxtSenhaA.getText();
+        String senha = String.copyValueOf(TxtSenhaA.getPassword());
         String tipo = CBoxTipoA.getSelectedItem() + "";
         String senhan = String.copyValueOf(TxtSenhaNA.getPassword());
         String senhan2 = String.copyValueOf(TxtSenhaN2A.getPassword());
@@ -702,11 +684,11 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_ButAlterarAActionPerformed
 
     private void ButBuscarBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButBuscarBActionPerformed
-        UserBO buscarBO = new UserBO();
         List<UserDTO> lista = new ArrayList<>();
         String id = TxtIdB.getText();
         String nome = TxtNomeB.getText();
         String login = TxtLoginB.getText();
+        UserBO buscarBO = new UserBO();
         try {
             Integer tipo = UserBO.escolherTipo(CBoxTipoB.getSelectedItem() + "");
             lista = buscarBO.busca(id, login, nome, tipo);
@@ -718,10 +700,13 @@ public class MainFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_ButBuscarBActionPerformed
 
-    private void ButListarAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButListarAActionPerformed
-        TabPane.setSelectedIndex(1);
-        atualizarTabela();
-    }//GEN-LAST:event_ButListarAActionPerformed
+    private void ButLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButLogoutActionPerformed
+        this.dispose();
+        LoginFrame login = new LoginFrame();
+        login.setLocationRelativeTo(null);
+        login.setVisible(true);
+        Main.setUsuarioLogado(null);
+    }//GEN-LAST:event_ButLogoutActionPerformed
 
     /**
      * @param args the command line arguments
@@ -763,12 +748,10 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JPanel Buscar;
     private javax.swing.JButton ButAlterarA;
     private javax.swing.JButton ButAtualizarL;
-    private javax.swing.JButton ButBuscarA;
     private javax.swing.JButton ButBuscarB;
-    private javax.swing.JButton ButBuscarL;
     private javax.swing.JButton ButCadastroC;
     private javax.swing.JButton ButExcluirA;
-    private javax.swing.JButton ButListarA;
+    private javax.swing.JButton ButLogout;
     private javax.swing.JButton ButSair;
     private javax.swing.JComboBox CBoxTipoA;
     private javax.swing.JComboBox CBoxTipoB;
@@ -804,7 +787,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JTextField TxtNomeA;
     private javax.swing.JTextField TxtNomeB;
     private javax.swing.JTextField TxtNomeC;
-    private javax.swing.JTextField TxtSenhaA;
+    private javax.swing.JPasswordField TxtSenhaA;
     private javax.swing.JPasswordField TxtSenhaC;
     private javax.swing.JPasswordField TxtSenhaN2A;
     private javax.swing.JPasswordField TxtSenhaNA;

@@ -5,7 +5,7 @@ import aplicativo.pizzaria.gui.LoginFrame;
 
 public class Main {
 
-    public static UserDTO usuarioLogado = null;
+    private static UserDTO usuarioLogado = null;
 
     public static void main(String args[]) {
         try {

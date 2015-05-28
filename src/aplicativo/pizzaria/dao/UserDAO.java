@@ -210,13 +210,13 @@ public class UserDAO implements GenericoDAO<UserDTO> {
                 ps.setInt(++cont, user.getId());
             }
             if (user.getLogin() != null) {
-                ps.setString(++cont, user.getLogin());
+                ps.setString(++cont, "%"+user.getLogin()+"%");
             }
             if (user.getTipo() != null) {
                 ps.setInt(++cont, user.getTipo());
             }
             if (user.getNome() != null) {
-                ps.setString(++cont, user.getNome());
+                ps.setString(++cont, "%"+user.getNome()+"%");
             }
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {

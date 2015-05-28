@@ -152,7 +152,7 @@ public class LoginFrame extends javax.swing.JFrame {
             }
             else {
                 MensagensUtil.addMsg(LoginFrame.this, "Login com sucesso!");
-                LoginFrame.this.dispose();
+                this.dispose();
                 MainFrame mainFrame = new MainFrame();
                 mainFrame.setLocationRelativeTo(null);
                 mainFrame.setVisible(true);
