@@ -63,17 +63,15 @@ public class UserDAO implements GenericoDAO<UserDTO> {
     public void atualizar(Integer id, UserDTO user) throws PersistenciaException {
         Connection con = ConexaoUtil.abrirConexao();
         String sql = "update user set login = ?, ";
-        sql += "senha = ?, ";
         sql += "tipo = ?, ";
         sql += "nome = ? ";
         sql += "where id_user = ? ";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, user.getLogin());
-            ps.setString(2, user.getSenha());
-            ps.setInt(3, user.getTipo());
-            ps.setString(4, user.getNome());
-            ps.setInt(5, id);
+            ps.setInt(2, user.getTipo());
+            ps.setString(3, user.getNome());
+            ps.setInt(4, id);
             ps.execute();
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -134,7 +132,7 @@ public class UserDAO implements GenericoDAO<UserDTO> {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
-            if (rs != null) {
+            if (rs.next()) {
                 user = new UserDTO();
                 user.setId(rs.getInt(1));
                 user.setLogin(rs.getString(2));
@@ -145,8 +143,30 @@ public class UserDAO implements GenericoDAO<UserDTO> {
         } catch (SQLException ex) {
             ex.printStackTrace();
             throw new PersistenciaException(ex.getMessage(), ex);
+        } finally {
+            ConexaoUtil.fecharConexao(con);
         }
         return user;
+    }
+
+    public Integer buscarPorLogin(String login) throws PersistenciaException {
+        Integer resul = null;
+        Connection con = ConexaoUtil.abrirConexao();
+        String sql = "select * from user where login = ? ";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, login);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                resul = rs.getInt(1);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            throw new PersistenciaException(ex.getMessage(), ex);
+        } finally {
+            ConexaoUtil.fecharConexao(con);
+        }
+        return resul;
     }
 
     public boolean alterarSenha(UserDTO user) throws PersistenciaException {
@@ -163,6 +183,8 @@ public class UserDAO implements GenericoDAO<UserDTO> {
         } catch (SQLException ex) {
             ex.printStackTrace();
             throw new PersistenciaException(ex.getMessage(), ex);
+        } finally {
+            ConexaoUtil.fecharConexao(con);
         }
         return false;
     }
@@ -210,13 +232,13 @@ public class UserDAO implements GenericoDAO<UserDTO> {
                 ps.setInt(++cont, user.getId());
             }
             if (user.getLogin() != null) {
-                ps.setString(++cont, "%"+user.getLogin()+"%");
+                ps.setString(++cont, "%" + user.getLogin() + "%");
             }
             if (user.getTipo() != null) {
                 ps.setInt(++cont, user.getTipo());
             }
             if (user.getNome() != null) {
-                ps.setString(++cont, "%"+user.getNome()+"%");
+                ps.setString(++cont, "%" + user.getNome() + "%");
             }
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {

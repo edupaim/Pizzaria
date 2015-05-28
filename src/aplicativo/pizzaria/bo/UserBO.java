@@ -10,21 +10,26 @@ import java.util.List;
 
 public class UserBO {
 
-    public UserDTO verificar(String login, String senha) throws NegocioException {
-        UserDTO user = null;
+    public boolean verificar(String ids, String senha) throws NegocioException {
+        boolean resul = false;
         try {
-            if (login == null || "".equals(login)) {
-                throw new NegocioException("Login obrigatório.");
+            if (ids == null || "".equals(ids)) {
+                throw new NegocioException("ID do usuário obrigatório.");
             } else if (senha == null || "".equals(senha)) {
                 throw new NegocioException("Senha obrigatória.");
             } else {
+                Integer id = Integer.parseInt(ids);
                 UserDAO userDAO = new UserDAO();
-                user = userDAO.logar(login.trim(), senha.trim());
+                UserDTO user = new UserDTO();
+                user = userDAO.buscarPorId(id);
+                if (senha.equals(user.getSenha())) {
+                    resul = true;
+                }
             }
         } catch (NegocioException | PersistenciaException ex) {
             throw new NegocioException(ex.getMessage());
         }
-        return user;
+        return resul;
     }
 
     public UserDTO logar(String login, String senha) throws NegocioException {
@@ -95,6 +100,7 @@ public class UserBO {
                 user = new UserDTO();
                 user.setId(Integer.parseInt(id));
                 user.setLogin(login.trim());
+                user.setSenha(senha.trim());
                 user.setNome(nome.trim());
                 user.setTipo(tip);
                 UserDAO userDAO = new UserDAO();
@@ -102,14 +108,21 @@ public class UserBO {
                     if (!s1.equals(s2)) {
                         throw new NegocioException("Repita a senha corretamente.");
                     } else {
-                        user.setSenha(s1.trim());
-                        userDAO.alterarSenha(user);
-                        resul = true;
+                        if (verificar(id, senha)) {
+                            user.setSenha(s1.trim());
+                            userDAO.alterarSenha(user);
+                            resul = true;
+                        } else {
+                            throw new NegocioException("Senha antiga incorreta.");
+                        }
                     }
                 } else {
-                    user.setSenha(senha.trim());
-                    userDAO.atualizar(Integer.parseInt(id), user);
-                    resul = true;
+                    if (verificar(id, senha)) {
+                        userDAO.atualizar(Integer.parseInt(id), user);
+                        resul = true;
+                    } else {
+                        throw new NegocioException("Senha antiga incorreta.");
+                    }
                 }
             }
 
@@ -130,20 +143,19 @@ public class UserBO {
         return lista;
     }
 
-    public boolean excluir(String login, String senha) throws NegocioException {
-        UserDTO user = new UserDTO();
+    public boolean excluir(String id, String senha) throws NegocioException {
         UserDAO userDao = new UserDAO();
         boolean resul = false;
         try {
-            user = verificar(login, senha);
-            if (user == null){
-                return false;
-            } 
-            if (!Main.getUsuarioLogado().getId().equals(user.getId())){
-                userDao.deletar(user.getId());
-                resul = true;
+            if (verificar(id, senha)) {
+                if (!Main.getUsuarioLogado().getId().equals(Integer.parseInt(id))) {
+                    userDao.deletar(Integer.parseInt(id));
+                    resul = true;
+                } else {
+                    throw new NegocioException("Cuidado, usuário logado.");
+                }
             } else {
-                throw new NegocioException("Cuidado, usuário logado.");
+                resul = false;
             }
         } catch (PersistenciaException ex) {
             throw new NegocioException(ex.getMessage());

@@ -10,8 +10,10 @@ import aplicativo.pizzaria.dto.UserDTO;
 import aplicativo.pizzaria.exception.NegocioException;
 import aplicativo.pizzaria.main.Main;
 import aplicativo.pizzaria.util.MensagensUtil;
+import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -25,19 +27,21 @@ public class MainFrame extends javax.swing.JFrame {
      */
     public MainFrame() {
         initComponents();
-        LbLogin.setText(Main.getUsuarioLogado().getNome());
+        String tipo = null;
         try {
-            String tipo = UserBO.tipo(Main.getUsuarioLogado().getTipo());
-            LbTipo.setText(tipo);
+            tipo = UserBO.tipo(Main.getUsuarioLogado().getTipo());
         } catch (NegocioException ex) {
             ex.printStackTrace();
             MensagensUtil.addMsg(MainFrame.this, ex.getMessage());
         }
+        LbLogin.setText(Main.getUsuarioLogado().getNome());
+        LbTipo.setText(tipo);
         if (Main.getUsuarioLogado().getTipo() >= 2) {
-            TabPane.setEnabledAt(0, false);
-            TabPane.setEnabledAt(3, false);
+            TabPane.remove(Cadastro);
+            TabPane.remove(Alterar);
         }
         atualizarTabela();
+        CBoxTipoB.setSelectedIndex(5);
     }
 
     public void atualizarCampos(Integer id, int tipo, String nome, String login) {
@@ -45,6 +49,16 @@ public class MainFrame extends javax.swing.JFrame {
         CBoxTipoA.setSelectedIndex(tipo);
         TxtNomeA.setText(nome);
         TxtLoginA.setText(login);
+    }
+
+    public void limparCampos() {
+        for (int i = 0; i < getContentPane().getComponentCount(); i++) {
+            Component c = getContentPane().getComponent(i);
+            if (c instanceof JTextField) { 
+                JTextField field = (JTextField) c;
+                field.setText("");
+            }
+        }
     }
 
     public final void atualizarTabela() {
@@ -598,9 +612,9 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_ButSairActionPerformed
 
     private void TblUserMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TblUserMouseClicked
-        Integer linha = TblUser.getSelectedRow();
         if (Main.getUsuarioLogado().getTipo() < 2) {
-            TabPane.setSelectedIndex(3);
+            Integer linha = TblUser.getSelectedRow();
+            TabPane.setSelectedComponent(Alterar);
             try {
                 atualizarCampos((Integer) TblUser.getValueAt(linha, 0),
                         UserBO.escolherTipo((String) TblUser.getValueAt(linha, 3)),
@@ -627,7 +641,7 @@ public class MainFrame extends javax.swing.JFrame {
         try {
             if (cadastroBo.cadastrar(login, nome, senha, senhar, tipo)) {
                 MensagensUtil.addMsg(MainFrame.this, "Cadastro efetuado com sucesso!");
-                TabPane.setSelectedIndex(1);
+                TabPane.setSelectedComponent(Lista);
                 atualizarTabela();
             } else {
                 MensagensUtil.addMsg(MainFrame.this, "Falha no cadastro.");
@@ -635,6 +649,8 @@ public class MainFrame extends javax.swing.JFrame {
         } catch (NegocioException ex) {
             ex.printStackTrace();
             MensagensUtil.addMsg(MainFrame.this, ex.getMessage());
+        } finally {
+            limparCampos();
         }
     }//GEN-LAST:event_ButCadastroCActionPerformed
 
@@ -643,13 +659,13 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_ButAtualizarLActionPerformed
 
     private void ButExcluirAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButExcluirAActionPerformed
-        String login = TxtLoginA.getText();
+        String id = TxtIdA.getText();
         String senha = String.copyValueOf(TxtSenhaA.getPassword());
         UserBO excluirBo = new UserBO();
         try {
-            if (excluirBo.excluir(login, senha)) {
+            if (excluirBo.excluir(id, senha)) {
                 MensagensUtil.addMsg(MainFrame.this, "Excluido com sucesso!");
-                TabPane.setSelectedIndex(1);
+                TabPane.setSelectedComponent(Lista);
                 atualizarTabela();
             } else {
                 MensagensUtil.addMsg(MainFrame.this, "Falha ao excluir.");
@@ -657,6 +673,8 @@ public class MainFrame extends javax.swing.JFrame {
         } catch (NegocioException ex) {
             ex.printStackTrace();
             MensagensUtil.addMsg(MainFrame.this, ex.getMessage());
+        } finally {
+            limparCampos();
         }
     }//GEN-LAST:event_ButExcluirAActionPerformed
 
@@ -672,7 +690,7 @@ public class MainFrame extends javax.swing.JFrame {
         try {
             if (alterarBo.alterar(id, login, nome, senha, tipo, senhan, senhan2)) {
                 MensagensUtil.addMsg(MainFrame.this, "Alterado com sucesso!");
-                TabPane.setSelectedIndex(1);
+                TabPane.setSelectedComponent(Lista);
                 atualizarTabela();
             } else {
                 MensagensUtil.addMsg(MainFrame.this, "Falha na alteração.");
@@ -680,6 +698,8 @@ public class MainFrame extends javax.swing.JFrame {
         } catch (NegocioException ex) {
             ex.printStackTrace();
             MensagensUtil.addMsg(MainFrame.this, ex.getMessage());
+        } finally {
+            limparCampos();
         }
     }//GEN-LAST:event_ButAlterarAActionPerformed
 
@@ -692,7 +712,7 @@ public class MainFrame extends javax.swing.JFrame {
         try {
             Integer tipo = UserBO.escolherTipo(CBoxTipoB.getSelectedItem() + "");
             lista = buscarBO.busca(id, login, nome, tipo);
-            TabPane.setSelectedIndex(1);
+            TabPane.setSelectedComponent(Lista);
             atualizarTabela(lista);
         } catch (NegocioException ex) {
             ex.printStackTrace();
