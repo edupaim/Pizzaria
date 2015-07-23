@@ -27,7 +27,7 @@ public class Main {
         return usuarioLogado;
     }
 
-    public static void setUsuarioLogado(UserDTO usuarioLogado) {
-        Main.usuarioLogado = usuarioLogado;
+    public static void setUsuarioLogado(UserDTO usuario) {
+        Main.usuarioLogado = usuario;
     }
 }

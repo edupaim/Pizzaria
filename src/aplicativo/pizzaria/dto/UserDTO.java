@@ -1,22 +1,14 @@
 package aplicativo.pizzaria.dto;
 
-public class UserDTO {
+public class UserDTO extends PessoaDTO{
 
     private Integer id;
-    private String nome;
     private String login;
     private String senha;
     private Integer tipo;
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
+    
     public UserDTO() {
+        super();
         this.id = null;
         this.login = null;
         this.senha = null;

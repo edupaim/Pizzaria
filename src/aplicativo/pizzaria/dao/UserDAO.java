@@ -14,7 +14,7 @@ public class UserDAO implements GenericoDAO<UserDTO> {
 
     public UserDTO logar(String login, String senha) throws PersistenciaException {
         UserDTO user = null;
-        Connection con = ConexaoUtil.abrirConexao();
+        Connection con = ConexaoUtil.abrirConexao("Login");
         String sql = "select * from user ";
         sql += "where login = ? ";
         sql += "and senha = ? ";
@@ -42,7 +42,7 @@ public class UserDAO implements GenericoDAO<UserDTO> {
 
     @Override
     public void inserir(UserDTO userDto) throws PersistenciaException {
-        Connection con = ConexaoUtil.abrirConexao();
+        Connection con = ConexaoUtil.abrirConexao("Inserir");
         String sql = "insert into user(login, senha, tipo, nome) values(?,?,?,?) ";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
@@ -61,7 +61,7 @@ public class UserDAO implements GenericoDAO<UserDTO> {
 
     @Override
     public void atualizar(Integer id, UserDTO user) throws PersistenciaException {
-        Connection con = ConexaoUtil.abrirConexao();
+        Connection con = ConexaoUtil.abrirConexao("Atualizar");
         String sql = "update user set login = ?, ";
         sql += "tipo = ?, ";
         sql += "nome = ? ";
@@ -83,7 +83,7 @@ public class UserDAO implements GenericoDAO<UserDTO> {
 
     @Override
     public void deletar(Integer id) throws PersistenciaException {
-        Connection con = ConexaoUtil.abrirConexao();
+        Connection con = ConexaoUtil.abrirConexao("Deletar");
         String sql = "delete from user where id_user = ? ";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
@@ -99,7 +99,7 @@ public class UserDAO implements GenericoDAO<UserDTO> {
 
     @Override
     public List<UserDTO> listarTodos() throws PersistenciaException {
-        Connection con = ConexaoUtil.abrirConexao();
+        Connection con = ConexaoUtil.abrirConexao("ListarTodos");
         List<UserDTO> lista = new ArrayList<>();
         String sql = "select * from user ";
         try {
@@ -126,7 +126,7 @@ public class UserDAO implements GenericoDAO<UserDTO> {
     @Override
     public UserDTO buscarPorId(Integer id) throws PersistenciaException {
         UserDTO user = null;
-        Connection con = ConexaoUtil.abrirConexao();
+        Connection con = ConexaoUtil.abrirConexao("BuscarId");
         String sql = "select * from user where id_user = ? ";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
@@ -151,7 +151,7 @@ public class UserDAO implements GenericoDAO<UserDTO> {
 
     public Integer buscarPorLogin(String login) throws PersistenciaException {
         Integer resul = null;
-        Connection con = ConexaoUtil.abrirConexao();
+        Connection con = ConexaoUtil.abrirConexao("BuscaLogin");
         String sql = "select * from user where login = ? ";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
@@ -170,7 +170,7 @@ public class UserDAO implements GenericoDAO<UserDTO> {
     }
 
     public boolean alterarSenha(UserDTO user) throws PersistenciaException {
-        Connection con = ConexaoUtil.abrirConexao();
+        Connection con = ConexaoUtil.abrirConexao("AlterarSenha");
         String sql = "update user set senha = ? ";
         sql += "where id_user = ? ";
         try {
@@ -190,7 +190,7 @@ public class UserDAO implements GenericoDAO<UserDTO> {
     }
 
     public List<UserDTO> listaFiltro(UserDTO user) throws PersistenciaException {
-        Connection con = ConexaoUtil.abrirConexao();
+        Connection con = ConexaoUtil.abrirConexao("ListaFiltro");
         List<UserDTO> lista = new ArrayList<>();
         String sql = "select * from user ";
         boolean ultimo = false;

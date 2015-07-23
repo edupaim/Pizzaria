@@ -8,7 +8,7 @@ public class ConexaoUtil {
     private static Connection con;
     private static ResourceBundle config;
 
-    public static Connection abrirConexao() {
+    public static Connection abrirConexao(String s) {
         try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
             String url = "jdbc:mysql://localhost:3306/pizzaria";
@@ -20,7 +20,7 @@ public class ConexaoUtil {
         } catch (InstantiationException | IllegalAccessException ex) {
             ex.printStackTrace();
         }
-        System.out.println("Conexao aberta.");
+        System.out.println("Conexao aberta. [" + s + "]");
         return con;
     }
 
