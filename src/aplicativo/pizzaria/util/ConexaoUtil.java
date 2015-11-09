@@ -13,7 +13,7 @@ public class ConexaoUtil {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
             String url = "jdbc:mysql://localhost:3306/pizzaria";
             String user = "root";
-            String senha = "root";
+            String senha = "1305";
             con = DriverManager.getConnection(url, user, senha);
         } catch (ClassNotFoundException | SQLException ex) {
             ex.printStackTrace();
