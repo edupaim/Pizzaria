@@ -455,7 +455,7 @@ public class MainFrame extends javax.swing.JFrame {
             ListaUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ListaUsuarioLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(ScrollPaneTab, javax.swing.GroupLayout.DEFAULT_SIZE, 555, Short.MAX_VALUE)
+                .addComponent(ScrollPaneTab, javax.swing.GroupLayout.DEFAULT_SIZE, 8, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ButAtualizarL))
         );
@@ -585,7 +585,7 @@ public class MainFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ScrollPaneTab1, javax.swing.GroupLayout.DEFAULT_SIZE, 438, Short.MAX_VALUE)
+                .addComponent(ScrollPaneTab1, javax.swing.GroupLayout.DEFAULT_SIZE, 8, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -797,7 +797,7 @@ public class MainFrame extends javax.swing.JFrame {
                     .addComponent(LabValorP)
                     .addComponent(TxtValorP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(LabRS))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 56, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 433, Short.MAX_VALUE)
                 .addComponent(ButCadastroP))
         );
 
@@ -855,7 +855,7 @@ public class MainFrame extends javax.swing.JFrame {
             ListaProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ListaProdutoLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(ScrollPaneTab5, javax.swing.GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE)
+                .addComponent(ScrollPaneTab5, javax.swing.GroupLayout.DEFAULT_SIZE, 555, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ButAtualizarCL1))
         );
@@ -866,11 +866,11 @@ public class MainFrame extends javax.swing.JFrame {
         AlteraProduto.setLayout(AlteraProdutoLayout);
         AlteraProdutoLayout.setHorizontalGroup(
             AlteraProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 284, Short.MAX_VALUE)
+            .addGap(0, 433, Short.MAX_VALUE)
         );
         AlteraProdutoLayout.setVerticalGroup(
             AlteraProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 218, Short.MAX_VALUE)
+            .addGap(0, 595, Short.MAX_VALUE)
         );
 
         TabProdutos.addTab("Alterar", AlteraProduto);
@@ -882,11 +882,11 @@ public class MainFrame extends javax.swing.JFrame {
         CadastroCliente.setLayout(CadastroClienteLayout);
         CadastroClienteLayout.setHorizontalGroup(
             CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 284, Short.MAX_VALUE)
+            .addGap(0, 433, Short.MAX_VALUE)
         );
         CadastroClienteLayout.setVerticalGroup(
             CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 218, Short.MAX_VALUE)
+            .addGap(0, 595, Short.MAX_VALUE)
         );
 
         TabClientes.addTab("Cadastrar", CadastroCliente);
@@ -943,7 +943,7 @@ public class MainFrame extends javax.swing.JFrame {
             ListaClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ListaClienteLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(ScrollPaneTab4, javax.swing.GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE)
+                .addComponent(ScrollPaneTab4, javax.swing.GroupLayout.DEFAULT_SIZE, 555, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ButAtualizarCL))
         );
@@ -954,11 +954,11 @@ public class MainFrame extends javax.swing.JFrame {
         AlteraCliente.setLayout(AlteraClienteLayout);
         AlteraClienteLayout.setHorizontalGroup(
             AlteraClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 284, Short.MAX_VALUE)
+            .addGap(0, 433, Short.MAX_VALUE)
         );
         AlteraClienteLayout.setVerticalGroup(
             AlteraClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 218, Short.MAX_VALUE)
+            .addGap(0, 595, Short.MAX_VALUE)
         );
 
         TabClientes.addTab("Alterar", AlteraCliente);
@@ -970,11 +970,11 @@ public class MainFrame extends javax.swing.JFrame {
         Novo.setLayout(NovoLayout);
         NovoLayout.setHorizontalGroup(
             NovoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 299, Short.MAX_VALUE)
+            .addGap(0, 448, Short.MAX_VALUE)
         );
         NovoLayout.setVerticalGroup(
             NovoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 218, Short.MAX_VALUE)
+            .addGap(0, 595, Short.MAX_VALUE)
         );
 
         TabPedidos.addTab("Novo", Novo);
@@ -1031,7 +1031,7 @@ public class MainFrame extends javax.swing.JFrame {
             ListaPedidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ListaPedidoLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(ScrollPaneTab2, javax.swing.GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE)
+                .addComponent(ScrollPaneTab2, javax.swing.GroupLayout.DEFAULT_SIZE, 555, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ButAtualizarPL))
         );
@@ -1042,11 +1042,11 @@ public class MainFrame extends javax.swing.JFrame {
         AlteraPedido.setLayout(AlteraPedidoLayout);
         AlteraPedidoLayout.setHorizontalGroup(
             AlteraPedidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 299, Short.MAX_VALUE)
+            .addGap(0, 448, Short.MAX_VALUE)
         );
         AlteraPedidoLayout.setVerticalGroup(
             AlteraPedidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 218, Short.MAX_VALUE)
+            .addGap(0, 595, Short.MAX_VALUE)
         );
 
         TabPedidos.addTab("Alterar", AlteraPedido);

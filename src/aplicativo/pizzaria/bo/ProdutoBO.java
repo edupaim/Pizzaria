@@ -2,9 +2,14 @@ package aplicativo.pizzaria.bo;
 
 import aplicativo.pizzaria.dao.ProdutoDAO;
 import aplicativo.pizzaria.dto.ProdutoDTO;
+import aplicativo.pizzaria.dto.UserDTO;
 import aplicativo.pizzaria.exception.NegocioException;
 import aplicativo.pizzaria.exception.PersistenciaException;
+import aplicativo.pizzaria.main.Main;
 import static aplicativo.pizzaria.util.FuncoesUtil.onlyNumbers;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ProdutoBO {
 
@@ -32,4 +37,24 @@ public class ProdutoBO {
         return resul;
     }
 
+    public List<ProdutoDTO> listar() throws NegocioException {
+        ProdutoDAO prodDao = new ProdutoDAO();
+        try {
+            return prodDao.listarTodos();
+        } catch (PersistenciaException ex) {
+            throw new NegocioException(ex.getMessage());
+        }
+    }
+    
+    public boolean excluir(String id) throws NegocioException {
+        ProdutoDAO prodDao = new ProdutoDAO();
+        boolean resul = false;
+        try {
+            prodDao.deletar(Integer.parseInt(id));
+            resul = true;
+        } catch (PersistenciaException ex) {
+            throw new NegocioException(ex.getMessage());
+        }
+        return resul;
+    }
 }

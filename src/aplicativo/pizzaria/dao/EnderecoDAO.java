@@ -1,6 +1,5 @@
 package aplicativo.pizzaria.dao;
 
-import aplicativo.pizzaria.dto.ClienteDTO;
 import aplicativo.pizzaria.dto.EnderecoDTO;
 import aplicativo.pizzaria.exception.PersistenciaException;
 import aplicativo.pizzaria.util.ConexaoUtil;

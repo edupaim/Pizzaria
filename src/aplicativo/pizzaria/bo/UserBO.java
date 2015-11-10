@@ -133,14 +133,12 @@ public class UserBO {
     }
 
     public List<UserDTO> listar() throws NegocioException {
-        List<UserDTO> lista = new ArrayList<>();
         UserDAO userDao = new UserDAO();
         try {
-            lista = userDao.listarTodos();
+            return userDao.listarTodos();
         } catch (PersistenciaException ex) {
             throw new NegocioException(ex.getMessage());
         }
-        return lista;
     }
 
     public boolean excluir(String id, String senha) throws NegocioException {

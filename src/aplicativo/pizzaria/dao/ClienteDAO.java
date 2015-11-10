@@ -2,7 +2,6 @@ package aplicativo.pizzaria.dao;
 
 import aplicativo.pizzaria.dto.ClienteDTO;
 import aplicativo.pizzaria.dto.EnderecoDTO;
-import aplicativo.pizzaria.dto.ProdutoDTO;
 import aplicativo.pizzaria.exception.PersistenciaException;
 import aplicativo.pizzaria.util.ConexaoUtil;
 import java.sql.Connection;
