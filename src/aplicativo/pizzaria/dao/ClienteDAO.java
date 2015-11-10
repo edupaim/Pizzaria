@@ -105,7 +105,7 @@ public class ClienteDAO implements GenericoDAO<ClienteDTO> {
         EnderecoDAO endDao = new EnderecoDAO();
         ClienteDTO cliente = null;
         Connection con = ConexaoUtil.abrirConexao("BuscarId");
-        String sql = "select * from produto where id_user = ? ";
+        String sql = "select * from cliente where id_cliente = ? ";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1, id);

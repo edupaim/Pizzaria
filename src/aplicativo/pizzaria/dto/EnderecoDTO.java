@@ -9,12 +9,38 @@ public class EnderecoDTO {
     private String bairro;
     private String cidade;
     private String estado;
+    private Integer idCliente;
 
-    public EnderecoDTO(String rua, String bairro, String cidade, String estado) {
+    public EnderecoDTO(String rua, String bairro, String cidade, String estado, Integer idCliente) {
         this.rua = rua;
         this.bairro = bairro;
         this.cidade = cidade;
         this.estado = estado;
+        this.idCliente = idCliente;
+    }
+
+    public EnderecoDTO() {
+        this.rua = null;
+        this.bairro = null;
+        this.cidade = null;
+        this.estado = null;
+        this.idCliente = null;
+    }
+
+    public void setIdCliente(Integer idCliente) {
+        this.idCliente = idCliente;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getIdCliente() {
+        return idCliente;
     }
 
     public void setRua(String rua) {
