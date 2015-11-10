@@ -72,9 +72,6 @@ public class ProdutoBO {
             if (tipo != null && !"".equals(tipo)) {
                 prod.setTipo(tipo.trim());
             }
-            if (tipo != null && !"".equals(tipo)) {
-                prod.setTipo(tipo.trim());
-            }
             lista = prodDao.listaFiltro(prod);
         } catch (PersistenciaException ex) {
             throw new NegocioException(ex.getMessage());

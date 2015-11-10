@@ -106,7 +106,7 @@ public class EnderecoDAO implements GenericoDAO<EnderecoDTO> {
     public EnderecoDTO buscarPorId(Integer id) throws PersistenciaException {
         EnderecoDTO end = null;
         Connection con = ConexaoUtil.abrirConexao("BuscarId");
-        String sql = "select * from cliente where id_cliente = ? ";
+        String sql = "select * from endereco where id_endereco = ? ";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1, id);

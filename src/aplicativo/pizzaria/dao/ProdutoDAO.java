@@ -24,7 +24,7 @@ public class ProdutoDAO implements GenericoDAO<ProdutoDTO> {
     @Override
     public void inserir(ProdutoDTO prod) throws PersistenciaException {
         Connection con = ConexaoUtil.abrirConexao("Inserir");
-        String sql = "insert into produto(nome, tamanho, descricao, valor, tipo) values(?,?,?,?,?) ";
+        String sql = "insert into produto(nome, tipo, tamanho, descricao, valor) values(?,?,?,?,?) ";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, prod.getNome());
@@ -95,10 +95,10 @@ public class ProdutoDAO implements GenericoDAO<ProdutoDTO> {
                 ProdutoDTO prod = new ProdutoDTO();
                 prod.setId(rs.getInt(1));
                 prod.setNome(rs.getString(2));
-                prod.setTamanho(rs.getString(3));
-                prod.setDescricao(rs.getString(4));
-                prod.setValor(rs.getDouble(5));
-                prod.setTipo(rs.getString(6));
+                prod.setTipo(rs.getString(3));
+                prod.setTamanho(rs.getString(4));
+                prod.setDescricao(rs.getString(5));
+                prod.setValor(rs.getDouble(6));
                 lista.add(prod);
             }
         } catch (SQLException ex) {
@@ -114,7 +114,7 @@ public class ProdutoDAO implements GenericoDAO<ProdutoDTO> {
     public ProdutoDTO buscarPorId(Integer id) throws PersistenciaException {
         ProdutoDTO prod = null;
         Connection con = ConexaoUtil.abrirConexao("BuscarId");
-        String sql = "select * from produto where id_user = ? ";
+        String sql = "select * from produto where id_produto = ? ";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1, id);
@@ -144,7 +144,7 @@ public class ProdutoDAO implements GenericoDAO<ProdutoDTO> {
         boolean ultimo = false;
         int cont = 0;
         if (prod.getId() != null) {
-            sql += "where id_user like ? ";
+            sql += "where id_produto like ? ";
             ultimo = true;
         }
         if (prod.getNome()!= null) {
