@@ -4,10 +4,11 @@ package aplicativo.pizzaria.dto;
  * @author Edu
  */
 public class EnderecoDTO {
-    String rua;
-    String bairro;
-    String cidade;
-    String estado;
+    private Integer id;
+    private String rua;
+    private String bairro;
+    private String cidade;
+    private String estado;
 
     public EnderecoDTO(String rua, String bairro, String cidade, String estado) {
         this.rua = rua;

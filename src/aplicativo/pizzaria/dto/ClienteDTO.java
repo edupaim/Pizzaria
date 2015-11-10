@@ -7,11 +7,11 @@ public class ClienteDTO extends PessoaDTO {
     private String numero;
     private EnderecoDTO endereco;
 
-    public ClienteDTO(Integer id, String cpf, String numero, EnderecoDTO endereco) {
-        this.id = id;
-        this.cpf = cpf;
-        this.numero = numero;
-        this.endereco = endereco;
+    public ClienteDTO() {
+        super();
+        this.cpf = null;
+        this.numero = null;
+        this.endereco = null;
     }
 
     public void setEndereco(EnderecoDTO endereco) {
