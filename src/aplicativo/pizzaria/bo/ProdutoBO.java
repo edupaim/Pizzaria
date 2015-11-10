@@ -2,14 +2,11 @@ package aplicativo.pizzaria.bo;
 
 import aplicativo.pizzaria.dao.ProdutoDAO;
 import aplicativo.pizzaria.dto.ProdutoDTO;
-import aplicativo.pizzaria.dto.UserDTO;
 import aplicativo.pizzaria.exception.NegocioException;
 import aplicativo.pizzaria.exception.PersistenciaException;
-import aplicativo.pizzaria.main.Main;
 import static aplicativo.pizzaria.util.FuncoesUtil.onlyNumbers;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class ProdutoBO {
 
@@ -56,5 +53,32 @@ public class ProdutoBO {
             throw new NegocioException(ex.getMessage());
         }
         return resul;
+    }
+    
+    public List<ProdutoDTO> busca(String id, String nome, String tamanho, String tipo) throws NegocioException {
+        ProdutoDTO prod = new ProdutoDTO();
+        List<ProdutoDTO> lista = new ArrayList<>();
+        ProdutoDAO prodDao = new ProdutoDAO();
+        try {
+            if (id != null && !"".equals(id)) {
+                prod.setId(Integer.parseInt(id));
+            }
+            if (nome != null && !"".equals(nome)) {
+                prod.setNome(nome.trim());
+            }
+            if (tamanho != null && !"".equals(tamanho)) {
+                prod.setTamanho(tamanho.trim());
+            }
+            if (tipo != null && !"".equals(tipo)) {
+                prod.setTipo(tipo.trim());
+            }
+            if (tipo != null && !"".equals(tipo)) {
+                prod.setTipo(tipo.trim());
+            }
+            lista = prodDao.listaFiltro(prod);
+        } catch (PersistenciaException ex) {
+            throw new NegocioException(ex.getMessage());
+        }
+        return lista;
     }
 }
