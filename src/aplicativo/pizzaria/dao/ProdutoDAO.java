@@ -136,4 +136,74 @@ public class ProdutoDAO implements GenericoDAO<ProdutoDTO> {
         }
         return prod;
     }
+    
+    public List<ProdutoDTO> listaFiltro(ProdutoDTO prod) throws PersistenciaException {
+        Connection con = ConexaoUtil.abrirConexao("ListaFiltro");
+        List<ProdutoDTO> lista = new ArrayList<>();
+        String sql = "select * from produto ";
+        boolean ultimo = false;
+        int cont = 0;
+        if (prod.getId() != null) {
+            sql += "where id_user like ? ";
+            ultimo = true;
+        }
+        if (prod.getNome()!= null) {
+            if (ultimo) {
+                sql += "and ";
+            } else {
+                sql += "where ";
+                ultimo = true;
+            }
+            sql += "nome like ? ";
+        }
+        if (prod.getTamanho()!= null) {
+            if (ultimo) {
+                sql += "and ";
+            } else {
+                sql += "where ";
+                ultimo = true;
+            }
+            sql += "tamanho like ? ";
+        }
+        if (prod.getTipo()!= null) {
+            if (ultimo) {
+                sql += "and ";
+            } else {
+                sql += "where ";
+                ultimo = true;
+            }
+            sql += "tipo like ? ";
+        }
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            if (prod.getId() != null) {
+                ps.setInt(++cont, prod.getId());
+            }
+            if (prod.getNome()!= null) {
+                ps.setString(++cont, "%" + prod.getNome()+ "%");
+            }
+            if (prod.getTamanho()!= null) {
+                ps.setString(++cont, prod.getTamanho());
+            }
+            if (prod.getTipo()!= null) {
+                ps.setString(++cont, "%" + prod.getTipo()+ "%");
+            }
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                ProdutoDTO aux = new ProdutoDTO();
+                aux.setId(rs.getInt(1));
+                aux.setNome(rs.getString(2));
+                aux.setTamanho(rs.getString(5));
+                aux.setTipo(rs.getString(3));
+                aux.setValor(rs.getDouble(sql));
+                lista.add(aux);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            throw new PersistenciaException(ex.getMessage(), ex);
+        } finally {
+            ConexaoUtil.fecharConexao(con);
+        }
+        return lista;
+    }
 }
