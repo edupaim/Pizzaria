@@ -1,6 +1,7 @@
 package aplicativo.pizzaria.dao;
 
 import aplicativo.pizzaria.dto.ClienteDTO;
+import aplicativo.pizzaria.dto.EnderecoDTO;
 import aplicativo.pizzaria.dto.ProdutoDTO;
 import aplicativo.pizzaria.exception.PersistenciaException;
 import aplicativo.pizzaria.util.ConexaoUtil;
@@ -74,6 +75,7 @@ public class ClienteDAO implements GenericoDAO<ClienteDTO> {
 
     @Override
     public List<ClienteDTO> listarTodos() throws PersistenciaException {
+        EnderecoDAO endDao = new EnderecoDAO();
         Connection con = ConexaoUtil.abrirConexao("ListarTodos");
         List<ClienteDTO> lista = new ArrayList<>();
         String sql = "select * from cliente ";
@@ -86,7 +88,7 @@ public class ClienteDAO implements GenericoDAO<ClienteDTO> {
                 cliente.setNome(rs.getString(2));
                 cliente.setCpf(rs.getString(3));
                 cliente.setNumero(rs.getString(4));
-                cliente.setEndereco(rs.getObject(sql, null));
+                cliente.setEndereco((EnderecoDTO) endDao.buscarPorId(rs.getInt(5)));
                 lista.add(cliente);
             }
         } catch (SQLException ex) {
@@ -100,7 +102,29 @@ public class ClienteDAO implements GenericoDAO<ClienteDTO> {
 
     @Override
     public ClienteDTO buscarPorId(Integer id) throws PersistenciaException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        EnderecoDAO endDao = new EnderecoDAO();
+        ClienteDTO cliente = null;
+        Connection con = ConexaoUtil.abrirConexao("BuscarId");
+        String sql = "select * from produto where id_user = ? ";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                cliente = new ClienteDTO();
+                cliente.setId(rs.getInt(1));
+                cliente.setNome(rs.getString(2));
+                cliente.setCpf(rs.getString(3));
+                cliente.setNumero(rs.getString(4));
+                cliente.setEndereco((EnderecoDTO) endDao.buscarPorId(rs.getInt(5)));
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            throw new PersistenciaException(ex.getMessage(), ex);
+        } finally {
+            ConexaoUtil.fecharConexao(con);
+        }
+        return cliente;
     }
 
 }

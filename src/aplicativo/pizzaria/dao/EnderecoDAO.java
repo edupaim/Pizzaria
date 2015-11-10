@@ -30,7 +30,7 @@ public class EnderecoDAO implements GenericoDAO<EnderecoDTO>{
     }
 
     @Override
-    abstract  public EnderecoDTO buscarPorId(Integer id) throws PersistenciaException {
+    public EnderecoDTO buscarPorId(Integer id) throws PersistenciaException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

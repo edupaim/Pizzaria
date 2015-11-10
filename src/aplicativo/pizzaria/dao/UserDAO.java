@@ -41,15 +41,15 @@ public class UserDAO implements GenericoDAO<UserDTO> {
     }
 
     @Override
-    public void inserir(UserDTO userDto) throws PersistenciaException {
+    public void inserir(UserDTO user) throws PersistenciaException {
         Connection con = ConexaoUtil.abrirConexao("Inserir");
         String sql = "insert into user(login, senha, tipo, nome) values(?,?,?,?) ";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
-            ps.setString(1, userDto.getLogin());
-            ps.setString(2, userDto.getSenha());
-            ps.setInt(3, userDto.getTipo());
-            ps.setString(4, userDto.getNome());
+            ps.setString(1, user.getLogin());
+            ps.setString(2, user.getSenha());
+            ps.setInt(3, user.getTipo());
+            ps.setString(4, user.getNome());
             ps.execute();
         } catch (SQLException ex) {
             ex.printStackTrace();
