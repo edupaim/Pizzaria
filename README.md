@@ -32,8 +32,12 @@
   5. Alterar
 - Clientes
   1. Cadastrar
+  2. CadastrarEndereco
+  3. Listar
+  4. Excluir
 - Endereços
-  1. Cadastrar
+  2. Listar
+  3. Excluir
 
 ######Frames:
 - Login
