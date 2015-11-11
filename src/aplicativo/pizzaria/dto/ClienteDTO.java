@@ -5,21 +5,21 @@ public class ClienteDTO extends PessoaDTO {
     private Integer id;
     private String cpf;
     private String numero;
-    private EnderecoDTO endereco;
+    private EnderecoDTO enderecos;
 
     public ClienteDTO() {
         super();
         this.cpf = null;
         this.numero = null;
-        this.endereco = null;
+        this.enderecos = null;
     }
-
-    public void setEndereco(EnderecoDTO endereco) {
-        this.endereco = endereco;
+    
+    public void setEndereco(EnderecoDTO end) {
+        this.enderecos = end;
     }
 
     public EnderecoDTO getEndereco() {
-        return endereco;
+        return enderecos;
     }
 
     public Integer getId() {

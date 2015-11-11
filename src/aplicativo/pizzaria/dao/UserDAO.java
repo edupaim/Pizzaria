@@ -222,7 +222,6 @@ public class UserDAO implements GenericoDAO<UserDTO> {
                 sql += "and ";
             } else {
                 sql += "where ";
-                ultimo = true;
             }
             sql += "nome like ? ";
         }

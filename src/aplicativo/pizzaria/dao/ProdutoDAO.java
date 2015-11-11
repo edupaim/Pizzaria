@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package aplicativo.pizzaria.dao;
 
 import aplicativo.pizzaria.dto.ProdutoDTO;
@@ -15,10 +10,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * @author eduardo
- */
 public class ProdutoDAO implements GenericoDAO<ProdutoDTO> {
 
     @Override
@@ -28,10 +19,10 @@ public class ProdutoDAO implements GenericoDAO<ProdutoDTO> {
         try {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, prod.getNome());
-            ps.setString(2, prod.getTamanho());
-            ps.setString(3, prod.getDescricao());
-            ps.setDouble(4, prod.getValor());
-            ps.setString(5, prod.getTipo());
+            ps.setString(2, prod.getTipo());
+            ps.setString(3, prod.getTamanho());
+            ps.setString(4, prod.getDescricao());
+            ps.setDouble(5, prod.getValor());
             ps.execute();
         } catch (SQLException ex) {
             ex.printStackTrace();

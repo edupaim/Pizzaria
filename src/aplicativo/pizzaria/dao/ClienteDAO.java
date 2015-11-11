@@ -11,20 +11,20 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
- * @author Edu
- */
 public class ClienteDAO implements GenericoDAO<ClienteDTO> {
 
     @Override
     public void inserir(ClienteDTO cliente) throws PersistenciaException {
         Connection con = ConexaoUtil.abrirConexao("Inserir");
-        String sql = "insert into produto(nome, cpf, numero) values(?,?,?) ";
+        String sql = "insert into cliente(nome, cpf, num, rua, bairro, cidade) values(?,?,?,?,?,?) ";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, cliente.getNome());
             ps.setString(2, cliente.getCpf());
             ps.setString(3, cliente.getNumero());
+            ps.setString(4, cliente.getEndereco().getRua());
+            ps.setString(5, cliente.getEndereco().getBairro());
+            ps.setString(6, cliente.getEndereco().getCidade());
             ps.execute();
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -39,13 +39,16 @@ public class ClienteDAO implements GenericoDAO<ClienteDTO> {
         Connection con = ConexaoUtil.abrirConexao("Atualizar");
         String sql = "update cliente set nome = ?, ";
         sql += "cpf = ?, ";
-        sql += "numero = ? ";
+        sql += "num = ? ";
         sql += "where id_cliente = ? ";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, cliente.getNome());
             ps.setString(2, cliente.getCpf());
             ps.setString(3, cliente.getNumero());
+            ps.setString(4, cliente.getEndereco().getRua());
+            ps.setString(5, cliente.getEndereco().getBairro());
+            ps.setString(6, cliente.getEndereco().getCidade());
             ps.setInt(4, id);
             ps.execute();
         } catch (SQLException ex) {
@@ -74,7 +77,6 @@ public class ClienteDAO implements GenericoDAO<ClienteDTO> {
 
     @Override
     public List<ClienteDTO> listarTodos() throws PersistenciaException {
-        EnderecoDAO endDao = new EnderecoDAO();
         Connection con = ConexaoUtil.abrirConexao("ListarTodos");
         List<ClienteDTO> lista = new ArrayList<>();
         String sql = "select * from cliente ";
@@ -87,7 +89,7 @@ public class ClienteDAO implements GenericoDAO<ClienteDTO> {
                 cliente.setNome(rs.getString(2));
                 cliente.setCpf(rs.getString(3));
                 cliente.setNumero(rs.getString(4));
-                cliente.setEndereco((EnderecoDTO) endDao.buscarPorId(rs.getInt(5)));
+                cliente.setEndereco(new EnderecoDTO(rs.getString(5), rs.getString(6), rs.getString(7)));
                 lista.add(cliente);
             }
         } catch (SQLException ex) {
@@ -101,7 +103,6 @@ public class ClienteDAO implements GenericoDAO<ClienteDTO> {
 
     @Override
     public ClienteDTO buscarPorId(Integer id) throws PersistenciaException {
-        EnderecoDAO endDao = new EnderecoDAO();
         ClienteDTO cliente = null;
         Connection con = ConexaoUtil.abrirConexao("BuscarId");
         String sql = "select * from cliente where id_cliente = ? ";
@@ -115,7 +116,7 @@ public class ClienteDAO implements GenericoDAO<ClienteDTO> {
                 cliente.setNome(rs.getString(2));
                 cliente.setCpf(rs.getString(3));
                 cliente.setNumero(rs.getString(4));
-                cliente.setEndereco((EnderecoDTO) endDao.buscarPorId(rs.getInt(5)));
+                cliente.setEndereco(new EnderecoDTO(rs.getString(5), rs.getString(6), rs.getString(7)));
             }
         } catch (SQLException ex) {
             ex.printStackTrace();

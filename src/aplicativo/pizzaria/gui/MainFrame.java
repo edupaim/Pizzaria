@@ -5,8 +5,11 @@
  */
 package aplicativo.pizzaria.gui;
 
+import aplicativo.pizzaria.bo.ClienteBO;
 import aplicativo.pizzaria.bo.ProdutoBO;
 import aplicativo.pizzaria.bo.UserBO;
+import aplicativo.pizzaria.dto.ClienteDTO;
+import aplicativo.pizzaria.dto.EnderecoDTO;
 import aplicativo.pizzaria.dto.ProdutoDTO;
 import aplicativo.pizzaria.dto.UserDTO;
 import aplicativo.pizzaria.exception.NegocioException;
@@ -15,7 +18,6 @@ import aplicativo.pizzaria.util.MensagensUtil;
 import java.awt.Component;
 import java.awt.Container;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.swing.JFormattedTextField;
@@ -47,6 +49,8 @@ public class MainFrame extends javax.swing.JFrame {
             LbNome.setText(Main.getUsuarioLogado().getNome());
             LbTipo.setText(tipo);
             MainFrame.this.atualizarTabelaUser();
+            MainFrame.this.atualizarTabelaProduto();
+            MainFrame.this.atualizarTabelaCliente();
             iniThreadHora();
         } else {
             MensagensUtil.addMsg(MainFrame.this, "Usuário não logado.");
@@ -61,9 +65,17 @@ public class MainFrame extends javax.swing.JFrame {
     public void atualizarIdUsuario(Integer id) {
         TxtIdA.setText(String.valueOf(id));
     }
-    
+
     public void atualizarIdProduto(Integer id) {
         TxtIdPA.setText(String.valueOf(id));
+    }
+    
+    public void atualizarIdCliente(Integer id) {
+        TxtIdAC.setText(String.valueOf(id));
+    }
+
+    public void atualizarIdPedido(Integer id) {
+        TxtIdAC.setText(String.valueOf(id));
     }
 
     public void limparTodosCampos(Container container) {
@@ -83,7 +95,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void atualizarTabelaUser() {
         UserBO listaBo = new UserBO();
-        List<UserDTO> lista = new ArrayList<>();
+        List<UserDTO> lista;
         DefaultTableModel tbl = (DefaultTableModel) TblUser.getModel();
         try {
             lista = listaBo.listar();
@@ -112,7 +124,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void atualizarTabelaProduto() {
         ProdutoBO listaBo = new ProdutoBO();
-        List<ProdutoDTO> lista = new ArrayList<>();
+        List<ProdutoDTO> lista;
         DefaultTableModel tbl = (DefaultTableModel) TblProduto.getModel();
         try {
             lista = listaBo.listar();
@@ -160,8 +172,60 @@ public class MainFrame extends javax.swing.JFrame {
         }
     }
 
+    public void atualizarTabelaFUser(List<UserDTO> consulta) {
+        if (consulta != null) {
+            DefaultTableModel tbl = (DefaultTableModel) TblUserFiltro.getModel();
+            while (tbl.getRowCount() > 0) {
+                tbl.removeRow(0);
+            }
+            int i = 0;
+            for (UserDTO user : consulta) {
+                tbl.addRow(new String[1]);
+                TblUserFiltro.setValueAt(user.getId(), i, 0);
+                TblUserFiltro.setValueAt(user.getNome(), i, 1);
+                TblUserFiltro.setValueAt(user.getLogin(), i, 2);
+                try {
+                    TblUserFiltro.setValueAt(UserBO.tipo(user.getTipo()), i, 3);
+                } catch (NegocioException ex) {
+                    ex.printStackTrace();
+                    MensagensUtil.addMsg(MainFrame.this, ex.getMessage());
+                }
+                i++;
+            }
+        } else {
+            MainFrame.this.atualizarTabelaUser();
+        }
+    }
+    
+    private void atualizarTabelaCliente() {
+        ClienteBO clienteBo = new ClienteBO();
+        List<ClienteDTO> lista;
+        DefaultTableModel tbl = (DefaultTableModel) TblCliente.getModel();
+        try {
+            lista = clienteBo.listar();
+            while (tbl.getRowCount() > 0) {
+                tbl.removeRow(0);
+            }
+            int i = 0;
+            for (ClienteDTO cliente : lista) {
+                tbl.addRow(new String[1]);
+                TblCliente.setValueAt(cliente.getId(), i, 0);
+                TblCliente.setValueAt(cliente.getNome(), i, 1);
+                TblCliente.setValueAt(cliente.getCpf(), i, 2);
+                TblCliente.setValueAt(cliente.getNumero(), i, 3);
+                TblCliente.setValueAt(cliente.getEndereco().getRua(), i, 4);
+                TblCliente.setValueAt(cliente.getEndereco().getBairro(), i, 5);
+                TblCliente.setValueAt(cliente.getEndereco().getCidade(), i, 6);
+                i++;
+            }
+        } catch (NegocioException ex) {
+            ex.printStackTrace();
+            MensagensUtil.addMsg(MainFrame.this, ex.getMessage());
+        }
+    }
+
     public void listarFiltrado() {
-        List<UserDTO> lista = new ArrayList<>();
+        List<UserDTO> lista;
         String id = TxtIdB.getText();
         String nome = TxtNomeB.getText();
         String login = TxtLoginB.getText();
@@ -169,7 +233,7 @@ public class MainFrame extends javax.swing.JFrame {
         try {
             Integer tipo = UserBO.escolherTipo(CBoxTipoB.getSelectedItem() + "");
             lista = buscarBO.busca(id, login, nome, tipo);
-            atualizarTabelaUser(lista);
+            atualizarTabelaFUser(lista);
             Thread.sleep(1000);
         } catch (NegocioException | InterruptedException ex) {
             ex.printStackTrace();
@@ -228,8 +292,8 @@ public class MainFrame extends javax.swing.JFrame {
         TxtUserC = new javax.swing.JTextField();
         TxtSenhaC = new javax.swing.JPasswordField();
         TxtSenhaRC = new javax.swing.JPasswordField();
-        CBoxTipoC = new javax.swing.JComboBox();
         TxtNomeC = new javax.swing.JTextField();
+        CBoxTipoC = new javax.swing.JComboBox();
         ButCadastroC = new javax.swing.JButton();
         ListaUsuario = new javax.swing.JPanel();
         ScrollPaneTab = new javax.swing.JScrollPane();
@@ -300,12 +364,42 @@ public class MainFrame extends javax.swing.JFrame {
         ButAlterarP = new javax.swing.JButton();
         TabClientes = new javax.swing.JTabbedPane();
         CadastroCliente = new javax.swing.JPanel();
+        LabCpfCC = new javax.swing.JLabel();
+        LabNumCC = new javax.swing.JLabel();
+        LabNomeCC = new javax.swing.JLabel();
+        LabCpfCC1 = new javax.swing.JLabel();
+        LabNumCC1 = new javax.swing.JLabel();
+        LabCIdade = new javax.swing.JLabel();
+        TxtCpfCC = new javax.swing.JTextField();
+        TxtNomeCC = new javax.swing.JTextField();
+        TxtRuaCC = new javax.swing.JTextField();
+        TxtCidadeCC = new javax.swing.JTextField();
+        CadastrarCC = new javax.swing.JButton();
+        TxtBairroCC = new javax.swing.JTextField();
+        TxtNumCC = new javax.swing.JTextField();
         ListaCliente = new javax.swing.JPanel();
         ScrollPaneTab4 = new javax.swing.JScrollPane();
         TblCliente = new javax.swing.JTable();
         ButAtualizarCL = new javax.swing.JButton();
         AlteraCliente = new javax.swing.JPanel();
-        EnderecoCliente = new javax.swing.JPanel();
+        TxtCpfCC4 = new javax.swing.JTextField();
+        TxtNumCC2 = new javax.swing.JPasswordField();
+        LabNumCC2 = new javax.swing.JLabel();
+        LabCpfCC4 = new javax.swing.JLabel();
+        TxtCpfCC5 = new javax.swing.JTextField();
+        LabNumCC3 = new javax.swing.JLabel();
+        LabCpfCC5 = new javax.swing.JLabel();
+        LabNomeCC1 = new javax.swing.JLabel();
+        LabCpfCC6 = new javax.swing.JLabel();
+        TxtCpfCC6 = new javax.swing.JTextField();
+        TxtCpfCC7 = new javax.swing.JTextField();
+        TxtNumCC3 = new javax.swing.JPasswordField();
+        TxtNomeCC1 = new javax.swing.JTextField();
+        LabCpfCC7 = new javax.swing.JLabel();
+        LabNomeCC2 = new javax.swing.JLabel();
+        TxtIdAC = new javax.swing.JTextField();
+        ButExcluirAC = new javax.swing.JButton();
+        ButAlterarAC = new javax.swing.JButton();
         TabPedidos = new javax.swing.JTabbedPane();
         Novo = new javax.swing.JPanel();
         ListaPedido = new javax.swing.JPanel();
@@ -996,15 +1090,88 @@ public class MainFrame extends javax.swing.JFrame {
         TabClientes.setTabPlacement(javax.swing.JTabbedPane.LEFT);
         TabClientes.setPreferredSize(new java.awt.Dimension(500, 600));
 
+        LabCpfCC.setText("CPF");
+
+        LabNumCC.setText("Número");
+
+        LabNomeCC.setText("Nome");
+
+        LabCpfCC1.setText("Rua");
+
+        LabNumCC1.setText("Bairro");
+
+        LabCIdade.setText("Cidade");
+
+        CadastrarCC.setText("Cadastrar");
+        CadastrarCC.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CadastrarCCActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout CadastroClienteLayout = new javax.swing.GroupLayout(CadastroCliente);
         CadastroCliente.setLayout(CadastroClienteLayout);
         CadastroClienteLayout.setHorizontalGroup(
             CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 431, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, CadastroClienteLayout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(CadastrarCC))
+            .addGroup(CadastroClienteLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(CadastroClienteLayout.createSequentialGroup()
+                        .addGroup(CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(LabCpfCC)
+                            .addComponent(LabNumCC)
+                            .addComponent(LabNomeCC))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 176, Short.MAX_VALUE)
+                        .addGroup(CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(TxtNomeCC, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(TxtCpfCC, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(TxtNumCC, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(CadastroClienteLayout.createSequentialGroup()
+                        .addGroup(CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(LabCpfCC1)
+                            .addComponent(LabNumCC1))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(TxtRuaCC, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(TxtBairroCC, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, CadastroClienteLayout.createSequentialGroup()
+                        .addComponent(LabCIdade)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(TxtCidadeCC, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         CadastroClienteLayout.setVerticalGroup(
             CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 595, Short.MAX_VALUE)
+            .addGroup(CadastroClienteLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabNomeCC)
+                    .addComponent(TxtNomeCC, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabCpfCC)
+                    .addComponent(TxtCpfCC, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabNumCC)
+                    .addComponent(TxtNumCC, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabCpfCC1)
+                    .addComponent(TxtRuaCC, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabNumCC1)
+                    .addComponent(TxtBairroCC, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabCIdade)
+                    .addComponent(TxtCidadeCC, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 411, Short.MAX_VALUE)
+                .addComponent(CadastrarCC))
         );
 
         TabClientes.addTab("Cadastrar", CadastroCliente);
@@ -1016,14 +1183,14 @@ public class MainFrame extends javax.swing.JFrame {
 
             },
             new String [] {
-                "ID", "Nome", "Login", "Tipo"
+                "ID", "Nome", "Cpf", "Número", "Rua", "Bairro", "Cidade"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -1052,7 +1219,7 @@ public class MainFrame extends javax.swing.JFrame {
         ListaCliente.setLayout(ListaClienteLayout);
         ListaClienteLayout.setHorizontalGroup(
             ListaClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(ScrollPaneTab4, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
+            .addComponent(ScrollPaneTab4, javax.swing.GroupLayout.DEFAULT_SIZE, 433, Short.MAX_VALUE)
             .addGroup(ListaClienteLayout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(ButAtualizarCL))
@@ -1068,31 +1235,125 @@ public class MainFrame extends javax.swing.JFrame {
 
         TabClientes.addTab("Listar", ListaCliente);
 
+        LabNumCC2.setText("Bairro");
+
+        LabCpfCC4.setText("CPF");
+
+        LabNumCC3.setText("Número");
+
+        LabCpfCC5.setText("Cidade");
+
+        LabNomeCC1.setText("Nome");
+
+        LabCpfCC6.setText("Complemento");
+
+        LabCpfCC7.setText("Rua");
+
+        LabNomeCC2.setText("ID");
+
+        TxtIdAC.setEditable(false);
+
+        ButExcluirAC.setText("Excluir");
+        ButExcluirAC.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ButExcluirACActionPerformed(evt);
+            }
+        });
+
+        ButAlterarAC.setText("Alterar");
+        ButAlterarAC.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ButAlterarACActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout AlteraClienteLayout = new javax.swing.GroupLayout(AlteraCliente);
         AlteraCliente.setLayout(AlteraClienteLayout);
         AlteraClienteLayout.setHorizontalGroup(
             AlteraClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 431, Short.MAX_VALUE)
+            .addGroup(AlteraClienteLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(AlteraClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(AlteraClienteLayout.createSequentialGroup()
+                        .addGroup(AlteraClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(LabCpfCC4)
+                            .addComponent(LabNumCC3)
+                            .addComponent(LabNomeCC1))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 176, Short.MAX_VALUE)
+                        .addGroup(AlteraClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(TxtNomeCC1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, AlteraClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(TxtCpfCC6, javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(TxtNumCC3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(AlteraClienteLayout.createSequentialGroup()
+                        .addGroup(AlteraClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(LabCpfCC7)
+                            .addComponent(LabNumCC2))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(AlteraClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(TxtCpfCC4, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(TxtNumCC2, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, AlteraClienteLayout.createSequentialGroup()
+                        .addComponent(LabCpfCC5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(TxtCpfCC5, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(AlteraClienteLayout.createSequentialGroup()
+                        .addComponent(LabCpfCC6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(TxtCpfCC7, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(AlteraClienteLayout.createSequentialGroup()
+                        .addComponent(LabNomeCC2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(TxtIdAC, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, AlteraClienteLayout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(ButExcluirAC)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(ButAlterarAC))
         );
         AlteraClienteLayout.setVerticalGroup(
             AlteraClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 595, Short.MAX_VALUE)
+            .addGroup(AlteraClienteLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(AlteraClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabNomeCC2)
+                    .addComponent(TxtIdAC, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(AlteraClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabNomeCC1)
+                    .addComponent(TxtNomeCC1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(AlteraClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabCpfCC4)
+                    .addComponent(TxtCpfCC6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(AlteraClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabNumCC3)
+                    .addComponent(TxtNumCC3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(AlteraClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabCpfCC7)
+                    .addComponent(TxtCpfCC4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(AlteraClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabNumCC2)
+                    .addComponent(TxtNumCC2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(AlteraClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabCpfCC5)
+                    .addComponent(TxtCpfCC5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(AlteraClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabCpfCC6)
+                    .addComponent(TxtCpfCC7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 359, Short.MAX_VALUE)
+                .addGroup(AlteraClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(ButAlterarAC)
+                    .addComponent(ButExcluirAC)))
         );
 
         TabClientes.addTab("Alterar", AlteraCliente);
-
-        javax.swing.GroupLayout EnderecoClienteLayout = new javax.swing.GroupLayout(EnderecoCliente);
-        EnderecoCliente.setLayout(EnderecoClienteLayout);
-        EnderecoClienteLayout.setHorizontalGroup(
-            EnderecoClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 431, Short.MAX_VALUE)
-        );
-        EnderecoClienteLayout.setVerticalGroup(
-            EnderecoClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 595, Short.MAX_VALUE)
-        );
-
-        TabClientes.addTab("Endereços", EnderecoCliente);
 
         TabPedidos.setTabPlacement(javax.swing.JTabbedPane.LEFT);
         TabPedidos.setPreferredSize(new java.awt.Dimension(500, 600));
@@ -1481,14 +1742,6 @@ public class MainFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_ButAtualizarPLActionPerformed
 
-    private void TblClienteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TblClienteMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_TblClienteMouseClicked
-
-    private void ButAtualizarCLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButAtualizarCLActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_ButAtualizarCLActionPerformed
-
     private void ButLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButLimparActionPerformed
         limparTodosCampos(Painel);
     }//GEN-LAST:event_ButLimparActionPerformed
@@ -1538,6 +1791,7 @@ public class MainFrame extends javax.swing.JFrame {
             if (produtoBo.cadastrar(nome, tam, desc, valor, tipo)) {
                 MensagensUtil.addMsg(MainFrame.this, "Cadastro efetuado com sucesso!");
                 TabProdutos.setSelectedComponent(ListaProduto);
+                atualizarTabelaProduto();
             } else {
                 MensagensUtil.addMsg(MainFrame.this, "Falha no cadastro.");
             }
@@ -1628,6 +1882,64 @@ public class MainFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_ButAlterarPActionPerformed
 
+    private void ButAtualizarCLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButAtualizarCLActionPerformed
+        atualizarTabelaCliente();
+    }//GEN-LAST:event_ButAtualizarCLActionPerformed
+
+    private void TblClienteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TblClienteMouseClicked
+        Integer linha = TblCliente.getSelectedRow();
+        TabClientes.setSelectedComponent(AlteraCliente);
+        atualizarIdCliente((Integer) TblCliente.getValueAt(linha, 0));
+    }//GEN-LAST:event_TblClienteMouseClicked
+
+    private void CadastrarCCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CadastrarCCActionPerformed
+        String nome = TxtNomeCC.getText();
+        String cpf = TxtCpfCC.getText();
+        String num = TxtNumCC.getText();
+        String rua = TxtRuaCC.getText();
+        String bairro = TxtBairroCC.getText();
+        String cidade = TxtCidadeCC.getText();
+        ClienteBO clienteBo = new ClienteBO();
+        EnderecoDTO end = new EnderecoDTO(rua, bairro, cidade);
+        try {
+            if (clienteBo.cadastrar(nome, cpf, num, end)) {
+                MensagensUtil.addMsg(MainFrame.this, "Cadastro efetuado com sucesso!");
+                TabClientes.setSelectedComponent(ListaCliente);
+                atualizarTabelaCliente();
+            } else {
+                MensagensUtil.addMsg(MainFrame.this, "Falha no cadastro.");
+            }
+        } catch (NegocioException ex) {
+            ex.printStackTrace();
+            MensagensUtil.addMsg(MainFrame.this, ex.getMessage());
+        } finally {
+            limparTodosCampos(rootPane);
+        }
+    }//GEN-LAST:event_CadastrarCCActionPerformed
+
+    private void ButExcluirACActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButExcluirACActionPerformed
+        String id = TxtIdAC.getText();
+        ClienteBO excluirBo = new ClienteBO();
+        try {
+            if (excluirBo.excluir(id)) {
+                MensagensUtil.addMsg(MainFrame.this, "Excluido com sucesso!");
+                TabClientes.setSelectedComponent(ListaCliente);
+                atualizarTabelaCliente();
+            } else {
+                MensagensUtil.addMsg(MainFrame.this, "Falha ao excluir.");
+            }
+        } catch (NegocioException ex) {
+            ex.printStackTrace();
+            MensagensUtil.addMsg(MainFrame.this, ex.getMessage());
+        } finally {
+            limparTodosCampos(rootPane);
+        }
+    }//GEN-LAST:event_ButExcluirACActionPerformed
+
+    private void ButAlterarACActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButAlterarACActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ButAlterarACActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1666,6 +1978,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JPanel AlteraUsuario;
     private javax.swing.JPanel BuscaUsuario;
     private javax.swing.JButton ButAlterarA;
+    private javax.swing.JButton ButAlterarAC;
     private javax.swing.JButton ButAlterarP;
     private javax.swing.JButton ButAtualizarCL;
     private javax.swing.JButton ButAtualizarCL1;
@@ -1675,6 +1988,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JButton ButCadastroP;
     private javax.swing.JButton ButClientes;
     private javax.swing.JButton ButExcluirA;
+    private javax.swing.JButton ButExcluirAC;
     private javax.swing.JButton ButExcluirP;
     private javax.swing.JButton ButLimpar;
     private javax.swing.JButton ButLogout;
@@ -1689,12 +2003,19 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JComboBox CBoxTipoC;
     private javax.swing.JComboBox CBoxTipoCP;
     private javax.swing.JComboBox CBoxTipoCPA;
+    private javax.swing.JButton CadastrarCC;
     private javax.swing.JPanel CadastroCliente;
     private javax.swing.JPanel CadastroProduto;
     private javax.swing.JPanel CadastroUsuario;
-    private javax.swing.JPanel EnderecoCliente;
     private javax.swing.JPanel Hora;
     private javax.swing.JPanel Infos;
+    private javax.swing.JLabel LabCIdade;
+    private javax.swing.JLabel LabCpfCC;
+    private javax.swing.JLabel LabCpfCC1;
+    private javax.swing.JLabel LabCpfCC4;
+    private javax.swing.JLabel LabCpfCC5;
+    private javax.swing.JLabel LabCpfCC6;
+    private javax.swing.JLabel LabCpfCC7;
     private javax.swing.JLabel LabDescP;
     private javax.swing.JLabel LabDescPA;
     private javax.swing.JLabel LabIdA;
@@ -1706,8 +2027,15 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel LabNomeA;
     private javax.swing.JLabel LabNomeB;
     private javax.swing.JLabel LabNomeC;
+    private javax.swing.JLabel LabNomeCC;
+    private javax.swing.JLabel LabNomeCC1;
+    private javax.swing.JLabel LabNomeCC2;
     private javax.swing.JLabel LabNomeP;
     private javax.swing.JLabel LabNomePA;
+    private javax.swing.JLabel LabNumCC;
+    private javax.swing.JLabel LabNumCC1;
+    private javax.swing.JLabel LabNumCC2;
+    private javax.swing.JLabel LabNumCC3;
     private javax.swing.JLabel LabRS;
     private javax.swing.JLabel LabRSA;
     private javax.swing.JLabel LabSenhaA;
@@ -1749,9 +2077,17 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JTable TblUser;
     private javax.swing.JTable TblUserFiltro;
     private javax.swing.JPanel Tipo;
+    private javax.swing.JTextField TxtBairroCC;
+    private javax.swing.JTextField TxtCidadeCC;
+    private javax.swing.JTextField TxtCpfCC;
+    private javax.swing.JTextField TxtCpfCC4;
+    private javax.swing.JTextField TxtCpfCC5;
+    private javax.swing.JTextField TxtCpfCC6;
+    private javax.swing.JTextField TxtCpfCC7;
     private javax.swing.JTextField TxtDescP;
     private javax.swing.JTextField TxtDescPA;
     private javax.swing.JTextField TxtIdA;
+    private javax.swing.JTextField TxtIdAC;
     private javax.swing.JTextField TxtIdB;
     private javax.swing.JTextField TxtIdPA;
     private javax.swing.JTextField TxtLoginA;
@@ -1759,8 +2095,14 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JTextField TxtNomeA;
     private javax.swing.JTextField TxtNomeB;
     private javax.swing.JTextField TxtNomeC;
+    private javax.swing.JTextField TxtNomeCC;
+    private javax.swing.JTextField TxtNomeCC1;
     private javax.swing.JTextField TxtNomeP;
     private javax.swing.JTextField TxtNomePA;
+    private javax.swing.JTextField TxtNumCC;
+    private javax.swing.JPasswordField TxtNumCC2;
+    private javax.swing.JPasswordField TxtNumCC3;
+    private javax.swing.JTextField TxtRuaCC;
     private javax.swing.JPasswordField TxtSenhaA;
     private javax.swing.JPasswordField TxtSenhaC;
     private javax.swing.JPasswordField TxtSenhaN2A;
