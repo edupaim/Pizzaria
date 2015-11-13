@@ -114,10 +114,10 @@ public class ProdutoDAO implements GenericoDAO<ProdutoDTO> {
                 prod = new ProdutoDTO();
                 prod.setId(rs.getInt(1));
                 prod.setNome(rs.getString(2));
-                prod.setTamanho(rs.getString(3));
-                prod.setDescricao(rs.getString(4));
-                prod.setValor(rs.getDouble(5));
-                prod.setTipo(rs.getString(6));
+                prod.setTipo(rs.getString(3));
+                prod.setTamanho(rs.getString(4));
+                prod.setDescricao(rs.getString(5));
+                prod.setValor(rs.getDouble(6));
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -147,15 +147,6 @@ public class ProdutoDAO implements GenericoDAO<ProdutoDTO> {
             }
             sql += "nome like ? ";
         }
-        if (prod.getTamanho()!= null) {
-            if (ultimo) {
-                sql += "and ";
-            } else {
-                sql += "where ";
-                ultimo = true;
-            }
-            sql += "tamanho like ? ";
-        }
         if (prod.getTipo()!= null) {
             if (ultimo) {
                 sql += "and ";
@@ -165,28 +156,36 @@ public class ProdutoDAO implements GenericoDAO<ProdutoDTO> {
             }
             sql += "tipo like ? ";
         }
+        if (prod.getTamanho()!= null) {
+            if (ultimo) {
+                sql += "and ";
+            } else {
+                sql += "where ";
+            }
+            sql += "tamanho like ? ";
+        }
         try {
             PreparedStatement ps = con.prepareStatement(sql);
             if (prod.getId() != null) {
                 ps.setInt(++cont, prod.getId());
             }
             if (prod.getNome()!= null) {
-                ps.setString(++cont, "%" + prod.getNome()+ "%");
-            }
-            if (prod.getTamanho()!= null) {
-                ps.setString(++cont, prod.getTamanho());
+                ps.setString(++cont, "%" + prod.getNome() + "%");
             }
             if (prod.getTipo()!= null) {
-                ps.setString(++cont, "%" + prod.getTipo()+ "%");
+                ps.setString(++cont, "%" + prod.getTipo() + "%");
+            }
+            if (prod.getTamanho()!= null) {
+                ps.setString(++cont, "%" + prod.getTamanho() + "%");
             }
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 ProdutoDTO aux = new ProdutoDTO();
                 aux.setId(rs.getInt(1));
                 aux.setNome(rs.getString(2));
-                aux.setTamanho(rs.getString(5));
+                aux.setTamanho(rs.getString(4));
                 aux.setTipo(rs.getString(3));
-                aux.setValor(rs.getDouble(sql));
+                aux.setValor(rs.getDouble(6));
                 lista.add(aux);
             }
         } catch (SQLException ex) {

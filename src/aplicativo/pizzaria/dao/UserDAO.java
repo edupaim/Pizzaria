@@ -32,7 +32,6 @@ public class UserDAO implements GenericoDAO<UserDTO> {
                 user.setTipo(rs.getInt(4));
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
             throw new PersistenciaException(ex.getMessage(), ex);
         } finally {
             ConexaoUtil.fecharConexao(con);
@@ -52,7 +51,6 @@ public class UserDAO implements GenericoDAO<UserDTO> {
             ps.setString(4, user.getNome());
             ps.execute();
         } catch (SQLException ex) {
-            ex.printStackTrace();
             throw new PersistenciaException(ex.getMessage(), ex);
         } finally {
             ConexaoUtil.fecharConexao(con);
@@ -74,7 +72,6 @@ public class UserDAO implements GenericoDAO<UserDTO> {
             ps.setInt(4, id);
             ps.execute();
         } catch (SQLException ex) {
-            ex.printStackTrace();
             throw new PersistenciaException(ex.getMessage(), ex);
         } finally {
             ConexaoUtil.fecharConexao(con);
@@ -90,7 +87,6 @@ public class UserDAO implements GenericoDAO<UserDTO> {
             ps.setInt(1, id);
             ps.execute();
         } catch (SQLException ex) {
-            ex.printStackTrace();
             throw new PersistenciaException(ex.getMessage(), ex);
         } finally {
             ConexaoUtil.fecharConexao(con);
@@ -115,7 +111,6 @@ public class UserDAO implements GenericoDAO<UserDTO> {
                 lista.add(user);
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
             throw new PersistenciaException(ex.getMessage(), ex);
         } finally {
             ConexaoUtil.fecharConexao(con);
@@ -141,7 +136,6 @@ public class UserDAO implements GenericoDAO<UserDTO> {
                 user.setTipo(rs.getInt(4));
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
             throw new PersistenciaException(ex.getMessage(), ex);
         } finally {
             ConexaoUtil.fecharConexao(con);
@@ -161,7 +155,6 @@ public class UserDAO implements GenericoDAO<UserDTO> {
                 resul = rs.getInt(1);
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
             throw new PersistenciaException(ex.getMessage(), ex);
         } finally {
             ConexaoUtil.fecharConexao(con);
@@ -181,7 +174,6 @@ public class UserDAO implements GenericoDAO<UserDTO> {
                 return true;
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
             throw new PersistenciaException(ex.getMessage(), ex);
         } finally {
             ConexaoUtil.fecharConexao(con);
@@ -250,7 +242,6 @@ public class UserDAO implements GenericoDAO<UserDTO> {
                 lista.add(aux);
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
             throw new PersistenciaException(ex.getMessage(), ex);
         } finally {
             ConexaoUtil.fecharConexao(con);

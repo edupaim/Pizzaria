@@ -5,7 +5,10 @@ import aplicativo.pizzaria.dto.ClienteDTO;
 import aplicativo.pizzaria.dto.EnderecoDTO;
 import aplicativo.pizzaria.exception.NegocioException;
 import aplicativo.pizzaria.exception.PersistenciaException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /*
  * @author Edu
@@ -58,6 +61,35 @@ public class ClienteBO {
             throw new NegocioException(ex.getMessage());
         }
         return resul;
+    }
+
+    public List<ClienteDTO> buscar(String nome, String num) {
+        ClienteDTO cliente = new ClienteDTO();
+        List<ClienteDTO> lista = new ArrayList<>();
+        ClienteDAO clienteDao = new ClienteDAO();
+        if (nome != null && !"".equals(nome)) {
+            cliente.setNome(nome.trim());
+        }
+        if (num != null && !"".equals(num)) {
+            cliente.setNumero(num.trim());
+        }
+        try {
+            lista = clienteDao.listaFiltro(cliente);
+        } catch (PersistenciaException ex) {
+
+        }
+        return lista;
+    }
+    
+    public ClienteDTO buscarPorID(Integer id) {
+        ClienteDTO cliente = new ClienteDTO();
+        ClienteDAO clienteDao = new ClienteDAO();
+        try {
+            cliente = clienteDao.buscarPorId(id);
+        } catch (PersistenciaException ex) {
+
+        }
+        return cliente;
     }
 
 }

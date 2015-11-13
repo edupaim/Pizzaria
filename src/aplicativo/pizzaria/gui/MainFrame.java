@@ -6,10 +6,12 @@
 package aplicativo.pizzaria.gui;
 
 import aplicativo.pizzaria.bo.ClienteBO;
+import aplicativo.pizzaria.bo.PedidoBO;
 import aplicativo.pizzaria.bo.ProdutoBO;
 import aplicativo.pizzaria.bo.UserBO;
 import aplicativo.pizzaria.dto.ClienteDTO;
 import aplicativo.pizzaria.dto.EnderecoDTO;
+import aplicativo.pizzaria.dto.ItemPedido;
 import aplicativo.pizzaria.dto.ProdutoDTO;
 import aplicativo.pizzaria.dto.UserDTO;
 import aplicativo.pizzaria.exception.NegocioException;
@@ -18,8 +20,11 @@ import aplicativo.pizzaria.util.MensagensUtil;
 import java.awt.Component;
 import java.awt.Container;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFormattedTextField;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
@@ -31,6 +36,8 @@ import javax.swing.table.DefaultTableModel;
 public class MainFrame extends javax.swing.JFrame {
 
     Thread hora = null;
+    ClienteDTO clientePedindo = new ClienteDTO();
+    List<ItemPedido> itensPedidos = new ArrayList<>();
 
     /**
      * Creates new form MainFrame
@@ -43,7 +50,6 @@ public class MainFrame extends javax.swing.JFrame {
             try {
                 tipo = UserBO.tipo(Main.getUsuarioLogado().getTipo());
             } catch (NegocioException ex) {
-                ex.printStackTrace();
                 MensagensUtil.addMsg(MainFrame.this, ex.getMessage());
             }
             LbNome.setText(Main.getUsuarioLogado().getNome());
@@ -52,6 +58,7 @@ public class MainFrame extends javax.swing.JFrame {
             MainFrame.this.atualizarTabelaProduto();
             MainFrame.this.atualizarTabelaCliente();
             iniThreadHora();
+            Painel.removeAll();
         } else {
             MensagensUtil.addMsg(MainFrame.this, "Usuário não logado.");
             MainFrame.this.dispose();
@@ -62,20 +69,16 @@ public class MainFrame extends javax.swing.JFrame {
 
     }
 
-    public void atualizarIdUsuario(Integer id) {
+    public void atualizarTxtUsuario(Integer id) {
         TxtIdA.setText(String.valueOf(id));
     }
 
-    public void atualizarIdProduto(Integer id) {
-        TxtIdPA.setText(String.valueOf(id));
-    }
-    
-    public void atualizarIdCliente(Integer id) {
+    public void atualizarTxtCliente(Integer id) {
         TxtIdAC.setText(String.valueOf(id));
     }
 
-    public void atualizarIdPedido(Integer id) {
-        TxtIdAC.setText(String.valueOf(id));
+    public void atualizarTxtProduto(Integer id) {
+        TxtIdPA.setText(String.valueOf(id));
     }
 
     public void limparTodosCampos(Container container) {
@@ -111,14 +114,36 @@ public class MainFrame extends javax.swing.JFrame {
                 try {
                     TblUser.setValueAt(UserBO.tipo(user.getTipo()), i, 3);
                 } catch (NegocioException ex) {
-                    ex.printStackTrace();
                     MensagensUtil.addMsg(MainFrame.this, ex.getMessage());
                 }
                 i++;
             }
         } catch (NegocioException ex) {
-            ex.printStackTrace();
             MensagensUtil.addMsg(MainFrame.this, ex.getMessage());
+        }
+    }
+
+    public void atualizarTabelaUser(List<UserDTO> consulta) {
+        if (consulta != null) {
+            DefaultTableModel tbl = (DefaultTableModel) TblUser.getModel();
+            while (tbl.getRowCount() > 0) {
+                tbl.removeRow(0);
+            }
+            int i = 0;
+            for (UserDTO user : consulta) {
+                tbl.addRow(new String[1]);
+                TblUser.setValueAt(user.getId(), i, 0);
+                TblUser.setValueAt(user.getNome(), i, 1);
+                TblUser.setValueAt(user.getLogin(), i, 2);
+                try {
+                    TblUser.setValueAt(UserBO.tipo(user.getTipo()), i, 3);
+                } catch (NegocioException ex) {
+                    MensagensUtil.addMsg(MainFrame.this, ex.getMessage());
+                }
+                i++;
+            }
+        } else {
+            MainFrame.this.atualizarTabelaUser();
         }
     }
 
@@ -142,33 +167,73 @@ public class MainFrame extends javax.swing.JFrame {
                 i++;
             }
         } catch (NegocioException ex) {
-            ex.printStackTrace();
             MensagensUtil.addMsg(MainFrame.this, ex.getMessage());
         }
     }
 
-    public void atualizarTabelaUser(List<UserDTO> consulta) {
-        if (consulta != null) {
-            DefaultTableModel tbl = (DefaultTableModel) TblUser.getModel();
+    private void atualizarTabelaBuscaProduto() {
+        ProdutoBO listaBo = new ProdutoBO();
+        List<ProdutoDTO> lista;
+        DefaultTableModel tbl = (DefaultTableModel) TblBuscaProduto.getModel();
+        try {
+            lista = listaBo.listar();
             while (tbl.getRowCount() > 0) {
                 tbl.removeRow(0);
             }
             int i = 0;
-            for (UserDTO user : consulta) {
+            for (ProdutoDTO produto : lista) {
                 tbl.addRow(new String[1]);
-                TblUser.setValueAt(user.getId(), i, 0);
-                TblUser.setValueAt(user.getNome(), i, 1);
-                TblUser.setValueAt(user.getLogin(), i, 2);
-                try {
-                    TblUser.setValueAt(UserBO.tipo(user.getTipo()), i, 3);
-                } catch (NegocioException ex) {
-                    ex.printStackTrace();
-                    MensagensUtil.addMsg(MainFrame.this, ex.getMessage());
-                }
+                TblBuscaProduto.setValueAt(produto.getId(), i, 0);
+                TblBuscaProduto.setValueAt(produto.getNome(), i, 1);
+                TblBuscaProduto.setValueAt(produto.getTipo(), i, 2);
+                TblBuscaProduto.setValueAt(produto.getTamanho(), i, 3);
+                TblBuscaProduto.setValueAt(produto.getValor(), i, 4);
+                i++;
+            }
+        } catch (NegocioException ex) {
+            MensagensUtil.addMsg(MainFrame.this, ex.getMessage());
+        }
+    }
+
+    private void atualizarTabelaBuscaProduto(List<ProdutoDTO> lista) {
+        if (lista != null) {
+            DefaultTableModel tbl = (DefaultTableModel) TblBuscaProduto.getModel();
+            while (tbl.getRowCount() > 0) {
+                tbl.removeRow(0);
+            }
+            int i = 0;
+            for (ProdutoDTO produto : lista) {
+                tbl.addRow(new String[1]);
+                TblBuscaProduto.setValueAt(produto.getId(), i, 0);
+                TblBuscaProduto.setValueAt(produto.getNome(), i, 1);
+                TblBuscaProduto.setValueAt(produto.getTipo(), i, 2);
+                TblBuscaProduto.setValueAt(produto.getTamanho(), i, 3);
+                TblBuscaProduto.setValueAt(produto.getValor(), i, 4);
                 i++;
             }
         } else {
-            MainFrame.this.atualizarTabelaUser();
+            atualizarTabelaBuscaProduto();
+        }
+    }
+
+    private void atualizarTabelaItem(List<ItemPedido> lista) {
+        if (lista != null) {
+            DefaultTableModel tbl = (DefaultTableModel) TblItens.getModel();
+            while (tbl.getRowCount() > 0) {
+                tbl.removeRow(0);
+            }
+            int i = 0;
+            for (ItemPedido item : lista) {
+                tbl.addRow(new String[1]);
+                TblItens.setValueAt(item.getProduto().getNome(), i, 0);
+                TblItens.setValueAt(item.getProduto().getTipo(), i, 1);
+                TblItens.setValueAt(item.getProduto().getTamanho(), i, 2);
+                TblItens.setValueAt(item.getProduto().getValor(), i, 3);
+                TblItens.setValueAt(item.getQuantidade(), i, 4);
+                i++;
+            }
+        } else {
+            atualizarTabelaBuscaProduto();
         }
     }
 
@@ -187,7 +252,6 @@ public class MainFrame extends javax.swing.JFrame {
                 try {
                     TblUserFiltro.setValueAt(UserBO.tipo(user.getTipo()), i, 3);
                 } catch (NegocioException ex) {
-                    ex.printStackTrace();
                     MensagensUtil.addMsg(MainFrame.this, ex.getMessage());
                 }
                 i++;
@@ -196,7 +260,49 @@ public class MainFrame extends javax.swing.JFrame {
             MainFrame.this.atualizarTabelaUser();
         }
     }
-    
+
+    private void atualizarTabelaBuscarCliente() {
+        ClienteBO clienteBo = new ClienteBO();
+        List<ClienteDTO> lista;
+        DefaultTableModel tbl = (DefaultTableModel) TblBuscaCliente.getModel();
+        try {
+            lista = clienteBo.listar();
+            while (tbl.getRowCount() > 0) {
+                tbl.removeRow(0);
+            }
+            int i = 0;
+            for (ClienteDTO cliente : lista) {
+                tbl.addRow(new String[1]);
+                TblBuscaCliente.setValueAt(cliente.getNome(), i, 0);
+                TblBuscaCliente.setValueAt(cliente.getCpf(), i, 1);
+                TblBuscaCliente.setValueAt(cliente.getNumero(), i, 2);
+                i++;
+            }
+        } catch (NegocioException ex) {
+            MensagensUtil.addMsg(MainFrame.this, ex.getMessage());
+        }
+    }
+
+    public void atualizarTabelaBuscarCliente(List<ClienteDTO> consulta) {
+        if (consulta != null) {
+            DefaultTableModel tbl = (DefaultTableModel) TblBuscaCliente.getModel();
+            while (tbl.getRowCount() > 0) {
+                tbl.removeRow(0);
+            }
+            int i = 0;
+            for (ClienteDTO cliente : consulta) {
+                tbl.addRow(new String[1]);
+                TblBuscaCliente.setValueAt(cliente.getId(), i, 0);
+                TblBuscaCliente.setValueAt(cliente.getNome(), i, 1);
+                TblBuscaCliente.setValueAt(cliente.getCpf(), i, 2);
+                TblBuscaCliente.setValueAt(cliente.getNumero(), i, 3);
+                i++;
+            }
+        } else {
+            MainFrame.this.atualizarTabelaBuscarCliente();
+        }
+    }
+
     private void atualizarTabelaCliente() {
         ClienteBO clienteBo = new ClienteBO();
         List<ClienteDTO> lista;
@@ -219,7 +325,6 @@ public class MainFrame extends javax.swing.JFrame {
                 i++;
             }
         } catch (NegocioException ex) {
-            ex.printStackTrace();
             MensagensUtil.addMsg(MainFrame.this, ex.getMessage());
         }
     }
@@ -246,6 +351,14 @@ public class MainFrame extends javax.swing.JFrame {
         hora.start();
     }
 
+    private void logout() {
+        this.dispose();
+        LoginFrame login = new LoginFrame();
+        login.setLocationRelativeTo(null);
+        login.setVisible(true);
+        Main.setUsuarioLogado(null);
+    }
+
     private class HorarioUtil implements Runnable {
 
         private SimpleDateFormat sdf = null;
@@ -266,9 +379,12 @@ public class MainFrame extends javax.swing.JFrame {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException ex) {
-                ex.printStackTrace();
                 MensagensUtil.addMsg(MainFrame.this, ex.getMessage());
             }
+        }
+
+        public String getHora() {
+            return sdf + "";
         }
 
     }
@@ -282,7 +398,67 @@ public class MainFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        TabUsuarios = new javax.swing.JTabbedPane();
+        Infos = new javax.swing.JPanel();
+        Usuario = new javax.swing.JPanel();
+        LbNome = new javax.swing.JLabel();
+        Tipo = new javax.swing.JPanel();
+        LbTipo = new javax.swing.JLabel();
+        Hora = new javax.swing.JPanel();
+        LbHora = new javax.swing.JLabel();
+        Menu = new javax.swing.JPanel();
+        MenuUsuarios = new javax.swing.JButton();
+        MenuProdutos = new javax.swing.JButton();
+        MenuClientes = new javax.swing.JButton();
+        MenuAtend = new javax.swing.JButton();
+        MenuPizza = new javax.swing.JButton();
+        MenuEntreg = new javax.swing.JButton();
+        Painel = new javax.swing.JPanel();
+        AbasAtendente = new javax.swing.JTabbedPane();
+        CadastrarPedido = new javax.swing.JPanel();
+        LabNomeP1 = new javax.swing.JLabel();
+        LabTipoP1 = new javax.swing.JLabel();
+        LabCpfCC2 = new javax.swing.JLabel();
+        LabCpfCC3 = new javax.swing.JLabel();
+        LabNumCC4 = new javax.swing.JLabel();
+        LabNomeCC3 = new javax.swing.JLabel();
+        LabNumCC5 = new javax.swing.JLabel();
+        LabCIdade1 = new javax.swing.JLabel();
+        BUTBuscarCliente = new javax.swing.JButton();
+        BUTCadastrarCliente = new javax.swing.JButton();
+        TXTNomeBC = new javax.swing.JTextField();
+        TXTNumBC = new javax.swing.JTextField();
+        TXTNomeACC = new javax.swing.JTextField();
+        TXTRuaACC = new javax.swing.JTextField();
+        TXTCidadeACC = new javax.swing.JTextField();
+        TXTBairroACC = new javax.swing.JTextField();
+        TXTNumACC = new javax.swing.JTextField();
+        TXTCpfACC = new javax.swing.JTextField();
+        ScrollPaneTab6 = new javax.swing.JScrollPane();
+        TblBuscaCliente = new javax.swing.JTable();
+        CompCadaPedi = new javax.swing.JPanel();
+        LabTipoP2 = new javax.swing.JLabel();
+        LabTamP1 = new javax.swing.JLabel();
+        LabNome1 = new javax.swing.JLabel();
+        BoxTipoAP = new javax.swing.JComboBox();
+        BoxTamAP = new javax.swing.JComboBox();
+        TxtNomeAP = new javax.swing.JTextField();
+        ScrollPaneTab9 = new javax.swing.JScrollPane();
+        TblBuscaProduto = new javax.swing.JTable();
+        LabNome2 = new javax.swing.JLabel();
+        Cliente = new javax.swing.JPanel();
+        NomeCliente = new javax.swing.JTextField();
+        Numero = new javax.swing.JPanel();
+        NumCliente = new javax.swing.JTextField();
+        TxtQuantidadeItem = new javax.swing.JTextField();
+        LabNome3 = new javax.swing.JLabel();
+        ButAtualizarPL2 = new javax.swing.JButton();
+        ButAtualizarPL4 = new javax.swing.JButton();
+        ButAtualizarPL3 = new javax.swing.JButton();
+        ScrollPaneTab11 = new javax.swing.JScrollPane();
+        TblItens = new javax.swing.JTable();
+        ButAtualizarPL5 = new javax.swing.JButton();
+        ButAtualizarPL6 = new javax.swing.JButton();
+        AbasUsuarios = new javax.swing.JTabbedPane();
         CadastroUsuario = new javax.swing.JPanel();
         LabLoginC = new javax.swing.JLabel();
         LabSenhaC = new javax.swing.JLabel();
@@ -328,7 +504,7 @@ public class MainFrame extends javax.swing.JFrame {
         ButExcluirA = new javax.swing.JButton();
         ButAlterarA = new javax.swing.JButton();
         TxtSenhaA = new javax.swing.JPasswordField();
-        TabProdutos = new javax.swing.JTabbedPane();
+        AbasProdutos = new javax.swing.JTabbedPane();
         CadastroProduto = new javax.swing.JPanel();
         LabNomeP = new javax.swing.JLabel();
         TxtNomeP = new javax.swing.JTextField();
@@ -362,7 +538,7 @@ public class MainFrame extends javax.swing.JFrame {
         TxtIdPA = new javax.swing.JTextField();
         ButExcluirP = new javax.swing.JButton();
         ButAlterarP = new javax.swing.JButton();
-        TabClientes = new javax.swing.JTabbedPane();
+        AbasClientes = new javax.swing.JTabbedPane();
         CadastroCliente = new javax.swing.JPanel();
         LabCpfCC = new javax.swing.JLabel();
         LabNumCC = new javax.swing.JLabel();
@@ -400,35 +576,584 @@ public class MainFrame extends javax.swing.JFrame {
         TxtIdAC = new javax.swing.JTextField();
         ButExcluirAC = new javax.swing.JButton();
         ButAlterarAC = new javax.swing.JButton();
-        TabPedidos = new javax.swing.JTabbedPane();
-        Novo = new javax.swing.JPanel();
-        ListaPedido = new javax.swing.JPanel();
-        ScrollPaneTab2 = new javax.swing.JScrollPane();
-        TblPedido = new javax.swing.JTable();
-        ButAtualizarPL = new javax.swing.JButton();
-        AlteraPedido = new javax.swing.JPanel();
-        Infos = new javax.swing.JPanel();
-        Usuario = new javax.swing.JPanel();
-        LbNome = new javax.swing.JLabel();
-        Tipo = new javax.swing.JPanel();
-        LbTipo = new javax.swing.JLabel();
-        Hora = new javax.swing.JPanel();
-        LbHora = new javax.swing.JLabel();
-        Menu = new javax.swing.JPanel();
-        ButUsuarios = new javax.swing.JButton();
-        ButProdutos = new javax.swing.JButton();
-        ButClientes = new javax.swing.JButton();
-        ButPedidos = new javax.swing.JButton();
-        Painel = new javax.swing.JPanel();
         jSeparator1 = new javax.swing.JSeparator();
         ButSair = new javax.swing.JButton();
         ButLogout = new javax.swing.JButton();
         ButLimpar = new javax.swing.JButton();
+        ButLimpar1 = new javax.swing.JButton();
 
-        TabUsuarios.setTabLayoutPolicy(javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT);
-        TabUsuarios.setTabPlacement(javax.swing.JTabbedPane.LEFT);
-        TabUsuarios.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        TabUsuarios.setPreferredSize(new java.awt.Dimension(500, 600));
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Pizzaria");
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        setResizable(false);
+
+        Usuario.setBorder(javax.swing.BorderFactory.createTitledBorder("Usuário"));
+
+        LbNome.setText("Nome");
+
+        javax.swing.GroupLayout UsuarioLayout = new javax.swing.GroupLayout(Usuario);
+        Usuario.setLayout(UsuarioLayout);
+        UsuarioLayout.setHorizontalGroup(
+            UsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(UsuarioLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(LbNome)
+                .addContainerGap(93, Short.MAX_VALUE))
+        );
+        UsuarioLayout.setVerticalGroup(
+            UsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(LbNome, javax.swing.GroupLayout.Alignment.TRAILING)
+        );
+
+        Tipo.setBorder(javax.swing.BorderFactory.createTitledBorder("Perfil"));
+
+        LbTipo.setText("Tipo");
+
+        javax.swing.GroupLayout TipoLayout = new javax.swing.GroupLayout(Tipo);
+        Tipo.setLayout(TipoLayout);
+        TipoLayout.setHorizontalGroup(
+            TipoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(TipoLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(LbTipo)
+                .addContainerGap(100, Short.MAX_VALUE))
+        );
+        TipoLayout.setVerticalGroup(
+            TipoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(LbTipo, javax.swing.GroupLayout.Alignment.TRAILING)
+        );
+
+        Hora.setBorder(javax.swing.BorderFactory.createTitledBorder("Horário"));
+
+        LbHora.setText("DD/MM/AA hh:mm:ss");
+
+        javax.swing.GroupLayout HoraLayout = new javax.swing.GroupLayout(Hora);
+        Hora.setLayout(HoraLayout);
+        HoraLayout.setHorizontalGroup(
+            HoraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(HoraLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(LbHora)
+                .addContainerGap(39, Short.MAX_VALUE))
+        );
+        HoraLayout.setVerticalGroup(
+            HoraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(LbHora, javax.swing.GroupLayout.Alignment.TRAILING)
+        );
+
+        javax.swing.GroupLayout InfosLayout = new javax.swing.GroupLayout(Infos);
+        Infos.setLayout(InfosLayout);
+        InfosLayout.setHorizontalGroup(
+            InfosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(InfosLayout.createSequentialGroup()
+                .addGap(6, 6, 6)
+                .addComponent(Usuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(Tipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(Hora, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        InfosLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {Tipo, Usuario});
+
+        InfosLayout.setVerticalGroup(
+            InfosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(InfosLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(InfosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(Usuario, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(Tipo, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(Hora, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+        );
+
+        Menu.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createTitledBorder("Menu"))));
+
+        MenuUsuarios.setText("Usuários");
+        MenuUsuarios.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MenuUsuariosActionPerformed(evt);
+            }
+        });
+
+        MenuProdutos.setText("Produtos");
+        MenuProdutos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MenuProdutosActionPerformed(evt);
+            }
+        });
+
+        MenuClientes.setText("Clientes");
+        MenuClientes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MenuClientesActionPerformed(evt);
+            }
+        });
+
+        MenuAtend.setText("Atendente");
+        MenuAtend.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MenuAtendActionPerformed(evt);
+            }
+        });
+
+        MenuPizza.setText("Pizzaiolo");
+        MenuPizza.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MenuPizzaActionPerformed(evt);
+            }
+        });
+
+        MenuEntreg.setText("Entregador");
+        MenuEntreg.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MenuEntregActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout MenuLayout = new javax.swing.GroupLayout(Menu);
+        Menu.setLayout(MenuLayout);
+        MenuLayout.setHorizontalGroup(
+            MenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(MenuLayout.createSequentialGroup()
+                .addComponent(MenuUsuarios)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(MenuProdutos)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(MenuClientes)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 290, Short.MAX_VALUE)
+                .addComponent(MenuAtend)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(MenuPizza)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(MenuEntreg))
+        );
+        MenuLayout.setVerticalGroup(
+            MenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(MenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(MenuProdutos)
+                .addComponent(MenuUsuarios)
+                .addComponent(MenuClientes)
+                .addComponent(MenuAtend)
+                .addComponent(MenuPizza)
+                .addComponent(MenuEntreg))
+        );
+
+        Painel.setLayout(new java.awt.CardLayout());
+
+        AbasAtendente.setTabPlacement(javax.swing.JTabbedPane.LEFT);
+        AbasAtendente.setPreferredSize(new java.awt.Dimension(500, 600));
+
+        LabNomeP1.setText("Nome");
+
+        LabTipoP1.setText("Número");
+
+        LabCpfCC2.setText("CPF");
+
+        LabCpfCC3.setText("Rua");
+
+        LabNumCC4.setText("Número");
+
+        LabNomeCC3.setText("Nome");
+
+        LabNumCC5.setText("Bairro");
+
+        LabCIdade1.setText("Cidade");
+
+        BUTBuscarCliente.setText("Buscar");
+        BUTBuscarCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BUTBuscarClienteActionPerformed(evt);
+            }
+        });
+
+        BUTCadastrarCliente.setText("Cadastrar Cliente");
+        BUTCadastrarCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BUTCadastrarClienteActionPerformed(evt);
+            }
+        });
+
+        TXTBairroACC.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                TXTBairroACCActionPerformed(evt);
+            }
+        });
+
+        TXTNumACC.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                TXTNumACCActionPerformed(evt);
+            }
+        });
+
+        ScrollPaneTab6.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+
+        TblBuscaCliente.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ID", "Nome", "Cpf", "Número"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        TblBuscaCliente.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                TblBuscaClienteMouseClicked(evt);
+            }
+        });
+        ScrollPaneTab6.setViewportView(TblBuscaCliente);
+
+        javax.swing.GroupLayout CadastrarPedidoLayout = new javax.swing.GroupLayout(CadastrarPedido);
+        CadastrarPedido.setLayout(CadastrarPedidoLayout);
+        CadastrarPedidoLayout.setHorizontalGroup(
+            CadastrarPedidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(CadastrarPedidoLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(CadastrarPedidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(CadastrarPedidoLayout.createSequentialGroup()
+                        .addGroup(CadastrarPedidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(LabTipoP1)
+                            .addComponent(LabNomeP1))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(CadastrarPedidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(TXTNomeBC, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                            .addComponent(TXTNumBC, javax.swing.GroupLayout.Alignment.TRAILING)))
+                    .addComponent(ScrollPaneTab6, javax.swing.GroupLayout.DEFAULT_SIZE, 540, Short.MAX_VALUE)
+                    .addGroup(CadastrarPedidoLayout.createSequentialGroup()
+                        .addGroup(CadastrarPedidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(LabCpfCC2)
+                            .addComponent(LabNumCC4)
+                            .addComponent(LabNomeCC3))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(CadastrarPedidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(TXTNomeACC, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(TXTNumACC, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
+                            .addComponent(TXTCpfACC, javax.swing.GroupLayout.Alignment.TRAILING)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, CadastrarPedidoLayout.createSequentialGroup()
+                        .addGroup(CadastrarPedidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(LabCpfCC3)
+                            .addComponent(LabNumCC5)
+                            .addComponent(LabCIdade1))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(CadastrarPedidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(TXTRuaACC, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(TXTCidadeACC, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                            .addComponent(TXTBairroACC, javax.swing.GroupLayout.Alignment.TRAILING)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, CadastrarPedidoLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(CadastrarPedidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(BUTBuscarCliente, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(BUTCadastrarCliente, javax.swing.GroupLayout.Alignment.TRAILING))))
+                .addContainerGap())
+        );
+
+        CadastrarPedidoLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {TXTCpfACC, TXTNumACC});
+
+        CadastrarPedidoLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {TXTBairroACC, TXTCidadeACC, TXTNomeACC});
+
+        CadastrarPedidoLayout.setVerticalGroup(
+            CadastrarPedidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(CadastrarPedidoLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(CadastrarPedidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabNomeP1)
+                    .addComponent(TXTNomeBC, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(CadastrarPedidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabTipoP1)
+                    .addComponent(TXTNumBC, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(BUTBuscarCliente)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(ScrollPaneTab6, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(CadastrarPedidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabNomeCC3)
+                    .addComponent(TXTNomeACC, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(CadastrarPedidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabCpfCC2)
+                    .addComponent(TXTCpfACC, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(CadastrarPedidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabNumCC4)
+                    .addComponent(TXTNumACC, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(CadastrarPedidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabCpfCC3)
+                    .addComponent(TXTRuaACC, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(CadastrarPedidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabNumCC5)
+                    .addComponent(TXTBairroACC, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(CadastrarPedidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabCIdade1)
+                    .addComponent(TXTCidadeACC, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(BUTCadastrarCliente)
+                .addContainerGap())
+        );
+
+        AbasAtendente.addTab("Buscar Cliente", CadastrarPedido);
+
+        LabTipoP2.setText("Tipo");
+
+        LabTamP1.setText("Tamanho");
+
+        LabNome1.setText("Nome");
+
+        BoxTipoAP.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Escolha", "Pizza", "Bebida", "Sobremesa" }));
+        BoxTipoAP.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BoxTipoAPActionPerformed(evt);
+            }
+        });
+
+        BoxTamAP.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Escolha" }));
+
+        ScrollPaneTab9.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+
+        TblBuscaProduto.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ID", "Nome", "Tipo", "Tamanho", "Valor"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        TblBuscaProduto.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                TblBuscaProdutoMouseClicked(evt);
+            }
+        });
+        ScrollPaneTab9.setViewportView(TblBuscaProduto);
+
+        LabNome2.setText("Itens");
+
+        Cliente.setBorder(javax.swing.BorderFactory.createTitledBorder("Cliente"));
+
+        NomeCliente.setEditable(false);
+
+        javax.swing.GroupLayout ClienteLayout = new javax.swing.GroupLayout(Cliente);
+        Cliente.setLayout(ClienteLayout);
+        ClienteLayout.setHorizontalGroup(
+            ClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(NomeCliente, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
+        );
+        ClienteLayout.setVerticalGroup(
+            ClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(NomeCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+
+        Numero.setBorder(javax.swing.BorderFactory.createTitledBorder("Número"));
+
+        NumCliente.setEditable(false);
+
+        javax.swing.GroupLayout NumeroLayout = new javax.swing.GroupLayout(Numero);
+        Numero.setLayout(NumeroLayout);
+        NumeroLayout.setHorizontalGroup(
+            NumeroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(NumCliente, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
+        );
+        NumeroLayout.setVerticalGroup(
+            NumeroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(NumCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+
+        LabNome3.setText("Quantidade");
+
+        ButAtualizarPL2.setText("Cadastrar Pedido");
+        ButAtualizarPL2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ButAtualizarPL2ActionPerformed(evt);
+            }
+        });
+
+        ButAtualizarPL4.setText("Buscar");
+        ButAtualizarPL4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ButAtualizarPL4ActionPerformed(evt);
+            }
+        });
+
+        ButAtualizarPL3.setText("Deletar Item");
+        ButAtualizarPL3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ButAtualizarPL3ActionPerformed(evt);
+            }
+        });
+
+        ScrollPaneTab11.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+
+        TblItens.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Nome", "Tipo", "Tamanho", "Valor Unitário", "Quantidade"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        TblItens.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                TblItensMouseClicked(evt);
+            }
+        });
+        ScrollPaneTab11.setViewportView(TblItens);
+
+        ButAtualizarPL5.setText("Adicionar Item");
+        ButAtualizarPL5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ButAtualizarPL5ActionPerformed(evt);
+            }
+        });
+
+        ButAtualizarPL6.setText("Deletar Lista");
+        ButAtualizarPL6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ButAtualizarPL6ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout CompCadaPediLayout = new javax.swing.GroupLayout(CompCadaPedi);
+        CompCadaPedi.setLayout(CompCadaPediLayout);
+        CompCadaPediLayout.setHorizontalGroup(
+            CompCadaPediLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(CompCadaPediLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(CompCadaPediLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, CompCadaPediLayout.createSequentialGroup()
+                        .addGroup(CompCadaPediLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(LabTipoP2)
+                            .addComponent(LabTamP1))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(CompCadaPediLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(BoxTipoAP, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(BoxTamAP, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(CompCadaPediLayout.createSequentialGroup()
+                        .addComponent(LabNome1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(TxtNomeAP, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(ScrollPaneTab9, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(CompCadaPediLayout.createSequentialGroup()
+                        .addComponent(Cliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
+                        .addComponent(Numero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, CompCadaPediLayout.createSequentialGroup()
+                        .addComponent(ButAtualizarPL3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(ButAtualizarPL6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(ButAtualizarPL2))
+                    .addComponent(ScrollPaneTab11)
+                    .addGroup(CompCadaPediLayout.createSequentialGroup()
+                        .addComponent(LabNome2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(LabNome3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(TxtQuantidadeItem, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(ButAtualizarPL5))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, CompCadaPediLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(ButAtualizarPL4)))
+                .addContainerGap())
+        );
+
+        CompCadaPediLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {BoxTamAP, BoxTipoAP});
+
+        CompCadaPediLayout.setVerticalGroup(
+            CompCadaPediLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(CompCadaPediLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(CompCadaPediLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(Numero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Cliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(CompCadaPediLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabTipoP2)
+                    .addComponent(BoxTipoAP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(CompCadaPediLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabTamP1)
+                    .addComponent(BoxTamAP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(CompCadaPediLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabNome1)
+                    .addComponent(TxtNomeAP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(ButAtualizarPL4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(ScrollPaneTab9, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(CompCadaPediLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabNome2)
+                    .addComponent(ButAtualizarPL5)
+                    .addComponent(LabNome3)
+                    .addComponent(TxtQuantidadeItem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(ScrollPaneTab11, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                .addGroup(CompCadaPediLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(ButAtualizarPL2)
+                    .addComponent(ButAtualizarPL3)
+                    .addComponent(ButAtualizarPL6))
+                .addContainerGap())
+        );
+
+        AbasAtendente.addTab("Cadastrar Pedido", CompCadaPedi);
+
+        Painel.add(AbasAtendente, "card5");
+
+        AbasUsuarios.setTabLayoutPolicy(javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT);
+        AbasUsuarios.setTabPlacement(javax.swing.JTabbedPane.LEFT);
+        AbasUsuarios.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        AbasUsuarios.setPreferredSize(new java.awt.Dimension(500, 600));
 
         LabLoginC.setText("Usuário");
 
@@ -458,7 +1183,7 @@ public class MainFrame extends javax.swing.JFrame {
                 .addGroup(CadastroUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(CadastroUsuarioLayout.createSequentialGroup()
                         .addComponent(LabSenhaRC)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 480, Short.MAX_VALUE)
                         .addComponent(TxtSenhaRC, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(CadastroUsuarioLayout.createSequentialGroup()
                         .addComponent(LabTipoC)
@@ -470,19 +1195,15 @@ public class MainFrame extends javax.swing.JFrame {
                             .addComponent(LabSenhaC)
                             .addComponent(LabNomeC))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(CadastroUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, CadastroUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(TxtUserC, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
-                                .addComponent(TxtSenhaC))
-                            .addComponent(TxtNomeC, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGroup(CadastroUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(TxtUserC, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                            .addComponent(TxtSenhaC, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(TxtNomeC, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE))))
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, CadastroUsuarioLayout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(ButCadastroC))
         );
-
-        CadastroUsuarioLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {TxtNomeC, TxtSenhaC, TxtSenhaRC, TxtUserC});
-
         CadastroUsuarioLayout.setVerticalGroup(
             CadastroUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(CadastroUsuarioLayout.createSequentialGroup()
@@ -510,7 +1231,7 @@ public class MainFrame extends javax.swing.JFrame {
                 .addComponent(ButCadastroC))
         );
 
-        TabUsuarios.addTab("Cadastrar", CadastroUsuario);
+        AbasUsuarios.addTab("Cadastrar", CadastroUsuario);
 
         ScrollPaneTab.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
@@ -560,19 +1281,19 @@ public class MainFrame extends javax.swing.JFrame {
                 .addComponent(ButAtualizarL))
             .addGroup(ListaUsuarioLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(ScrollPaneTab, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addComponent(ScrollPaneTab, javax.swing.GroupLayout.DEFAULT_SIZE, 713, Short.MAX_VALUE)
                 .addContainerGap())
         );
         ListaUsuarioLayout.setVerticalGroup(
             ListaUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ListaUsuarioLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(ScrollPaneTab, javax.swing.GroupLayout.DEFAULT_SIZE, 555, Short.MAX_VALUE)
+                .addComponent(ScrollPaneTab, javax.swing.GroupLayout.DEFAULT_SIZE, 564, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ButAtualizarL))
         );
 
-        TabUsuarios.addTab("Listar", ListaUsuario);
+        AbasUsuarios.addTab("Listar", ListaUsuario);
 
         LabIdB.setText("ID");
 
@@ -660,21 +1381,18 @@ public class MainFrame extends javax.swing.JFrame {
                             .addComponent(LabLoginB)
                             .addComponent(LabTipoB)
                             .addComponent(LabNomeB))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(BuscaUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 486, Short.MAX_VALUE)
+                        .addGroup(BuscaUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(CBoxTipoB, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(TxtLoginB, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(TxtNomeB, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(TxtIdB, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(ScrollPaneTab1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                            .addComponent(TxtNomeB, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                            .addComponent(TxtLoginB)
+                            .addComponent(TxtIdB, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(ScrollPaneTab1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 713, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, BuscaUsuarioLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jButton1)))
                 .addContainerGap())
         );
-
-        BuscaUsuarioLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {TxtLoginB, TxtNomeB});
-
         BuscaUsuarioLayout.setVerticalGroup(
             BuscaUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(BuscaUsuarioLayout.createSequentialGroup()
@@ -697,11 +1415,11 @@ public class MainFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ScrollPaneTab1, javax.swing.GroupLayout.DEFAULT_SIZE, 438, Short.MAX_VALUE)
+                .addComponent(ScrollPaneTab1, javax.swing.GroupLayout.DEFAULT_SIZE, 447, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        TabUsuarios.addTab("Buscar", BuscaUsuario);
+        AbasUsuarios.addTab("Buscar", BuscaUsuario);
 
         LabIdA.setText("ID");
 
@@ -745,31 +1463,25 @@ public class MainFrame extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, AlteraUsuarioLayout.createSequentialGroup()
                         .addComponent(LabIdA)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(TxtIdA, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(TxtIdA, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(AlteraUsuarioLayout.createSequentialGroup()
                         .addComponent(LabTipoA)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(CBoxTipoA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(AlteraUsuarioLayout.createSequentialGroup()
-                        .addComponent(LabLoginA)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(TxtLoginA, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(AlteraUsuarioLayout.createSequentialGroup()
-                        .addComponent(LabNomeA)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(TxtNomeA, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(AlteraUsuarioLayout.createSequentialGroup()
-                        .addComponent(LabSenhaA)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(TxtSenhaA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(AlteraUsuarioLayout.createSequentialGroup()
-                        .addComponent(LabSenhaNRA)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(TxtSenhaN2A, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(AlteraUsuarioLayout.createSequentialGroup()
-                        .addComponent(LabSenhaNA)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(TxtSenhaNA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, AlteraUsuarioLayout.createSequentialGroup()
+                        .addGroup(AlteraUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(LabLoginA)
+                            .addComponent(LabNomeA)
+                            .addComponent(LabSenhaA)
+                            .addComponent(LabSenhaNA)
+                            .addComponent(LabSenhaNRA))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 450, Short.MAX_VALUE)
+                        .addGroup(AlteraUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(TxtSenhaN2A, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(TxtSenhaNA, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(TxtNomeA, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                            .addComponent(TxtLoginA, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(TxtSenhaA))))
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, AlteraUsuarioLayout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
@@ -777,9 +1489,6 @@ public class MainFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ButAlterarA))
         );
-
-        AlteraUsuarioLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {TxtLoginA, TxtNomeA, TxtSenhaA, TxtSenhaN2A, TxtSenhaNA});
-
         AlteraUsuarioLayout.setVerticalGroup(
             AlteraUsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(AlteraUsuarioLayout.createSequentialGroup()
@@ -817,10 +1526,12 @@ public class MainFrame extends javax.swing.JFrame {
                     .addComponent(ButExcluirA)))
         );
 
-        TabUsuarios.addTab("Alterar", AlteraUsuario);
+        AbasUsuarios.addTab("Alterar", AlteraUsuario);
 
-        TabProdutos.setTabPlacement(javax.swing.JTabbedPane.LEFT);
-        TabProdutos.setPreferredSize(new java.awt.Dimension(500, 600));
+        Painel.add(AbasUsuarios, "card2");
+
+        AbasProdutos.setTabPlacement(javax.swing.JTabbedPane.LEFT);
+        AbasProdutos.setPreferredSize(new java.awt.Dimension(500, 600));
 
         LabNomeP.setText("Nome");
 
@@ -862,15 +1573,15 @@ public class MainFrame extends javax.swing.JFrame {
                             .addComponent(LabTipoP)
                             .addComponent(LabTamP)
                             .addComponent(LabNomeP))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 469, Short.MAX_VALUE)
                         .addGroup(CadastroProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(TxtNomeP, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(CBoxTipoCP, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(CBoxTamCP, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(CBoxTamCP, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(TxtNomeP, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(CadastroProdutoLayout.createSequentialGroup()
                         .addComponent(LabDescP)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
-                        .addComponent(TxtDescP, javax.swing.GroupLayout.PREFERRED_SIZE, 360, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(TxtDescP, javax.swing.GroupLayout.PREFERRED_SIZE, 355, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, CadastroProdutoLayout.createSequentialGroup()
                         .addComponent(LabValorP)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -882,9 +1593,6 @@ public class MainFrame extends javax.swing.JFrame {
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(ButCadastroP))
         );
-
-        CadastroProdutoLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {CBoxTamCP, CBoxTipoCP});
-
         CadastroProdutoLayout.setVerticalGroup(
             CadastroProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(CadastroProdutoLayout.createSequentialGroup()
@@ -909,11 +1617,11 @@ public class MainFrame extends javax.swing.JFrame {
                     .addComponent(LabValorP)
                     .addComponent(TxtValorP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(LabRS))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 433, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 442, Short.MAX_VALUE)
                 .addComponent(ButCadastroP))
         );
 
-        TabProdutos.addTab("Cadastrar", CadastroProduto);
+        AbasProdutos.addTab("Cadastrar", CadastroProduto);
 
         ScrollPaneTab5.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 
@@ -958,7 +1666,7 @@ public class MainFrame extends javax.swing.JFrame {
         ListaProduto.setLayout(ListaProdutoLayout);
         ListaProdutoLayout.setHorizontalGroup(
             ListaProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(ScrollPaneTab5, javax.swing.GroupLayout.DEFAULT_SIZE, 433, Short.MAX_VALUE)
+            .addComponent(ScrollPaneTab5, javax.swing.GroupLayout.DEFAULT_SIZE, 733, Short.MAX_VALUE)
             .addGroup(ListaProdutoLayout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(ButAtualizarCL1))
@@ -967,12 +1675,12 @@ public class MainFrame extends javax.swing.JFrame {
             ListaProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ListaProdutoLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(ScrollPaneTab5, javax.swing.GroupLayout.DEFAULT_SIZE, 555, Short.MAX_VALUE)
+                .addComponent(ScrollPaneTab5, javax.swing.GroupLayout.DEFAULT_SIZE, 564, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ButAtualizarCL1))
         );
 
-        TabProdutos.addTab("Listar", ListaProduto);
+        AbasProdutos.addTab("Listar", ListaProduto);
 
         LabRSA.setText("R$");
 
@@ -1027,13 +1735,13 @@ public class MainFrame extends javax.swing.JFrame {
                             .addComponent(LabNomePA))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(AlteraProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(TxtNomePA, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(CBoxTipoCPA, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(TxtNomePA, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(CBoxTamCPA, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(AlteraProdutoLayout.createSequentialGroup()
                         .addComponent(LabDescPA)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
-                        .addComponent(TxtDescPA, javax.swing.GroupLayout.PREFERRED_SIZE, 360, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 312, Short.MAX_VALUE)
+                        .addComponent(TxtDescPA, javax.swing.GroupLayout.PREFERRED_SIZE, 355, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, AlteraProdutoLayout.createSequentialGroup()
                         .addComponent(LabValorPA)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1070,7 +1778,7 @@ public class MainFrame extends javax.swing.JFrame {
                 .addGroup(AlteraProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(LabTamPA)
                     .addComponent(CBoxTamCPA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(10, 10, 10)
                 .addGroup(AlteraProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(LabDescPA)
                     .addComponent(TxtDescPA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1079,16 +1787,18 @@ public class MainFrame extends javax.swing.JFrame {
                     .addComponent(LabValorPA)
                     .addComponent(TxtValorPA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(LabRSA))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 407, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 412, Short.MAX_VALUE)
                 .addGroup(AlteraProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(ButAlterarP)
                     .addComponent(ButExcluirP)))
         );
 
-        TabProdutos.addTab("Alterar", AlteraProduto);
+        AbasProdutos.addTab("Alterar", AlteraProduto);
 
-        TabClientes.setTabPlacement(javax.swing.JTabbedPane.LEFT);
-        TabClientes.setPreferredSize(new java.awt.Dimension(500, 600));
+        Painel.add(AbasProdutos, "card3");
+
+        AbasClientes.setTabPlacement(javax.swing.JTabbedPane.LEFT);
+        AbasClientes.setPreferredSize(new java.awt.Dimension(500, 600));
 
         LabCpfCC.setText("CPF");
 
@@ -1109,6 +1819,12 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
+        TxtBairroCC.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                TxtBairroCCActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout CadastroClienteLayout = new javax.swing.GroupLayout(CadastroCliente);
         CadastroCliente.setLayout(CadastroClienteLayout);
         CadastroClienteLayout.setHorizontalGroup(
@@ -1124,23 +1840,21 @@ public class MainFrame extends javax.swing.JFrame {
                             .addComponent(LabCpfCC)
                             .addComponent(LabNumCC)
                             .addComponent(LabNomeCC))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 176, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(TxtNomeCC, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(TxtCpfCC, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(TxtNumCC, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(CadastroClienteLayout.createSequentialGroup()
+                            .addComponent(TxtNumCC, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 671, Short.MAX_VALUE)
+                            .addComponent(TxtCpfCC, javax.swing.GroupLayout.Alignment.TRAILING)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, CadastroClienteLayout.createSequentialGroup()
                         .addGroup(CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(LabCpfCC1)
-                            .addComponent(LabNumCC1))
+                            .addComponent(LabNumCC1)
+                            .addComponent(LabCIdade))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(TxtRuaCC, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(TxtBairroCC, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, CadastroClienteLayout.createSequentialGroup()
-                        .addComponent(LabCIdade)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(TxtCidadeCC, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(TxtRuaCC, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(TxtCidadeCC, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(TxtBairroCC, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
         );
         CadastroClienteLayout.setVerticalGroup(
@@ -1170,11 +1884,11 @@ public class MainFrame extends javax.swing.JFrame {
                 .addGroup(CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(LabCIdade)
                     .addComponent(TxtCidadeCC, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 411, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 420, Short.MAX_VALUE)
                 .addComponent(CadastrarCC))
         );
 
-        TabClientes.addTab("Cadastrar", CadastroCliente);
+        AbasClientes.addTab("Cadastrar", CadastroCliente);
 
         ScrollPaneTab4.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 
@@ -1219,7 +1933,7 @@ public class MainFrame extends javax.swing.JFrame {
         ListaCliente.setLayout(ListaClienteLayout);
         ListaClienteLayout.setHorizontalGroup(
             ListaClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(ScrollPaneTab4, javax.swing.GroupLayout.DEFAULT_SIZE, 433, Short.MAX_VALUE)
+            .addComponent(ScrollPaneTab4, javax.swing.GroupLayout.DEFAULT_SIZE, 733, Short.MAX_VALUE)
             .addGroup(ListaClienteLayout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(ButAtualizarCL))
@@ -1228,12 +1942,12 @@ public class MainFrame extends javax.swing.JFrame {
             ListaClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ListaClienteLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(ScrollPaneTab4, javax.swing.GroupLayout.DEFAULT_SIZE, 555, Short.MAX_VALUE)
+                .addComponent(ScrollPaneTab4, javax.swing.GroupLayout.DEFAULT_SIZE, 564, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ButAtualizarCL))
         );
 
-        TabClientes.addTab("Listar", ListaCliente);
+        AbasClientes.addTab("Listar", ListaCliente);
 
         LabNumCC2.setText("Bairro");
 
@@ -1279,7 +1993,7 @@ public class MainFrame extends javax.swing.JFrame {
                             .addComponent(LabCpfCC4)
                             .addComponent(LabNumCC3)
                             .addComponent(LabNomeCC1))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 176, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 476, Short.MAX_VALUE)
                         .addGroup(AlteraClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(TxtNomeCC1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, AlteraClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -1347,243 +2061,15 @@ public class MainFrame extends javax.swing.JFrame {
                 .addGroup(AlteraClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(LabCpfCC6)
                     .addComponent(TxtCpfCC7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 359, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 368, Short.MAX_VALUE)
                 .addGroup(AlteraClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(ButAlterarAC)
                     .addComponent(ButExcluirAC)))
         );
 
-        TabClientes.addTab("Alterar", AlteraCliente);
+        AbasClientes.addTab("Alterar", AlteraCliente);
 
-        TabPedidos.setTabPlacement(javax.swing.JTabbedPane.LEFT);
-        TabPedidos.setPreferredSize(new java.awt.Dimension(500, 600));
-
-        javax.swing.GroupLayout NovoLayout = new javax.swing.GroupLayout(Novo);
-        Novo.setLayout(NovoLayout);
-        NovoLayout.setHorizontalGroup(
-            NovoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 448, Short.MAX_VALUE)
-        );
-        NovoLayout.setVerticalGroup(
-            NovoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 595, Short.MAX_VALUE)
-        );
-
-        TabPedidos.addTab("Novo", Novo);
-
-        ScrollPaneTab2.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
-
-        TblPedido.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "ID", "Nome", "Login", "Tipo"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        TblPedido.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                TblPedidoMouseClicked(evt);
-            }
-        });
-        ScrollPaneTab2.setViewportView(TblPedido);
-
-        ButAtualizarPL.setText("Atualizar");
-        ButAtualizarPL.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ButAtualizarPLActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout ListaPedidoLayout = new javax.swing.GroupLayout(ListaPedido);
-        ListaPedido.setLayout(ListaPedidoLayout);
-        ListaPedidoLayout.setHorizontalGroup(
-            ListaPedidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(ScrollPaneTab2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-            .addGroup(ListaPedidoLayout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(ButAtualizarPL))
-        );
-        ListaPedidoLayout.setVerticalGroup(
-            ListaPedidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ListaPedidoLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(ScrollPaneTab2, javax.swing.GroupLayout.DEFAULT_SIZE, 555, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ButAtualizarPL))
-        );
-
-        TabPedidos.addTab("Listar", ListaPedido);
-
-        javax.swing.GroupLayout AlteraPedidoLayout = new javax.swing.GroupLayout(AlteraPedido);
-        AlteraPedido.setLayout(AlteraPedidoLayout);
-        AlteraPedidoLayout.setHorizontalGroup(
-            AlteraPedidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 448, Short.MAX_VALUE)
-        );
-        AlteraPedidoLayout.setVerticalGroup(
-            AlteraPedidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 595, Short.MAX_VALUE)
-        );
-
-        TabPedidos.addTab("Alterar", AlteraPedido);
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Pizzaria");
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        setResizable(false);
-
-        Usuario.setBorder(javax.swing.BorderFactory.createTitledBorder("Usuário"));
-
-        LbNome.setText("Nome");
-
-        javax.swing.GroupLayout UsuarioLayout = new javax.swing.GroupLayout(Usuario);
-        Usuario.setLayout(UsuarioLayout);
-        UsuarioLayout.setHorizontalGroup(
-            UsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(UsuarioLayout.createSequentialGroup()
-                .addComponent(LbNome)
-                .addContainerGap(103, Short.MAX_VALUE))
-        );
-        UsuarioLayout.setVerticalGroup(
-            UsuarioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(LbNome)
-        );
-
-        Tipo.setBorder(javax.swing.BorderFactory.createTitledBorder("Perfil"));
-
-        LbTipo.setText("Tipo");
-
-        javax.swing.GroupLayout TipoLayout = new javax.swing.GroupLayout(Tipo);
-        Tipo.setLayout(TipoLayout);
-        TipoLayout.setHorizontalGroup(
-            TipoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(TipoLayout.createSequentialGroup()
-                .addComponent(LbTipo)
-                .addContainerGap(110, Short.MAX_VALUE))
-        );
-        TipoLayout.setVerticalGroup(
-            TipoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(LbTipo, javax.swing.GroupLayout.Alignment.TRAILING)
-        );
-
-        Hora.setBorder(javax.swing.BorderFactory.createTitledBorder("Horário"));
-
-        LbHora.setText("DD/MM/AA hh:mm:ss");
-
-        javax.swing.GroupLayout HoraLayout = new javax.swing.GroupLayout(Hora);
-        Hora.setLayout(HoraLayout);
-        HoraLayout.setHorizontalGroup(
-            HoraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(HoraLayout.createSequentialGroup()
-                .addComponent(LbHora)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        HoraLayout.setVerticalGroup(
-            HoraLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(LbHora, javax.swing.GroupLayout.Alignment.TRAILING)
-        );
-
-        javax.swing.GroupLayout InfosLayout = new javax.swing.GroupLayout(Infos);
-        Infos.setLayout(InfosLayout);
-        InfosLayout.setHorizontalGroup(
-            InfosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(InfosLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(Usuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(Tipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 243, Short.MAX_VALUE)
-                .addComponent(Hora, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-
-        InfosLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {Tipo, Usuario});
-
-        InfosLayout.setVerticalGroup(
-            InfosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(InfosLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(InfosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(Hora, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(Tipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(Usuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        Menu.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createTitledBorder("Menu"))));
-
-        ButUsuarios.setText("Usuários");
-        ButUsuarios.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ButUsuariosActionPerformed(evt);
-            }
-        });
-
-        ButProdutos.setText("Produtos");
-        ButProdutos.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ButProdutosActionPerformed(evt);
-            }
-        });
-
-        ButClientes.setText("Clientes");
-        ButClientes.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ButClientesActionPerformed(evt);
-            }
-        });
-
-        ButPedidos.setText("Pedidos");
-        ButPedidos.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ButPedidosActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout MenuLayout = new javax.swing.GroupLayout(Menu);
-        Menu.setLayout(MenuLayout);
-        MenuLayout.setHorizontalGroup(
-            MenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(MenuLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(ButUsuarios)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ButProdutos)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ButClientes)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ButPedidos)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        MenuLayout.setVerticalGroup(
-            MenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(MenuLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(MenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(ButUsuarios)
-                    .addComponent(ButProdutos)
-                    .addComponent(ButClientes)
-                    .addComponent(ButPedidos))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        Painel.setLayout(new java.awt.CardLayout());
+        Painel.add(AbasClientes, "card4");
 
         ButSair.setText("Sair");
         ButSair.setToolTipText("");
@@ -1608,21 +2094,29 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
+        ButLimpar1.setText("Configurações Conta");
+        ButLimpar1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ButLimpar1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jSeparator1)
+            .addComponent(Infos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(Menu, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(ButLimpar1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(ButLimpar)
                 .addGap(6, 6, 6)
                 .addComponent(ButLogout)
                 .addGap(6, 6, 6)
                 .addComponent(ButSair))
-            .addComponent(jSeparator1)
-            .addComponent(Infos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(Painel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(Menu, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1631,12 +2125,14 @@ public class MainFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(Menu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(Painel, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(Painel, javax.swing.GroupLayout.DEFAULT_SIZE, 609, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(ButLimpar)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(ButLimpar)
+                        .addComponent(ButLimpar1))
                     .addComponent(ButLogout)
                     .addComponent(ButSair)))
         );
@@ -1648,11 +2144,174 @@ public class MainFrame extends javax.swing.JFrame {
         System.exit(0);
     }//GEN-LAST:event_ButSairActionPerformed
 
-    private void TblUserMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TblUserMouseClicked
-        Integer linha = TblUser.getSelectedRow();
-        TabUsuarios.setSelectedComponent(AlteraUsuario);
-        atualizarIdUsuario((Integer) TblUser.getValueAt(linha, 0));
-    }//GEN-LAST:event_TblUserMouseClicked
+    private void ButLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButLogoutActionPerformed
+        logout();
+    }//GEN-LAST:event_ButLogoutActionPerformed
+
+    private void ButLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButLimparActionPerformed
+        limparTodosCampos(Painel);
+    }//GEN-LAST:event_ButLimparActionPerformed
+
+    private void MenuUsuariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuUsuariosActionPerformed
+        Painel.removeAll();
+        Painel.add(AbasUsuarios);
+        Painel.repaint();
+        Painel.validate();
+    }//GEN-LAST:event_MenuUsuariosActionPerformed
+
+    private void MenuProdutosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuProdutosActionPerformed
+        Painel.removeAll();
+        Painel.add(AbasProdutos);
+        Painel.repaint();
+        Painel.validate();
+    }//GEN-LAST:event_MenuProdutosActionPerformed
+
+    private void MenuClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuClientesActionPerformed
+        Painel.removeAll();
+        Painel.add(AbasClientes);
+        Painel.repaint();
+        Painel.validate();
+    }//GEN-LAST:event_MenuClientesActionPerformed
+
+    private void ButLimpar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButLimpar1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ButLimpar1ActionPerformed
+
+    private void MenuAtendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuAtendActionPerformed
+        Painel.removeAll();
+        Painel.add(AbasAtendente);
+        Painel.repaint();
+        Painel.validate();
+    }//GEN-LAST:event_MenuAtendActionPerformed
+
+    private void MenuPizzaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuPizzaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_MenuPizzaActionPerformed
+
+    private void MenuEntregActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuEntregActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_MenuEntregActionPerformed
+
+    private void ButAtualizarPL2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButAtualizarPL2ActionPerformed
+        PedidoBO pedBo = new PedidoBO();
+        try {
+            pedBo.cadastrar(null, null, clientePedindo, itensPedidos);
+        } catch (NegocioException ex) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_ButAtualizarPL2ActionPerformed
+
+    private void TblBuscaProdutoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TblBuscaProdutoMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_TblBuscaProdutoMouseClicked
+
+    private void BoxTipoAPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BoxTipoAPActionPerformed
+        BoxTamAP.removeAllItems();
+        if (BoxTipoAP.getSelectedIndex() == 0) {
+            BoxTamAP.addItem("Escolha Tipo");
+        }
+        if (BoxTipoAP.getSelectedIndex() == 1) {
+            BoxTamAP.addItem("P");
+            BoxTamAP.addItem("M");
+            BoxTamAP.addItem("G");
+            BoxTamAP.addItem("F");
+        }
+        if (BoxTipoAP.getSelectedIndex() == 2) {
+            BoxTamAP.addItem("Lata");
+            BoxTamAP.addItem("1L");
+            BoxTamAP.addItem("1,5L");
+            BoxTamAP.addItem("2L");
+            BoxTamAP.addItem("Copo");
+            BoxTamAP.addItem("Jarra");
+        }
+        if (BoxTipoAP.getSelectedIndex() == 3) {
+            BoxTamAP.addItem("Unico");
+        }
+    }//GEN-LAST:event_BoxTipoAPActionPerformed
+
+    private void BUTCadastrarClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BUTCadastrarClienteActionPerformed
+        String nome = TXTNomeACC.getText();
+        String cpf = TXTCpfACC.getText();
+        String num = TXTNumACC.getText();
+        String rua = TXTRuaACC.getText();
+        String bairro = TXTBairroACC.getText();
+        String cidade = TXTCidadeACC.getText();
+        ClienteBO clienteBo = new ClienteBO();
+        EnderecoDTO end = new EnderecoDTO(rua, bairro, cidade);
+        try {
+            if (clienteBo.cadastrar(nome, cpf, num, end)) {
+                MensagensUtil.addMsg(MainFrame.this, "Cadastro efetuado com sucesso!");
+                atualizarTabelaBuscarCliente(null);
+            } else {
+                MensagensUtil.addMsg(MainFrame.this, "Falha no cadastro.");
+            }
+        } catch (NegocioException ex) {
+            MensagensUtil.addMsg(MainFrame.this, ex.getMessage());
+        } finally {
+            limparTodosCampos(rootPane);
+        }
+    }//GEN-LAST:event_BUTCadastrarClienteActionPerformed
+
+    private void TXTBairroACCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TXTBairroACCActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_TXTBairroACCActionPerformed
+
+    private void TXTNumACCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TXTNumACCActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_TXTNumACCActionPerformed
+
+    private void BUTBuscarClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BUTBuscarClienteActionPerformed
+        List<ClienteDTO> lista;
+        String nome = TXTNomeBC.getText();
+        String num = TXTNumBC.getText();
+        ClienteBO buscarBO = new ClienteBO();
+        lista = buscarBO.buscar(nome, num);
+        atualizarTabelaBuscarCliente(lista);
+    }//GEN-LAST:event_BUTBuscarClienteActionPerformed
+
+    private void TblBuscaClienteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TblBuscaClienteMouseClicked
+        Integer linha = TblBuscaCliente.getSelectedRow();
+        AbasAtendente.setSelectedComponent(CompCadaPedi);
+        clientePedindo = new ClienteBO().buscarPorID((Integer) TblBuscaCliente.getValueAt(linha, 0));
+        NomeCliente.setText(clientePedindo.getNome());
+        NumCliente.setText(clientePedindo.getNumero());
+    }//GEN-LAST:event_TblBuscaClienteMouseClicked
+
+    private void ButAtualizarPL4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButAtualizarPL4ActionPerformed
+        List<ProdutoDTO> lista;
+        String tipo = null;
+        String tam = null;
+        if (BoxTipoAP.getSelectedIndex() > 0) {
+            tipo = BoxTipoAP.getSelectedItem() + "";
+            tam = BoxTamAP.getSelectedItem() + "";
+        }
+        String nome = TxtNomeAP.getText();
+        ProdutoBO buscarBO = new ProdutoBO();
+        try {
+            lista = buscarBO.busca(null, nome, tam, tipo);
+            atualizarTabelaBuscaProduto(lista);
+        } catch (NegocioException ex) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_ButAtualizarPL4ActionPerformed
+
+    private void ButAtualizarPL3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButAtualizarPL3ActionPerformed
+        DefaultTableModel tbl = (DefaultTableModel) TblItens.getModel();
+        int linha = TblItens.getSelectedRow();
+        tbl.removeRow(linha);
+        itensPedidos.remove(linha);
+    }//GEN-LAST:event_ButAtualizarPL3ActionPerformed
+
+    private void TblItensMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TblItensMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_TblItensMouseClicked
+
+    private void ButAtualizarPL5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButAtualizarPL5ActionPerformed
+        Integer linha = TblBuscaProduto.getSelectedRow();
+        ItemPedido item = new ItemPedido(new ProdutoBO().buscarPorID((Integer) TblBuscaProduto.getValueAt(linha, 0)), null, Integer.parseInt(TxtQuantidadeItem.getText()));
+        itensPedidos.add(item);
+        atualizarTabelaItem(itensPedidos);
+    }//GEN-LAST:event_ButAtualizarPL5ActionPerformed
 
     private void ButCadastroCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButCadastroCActionPerformed
         String nome = TxtNomeC.getText();
@@ -1664,22 +2323,51 @@ public class MainFrame extends javax.swing.JFrame {
         try {
             if (cadastroBo.cadastrar(login, nome, senha, senhar, tipo)) {
                 MensagensUtil.addMsg(MainFrame.this, "Cadastro efetuado com sucesso!");
-                TabUsuarios.setSelectedComponent(ListaUsuario);
+                AbasUsuarios.setSelectedComponent(ListaUsuario);
                 atualizarTabelaUser();
             } else {
                 MensagensUtil.addMsg(MainFrame.this, "Falha no cadastro.");
             }
         } catch (NegocioException ex) {
-            ex.printStackTrace();
             MensagensUtil.addMsg(MainFrame.this, ex.getMessage());
         } finally {
             limparTodosCampos(rootPane);
         }
     }//GEN-LAST:event_ButCadastroCActionPerformed
 
+    private void TblUserMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TblUserMouseClicked
+        Integer linha = TblUser.getSelectedRow();
+        AbasUsuarios.setSelectedComponent(AlteraUsuario);
+        atualizarTxtUsuario((Integer) TblUser.getValueAt(linha, 0));
+    }//GEN-LAST:event_TblUserMouseClicked
+
     private void ButAtualizarLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButAtualizarLActionPerformed
         atualizarTabelaUser();
     }//GEN-LAST:event_ButAtualizarLActionPerformed
+
+    private void TxtIdBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TxtIdBActionPerformed
+        listarFiltrado();
+    }//GEN-LAST:event_TxtIdBActionPerformed
+
+    private void TxtLoginBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TxtLoginBActionPerformed
+        listarFiltrado();
+    }//GEN-LAST:event_TxtLoginBActionPerformed
+
+    private void CBoxTipoBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CBoxTipoBActionPerformed
+        listarFiltrado();
+    }//GEN-LAST:event_CBoxTipoBActionPerformed
+
+    private void TxtNomeBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TxtNomeBActionPerformed
+        listarFiltrado();
+    }//GEN-LAST:event_TxtNomeBActionPerformed
+
+    private void TblUserFiltroMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TblUserFiltroMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_TblUserFiltroMouseClicked
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        listarFiltrado();
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     private void ButExcluirAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButExcluirAActionPerformed
         String id = TxtIdA.getText();
@@ -1688,7 +2376,7 @@ public class MainFrame extends javax.swing.JFrame {
         try {
             if (excluirBo.excluir(id, senha)) {
                 MensagensUtil.addMsg(MainFrame.this, "Excluido com sucesso!");
-                TabUsuarios.setSelectedComponent(ListaUsuario);
+                AbasUsuarios.setSelectedComponent(ListaUsuario);
                 atualizarTabelaUser();
             } else {
                 MensagensUtil.addMsg(MainFrame.this, "Falha ao excluir.");
@@ -1713,48 +2401,17 @@ public class MainFrame extends javax.swing.JFrame {
         try {
             if (alterarBo.alterar(id, login, nome, senha, tipo, senhan, senhan2)) {
                 MensagensUtil.addMsg(MainFrame.this, "Alterado com sucesso!");
-                TabUsuarios.setSelectedComponent(ListaUsuario);
+                AbasUsuarios.setSelectedComponent(ListaUsuario);
                 atualizarTabelaUser();
             } else {
                 MensagensUtil.addMsg(MainFrame.this, "Falha na alteração.");
             }
         } catch (NegocioException ex) {
-            ex.printStackTrace();
             MensagensUtil.addMsg(MainFrame.this, ex.getMessage());
         } finally {
             limparTodosCampos(rootPane);
         }
     }//GEN-LAST:event_ButAlterarAActionPerformed
-
-    private void ButLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButLogoutActionPerformed
-        this.dispose();
-        LoginFrame login = new LoginFrame();
-        login.setLocationRelativeTo(null);
-        login.setVisible(true);
-        Main.setUsuarioLogado(null);
-    }//GEN-LAST:event_ButLogoutActionPerformed
-
-    private void TblPedidoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TblPedidoMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_TblPedidoMouseClicked
-
-    private void ButAtualizarPLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButAtualizarPLActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_ButAtualizarPLActionPerformed
-
-    private void ButLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButLimparActionPerformed
-        limparTodosCampos(Painel);
-    }//GEN-LAST:event_ButLimparActionPerformed
-
-    private void TblProdutoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TblProdutoMouseClicked
-        Integer linha = TblProduto.getSelectedRow();
-        TabProdutos.setSelectedComponent(AlteraProduto);
-        atualizarIdProduto((Integer) TblProduto.getValueAt(linha, 0));
-    }//GEN-LAST:event_TblProdutoMouseClicked
-
-    private void ButAtualizarCL1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButAtualizarCL1ActionPerformed
-        atualizarTabelaProduto();
-    }//GEN-LAST:event_ButAtualizarCL1ActionPerformed
 
     private void CBoxTipoCPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CBoxTipoCPActionPerformed
         CBoxTamCP.removeAllItems();
@@ -1790,7 +2447,7 @@ public class MainFrame extends javax.swing.JFrame {
         try {
             if (produtoBo.cadastrar(nome, tam, desc, valor, tipo)) {
                 MensagensUtil.addMsg(MainFrame.this, "Cadastro efetuado com sucesso!");
-                TabProdutos.setSelectedComponent(ListaProduto);
+                AbasProdutos.setSelectedComponent(ListaProduto);
                 atualizarTabelaProduto();
             } else {
                 MensagensUtil.addMsg(MainFrame.this, "Falha no cadastro.");
@@ -1803,60 +2460,38 @@ public class MainFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_ButCadastroPActionPerformed
 
-    private void TblUserFiltroMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TblUserFiltroMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_TblUserFiltroMouseClicked
+    private void TblProdutoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TblProdutoMouseClicked
+        Integer linha = TblProduto.getSelectedRow();
+        AbasProdutos.setSelectedComponent(AlteraProduto);
+        atualizarTxtProduto((Integer) TblProduto.getValueAt(linha, 0));
+    }//GEN-LAST:event_TblProdutoMouseClicked
 
-    private void TxtIdBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TxtIdBActionPerformed
-        listarFiltrado();
-    }//GEN-LAST:event_TxtIdBActionPerformed
-
-    private void TxtNomeBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TxtNomeBActionPerformed
-        listarFiltrado();
-    }//GEN-LAST:event_TxtNomeBActionPerformed
-
-    private void TxtLoginBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TxtLoginBActionPerformed
-        listarFiltrado();
-    }//GEN-LAST:event_TxtLoginBActionPerformed
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        listarFiltrado();
-    }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void CBoxTipoBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CBoxTipoBActionPerformed
-        listarFiltrado();
-    }//GEN-LAST:event_CBoxTipoBActionPerformed
-
-    private void ButUsuariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButUsuariosActionPerformed
-        Painel.removeAll();
-        Painel.add(TabUsuarios);
-        Painel.repaint();
-        Painel.validate();
-    }//GEN-LAST:event_ButUsuariosActionPerformed
-
-    private void ButProdutosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButProdutosActionPerformed
-        Painel.removeAll();
-        Painel.add(TabProdutos);
-        Painel.repaint();
-        Painel.validate();
-    }//GEN-LAST:event_ButProdutosActionPerformed
-
-    private void ButClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButClientesActionPerformed
-        Painel.removeAll();
-        Painel.add(TabClientes);
-        Painel.repaint();
-        Painel.validate();
-    }//GEN-LAST:event_ButClientesActionPerformed
-
-    private void ButPedidosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButPedidosActionPerformed
-        Painel.removeAll();
-        Painel.add(TabPedidos);
-        Painel.repaint();
-        Painel.validate();
-    }//GEN-LAST:event_ButPedidosActionPerformed
+    private void ButAtualizarCL1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButAtualizarCL1ActionPerformed
+        atualizarTabelaProduto();
+    }//GEN-LAST:event_ButAtualizarCL1ActionPerformed
 
     private void CBoxTipoCPAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CBoxTipoCPAActionPerformed
-        // TODO add your handling code here:
+        CBoxTamCPA.removeAllItems();
+        if (CBoxTipoCPA.getSelectedIndex() == 0) {
+            CBoxTamCPA.addItem("Escolha");
+        }
+        if (CBoxTipoCPA.getSelectedIndex() == 1) {
+            CBoxTamCPA.addItem("P");
+            CBoxTamCPA.addItem("M");
+            CBoxTamCPA.addItem("G");
+            CBoxTamCPA.addItem("F");
+        }
+        if (CBoxTipoCPA.getSelectedIndex() == 2) {
+            CBoxTamCPA.addItem("Lata");
+            CBoxTamCPA.addItem("1L");
+            CBoxTamCPA.addItem("1,5L");
+            CBoxTamCPA.addItem("2L");
+            CBoxTamCPA.addItem("Copo");
+            CBoxTamCPA.addItem("Jarra");
+        }
+        if (CBoxTipoCPA.getSelectedIndex() == 3) {
+            CBoxTamCPA.addItem("Unico");
+        }
     }//GEN-LAST:event_CBoxTipoCPAActionPerformed
 
     private void ButExcluirPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButExcluirPActionPerformed
@@ -1865,13 +2500,12 @@ public class MainFrame extends javax.swing.JFrame {
         try {
             if (excluirBo.excluir(id)) {
                 MensagensUtil.addMsg(MainFrame.this, "Excluido com sucesso!");
-                TabProdutos.setSelectedComponent(ListaProduto);
+                AbasProdutos.setSelectedComponent(ListaProduto);
                 atualizarTabelaUser();
             } else {
                 MensagensUtil.addMsg(MainFrame.this, "Falha ao excluir.");
             }
         } catch (NegocioException ex) {
-            ex.printStackTrace();
             MensagensUtil.addMsg(MainFrame.this, ex.getMessage());
         } finally {
             limparTodosCampos(rootPane);
@@ -1881,16 +2515,6 @@ public class MainFrame extends javax.swing.JFrame {
     private void ButAlterarPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButAlterarPActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_ButAlterarPActionPerformed
-
-    private void ButAtualizarCLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButAtualizarCLActionPerformed
-        atualizarTabelaCliente();
-    }//GEN-LAST:event_ButAtualizarCLActionPerformed
-
-    private void TblClienteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TblClienteMouseClicked
-        Integer linha = TblCliente.getSelectedRow();
-        TabClientes.setSelectedComponent(AlteraCliente);
-        atualizarIdCliente((Integer) TblCliente.getValueAt(linha, 0));
-    }//GEN-LAST:event_TblClienteMouseClicked
 
     private void CadastrarCCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CadastrarCCActionPerformed
         String nome = TxtNomeCC.getText();
@@ -1904,18 +2528,31 @@ public class MainFrame extends javax.swing.JFrame {
         try {
             if (clienteBo.cadastrar(nome, cpf, num, end)) {
                 MensagensUtil.addMsg(MainFrame.this, "Cadastro efetuado com sucesso!");
-                TabClientes.setSelectedComponent(ListaCliente);
+                AbasClientes.setSelectedComponent(ListaCliente);
                 atualizarTabelaCliente();
             } else {
                 MensagensUtil.addMsg(MainFrame.this, "Falha no cadastro.");
             }
         } catch (NegocioException ex) {
-            ex.printStackTrace();
             MensagensUtil.addMsg(MainFrame.this, ex.getMessage());
         } finally {
             limparTodosCampos(rootPane);
         }
     }//GEN-LAST:event_CadastrarCCActionPerformed
+
+    private void TxtBairroCCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TxtBairroCCActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_TxtBairroCCActionPerformed
+
+    private void TblClienteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TblClienteMouseClicked
+        Integer linha = TblCliente.getSelectedRow();
+        AbasClientes.setSelectedComponent(AlteraCliente);
+        atualizarTxtCliente((Integer) TblCliente.getValueAt(linha, 0));
+    }//GEN-LAST:event_TblClienteMouseClicked
+
+    private void ButAtualizarCLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButAtualizarCLActionPerformed
+        atualizarTabelaCliente();
+    }//GEN-LAST:event_ButAtualizarCLActionPerformed
 
     private void ButExcluirACActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButExcluirACActionPerformed
         String id = TxtIdAC.getText();
@@ -1923,13 +2560,12 @@ public class MainFrame extends javax.swing.JFrame {
         try {
             if (excluirBo.excluir(id)) {
                 MensagensUtil.addMsg(MainFrame.this, "Excluido com sucesso!");
-                TabClientes.setSelectedComponent(ListaCliente);
+                AbasClientes.setSelectedComponent(ListaCliente);
                 atualizarTabelaCliente();
             } else {
                 MensagensUtil.addMsg(MainFrame.this, "Falha ao excluir.");
             }
         } catch (NegocioException ex) {
-            ex.printStackTrace();
             MensagensUtil.addMsg(MainFrame.this, ex.getMessage());
         } finally {
             limparTodosCampos(rootPane);
@@ -1939,6 +2575,11 @@ public class MainFrame extends javax.swing.JFrame {
     private void ButAlterarACActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButAlterarACActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_ButAlterarACActionPerformed
+
+    private void ButAtualizarPL6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButAtualizarPL6ActionPerformed
+        itensPedidos = new ArrayList<>();
+        atualizarTabelaItem(itensPedidos);
+    }//GEN-LAST:event_ButAtualizarPL6ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1972,10 +2613,17 @@ public class MainFrame extends javax.swing.JFrame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTabbedPane AbasAtendente;
+    private javax.swing.JTabbedPane AbasClientes;
+    private javax.swing.JTabbedPane AbasProdutos;
+    private javax.swing.JTabbedPane AbasUsuarios;
     private javax.swing.JPanel AlteraCliente;
-    private javax.swing.JPanel AlteraPedido;
     private javax.swing.JPanel AlteraProduto;
     private javax.swing.JPanel AlteraUsuario;
+    private javax.swing.JButton BUTBuscarCliente;
+    private javax.swing.JButton BUTCadastrarCliente;
+    private javax.swing.JComboBox BoxTamAP;
+    private javax.swing.JComboBox BoxTipoAP;
     private javax.swing.JPanel BuscaUsuario;
     private javax.swing.JButton ButAlterarA;
     private javax.swing.JButton ButAlterarAC;
@@ -1983,19 +2631,20 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JButton ButAtualizarCL;
     private javax.swing.JButton ButAtualizarCL1;
     private javax.swing.JButton ButAtualizarL;
-    private javax.swing.JButton ButAtualizarPL;
+    private javax.swing.JButton ButAtualizarPL2;
+    private javax.swing.JButton ButAtualizarPL3;
+    private javax.swing.JButton ButAtualizarPL4;
+    private javax.swing.JButton ButAtualizarPL5;
+    private javax.swing.JButton ButAtualizarPL6;
     private javax.swing.JButton ButCadastroC;
     private javax.swing.JButton ButCadastroP;
-    private javax.swing.JButton ButClientes;
     private javax.swing.JButton ButExcluirA;
     private javax.swing.JButton ButExcluirAC;
     private javax.swing.JButton ButExcluirP;
     private javax.swing.JButton ButLimpar;
+    private javax.swing.JButton ButLimpar1;
     private javax.swing.JButton ButLogout;
-    private javax.swing.JButton ButPedidos;
-    private javax.swing.JButton ButProdutos;
     private javax.swing.JButton ButSair;
-    private javax.swing.JButton ButUsuarios;
     private javax.swing.JComboBox CBoxTamCP;
     private javax.swing.JComboBox CBoxTamCPA;
     private javax.swing.JComboBox CBoxTipoA;
@@ -2004,14 +2653,20 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JComboBox CBoxTipoCP;
     private javax.swing.JComboBox CBoxTipoCPA;
     private javax.swing.JButton CadastrarCC;
+    private javax.swing.JPanel CadastrarPedido;
     private javax.swing.JPanel CadastroCliente;
     private javax.swing.JPanel CadastroProduto;
     private javax.swing.JPanel CadastroUsuario;
+    private javax.swing.JPanel Cliente;
+    private javax.swing.JPanel CompCadaPedi;
     private javax.swing.JPanel Hora;
     private javax.swing.JPanel Infos;
     private javax.swing.JLabel LabCIdade;
+    private javax.swing.JLabel LabCIdade1;
     private javax.swing.JLabel LabCpfCC;
     private javax.swing.JLabel LabCpfCC1;
+    private javax.swing.JLabel LabCpfCC2;
+    private javax.swing.JLabel LabCpfCC3;
     private javax.swing.JLabel LabCpfCC4;
     private javax.swing.JLabel LabCpfCC5;
     private javax.swing.JLabel LabCpfCC6;
@@ -2024,18 +2679,25 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel LabLoginA;
     private javax.swing.JLabel LabLoginB;
     private javax.swing.JLabel LabLoginC;
+    private javax.swing.JLabel LabNome1;
+    private javax.swing.JLabel LabNome2;
+    private javax.swing.JLabel LabNome3;
     private javax.swing.JLabel LabNomeA;
     private javax.swing.JLabel LabNomeB;
     private javax.swing.JLabel LabNomeC;
     private javax.swing.JLabel LabNomeCC;
     private javax.swing.JLabel LabNomeCC1;
     private javax.swing.JLabel LabNomeCC2;
+    private javax.swing.JLabel LabNomeCC3;
     private javax.swing.JLabel LabNomeP;
+    private javax.swing.JLabel LabNomeP1;
     private javax.swing.JLabel LabNomePA;
     private javax.swing.JLabel LabNumCC;
     private javax.swing.JLabel LabNumCC1;
     private javax.swing.JLabel LabNumCC2;
     private javax.swing.JLabel LabNumCC3;
+    private javax.swing.JLabel LabNumCC4;
+    private javax.swing.JLabel LabNumCC5;
     private javax.swing.JLabel LabRS;
     private javax.swing.JLabel LabRSA;
     private javax.swing.JLabel LabSenhaA;
@@ -2044,11 +2706,14 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel LabSenhaNRA;
     private javax.swing.JLabel LabSenhaRC;
     private javax.swing.JLabel LabTamP;
+    private javax.swing.JLabel LabTamP1;
     private javax.swing.JLabel LabTamPA;
     private javax.swing.JLabel LabTipoA;
     private javax.swing.JLabel LabTipoB;
     private javax.swing.JLabel LabTipoC;
     private javax.swing.JLabel LabTipoP;
+    private javax.swing.JLabel LabTipoP1;
+    private javax.swing.JLabel LabTipoP2;
     private javax.swing.JLabel LabTipoPA;
     private javax.swing.JLabel LabValorP;
     private javax.swing.JLabel LabValorPA;
@@ -2056,23 +2721,38 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel LbNome;
     private javax.swing.JLabel LbTipo;
     private javax.swing.JPanel ListaCliente;
-    private javax.swing.JPanel ListaPedido;
     private javax.swing.JPanel ListaProduto;
     private javax.swing.JPanel ListaUsuario;
     private javax.swing.JPanel Menu;
-    private javax.swing.JPanel Novo;
+    private javax.swing.JButton MenuAtend;
+    private javax.swing.JButton MenuClientes;
+    private javax.swing.JButton MenuEntreg;
+    private javax.swing.JButton MenuPizza;
+    private javax.swing.JButton MenuProdutos;
+    private javax.swing.JButton MenuUsuarios;
+    private javax.swing.JTextField NomeCliente;
+    private javax.swing.JTextField NumCliente;
+    private javax.swing.JPanel Numero;
     private javax.swing.JPanel Painel;
     private javax.swing.JScrollPane ScrollPaneTab;
     private javax.swing.JScrollPane ScrollPaneTab1;
-    private javax.swing.JScrollPane ScrollPaneTab2;
+    private javax.swing.JScrollPane ScrollPaneTab11;
     private javax.swing.JScrollPane ScrollPaneTab4;
     private javax.swing.JScrollPane ScrollPaneTab5;
-    private javax.swing.JTabbedPane TabClientes;
-    private javax.swing.JTabbedPane TabPedidos;
-    private javax.swing.JTabbedPane TabProdutos;
-    private javax.swing.JTabbedPane TabUsuarios;
+    private javax.swing.JScrollPane ScrollPaneTab6;
+    private javax.swing.JScrollPane ScrollPaneTab9;
+    private javax.swing.JTextField TXTBairroACC;
+    private javax.swing.JTextField TXTCidadeACC;
+    private javax.swing.JTextField TXTCpfACC;
+    private javax.swing.JTextField TXTNomeACC;
+    private javax.swing.JTextField TXTNomeBC;
+    private javax.swing.JTextField TXTNumACC;
+    private javax.swing.JTextField TXTNumBC;
+    private javax.swing.JTextField TXTRuaACC;
+    private javax.swing.JTable TblBuscaCliente;
+    private javax.swing.JTable TblBuscaProduto;
     private javax.swing.JTable TblCliente;
-    private javax.swing.JTable TblPedido;
+    private javax.swing.JTable TblItens;
     private javax.swing.JTable TblProduto;
     private javax.swing.JTable TblUser;
     private javax.swing.JTable TblUserFiltro;
@@ -2093,6 +2773,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JTextField TxtLoginA;
     private javax.swing.JTextField TxtLoginB;
     private javax.swing.JTextField TxtNomeA;
+    private javax.swing.JTextField TxtNomeAP;
     private javax.swing.JTextField TxtNomeB;
     private javax.swing.JTextField TxtNomeC;
     private javax.swing.JTextField TxtNomeCC;
@@ -2102,6 +2783,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JTextField TxtNumCC;
     private javax.swing.JPasswordField TxtNumCC2;
     private javax.swing.JPasswordField TxtNumCC3;
+    private javax.swing.JTextField TxtQuantidadeItem;
     private javax.swing.JTextField TxtRuaCC;
     private javax.swing.JPasswordField TxtSenhaA;
     private javax.swing.JPasswordField TxtSenhaC;

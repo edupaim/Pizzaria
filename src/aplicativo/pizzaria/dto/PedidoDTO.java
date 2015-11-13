@@ -1,6 +1,6 @@
 package aplicativo.pizzaria.dto;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class PedidoDTO {
 
@@ -8,14 +8,30 @@ public class PedidoDTO {
     private String data;
     private String estado;
     private ClienteDTO cliente;
-    private ArrayList<ProdutoDTO> produtos;
+    private List<ItemPedido> itens;
 
-    public PedidoDTO(Integer id, String data, String estado, ClienteDTO cliente, ArrayList<ProdutoDTO> produto) {
+    public PedidoDTO(Integer id, String data, String estado, ClienteDTO cliente, List<ItemPedido> itens) {
         this.id = id;
         this.data = data;
         this.estado = estado;
         this.cliente = cliente;
-        this.produtos = produto;
+        this.itens = itens;
+    }
+
+    public PedidoDTO() {
+        this.id = null;
+        this.data = null;
+        this.estado = null;
+        this.cliente = null;
+        this.itens = null;
+    }
+
+    public void setItens(List<ItemPedido> itens) {
+        this.itens = itens;
+    }
+
+    public List<ItemPedido> getItens() {
+        return itens;
     }
 
     public String getEstado() {
@@ -38,10 +54,6 @@ public class PedidoDTO {
         this.cliente = cliente;
     }
 
-    public void setProduto(ArrayList<ProdutoDTO> produto) {
-        this.produtos = produto;
-    }
-
     public Integer getId() {
         return id;
     }
@@ -52,10 +64,6 @@ public class PedidoDTO {
 
     public ClienteDTO getCliente() {
         return cliente;
-    }
-
-    public ArrayList<ProdutoDTO> getProduto() {
-        return produtos;
     }
 
 }

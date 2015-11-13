@@ -16,7 +16,6 @@ public class Main {
                 }
             }
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-            ex.printStackTrace();
         }
         LoginFrame loginFrame = new LoginFrame();
         loginFrame.setLocationRelativeTo(null);

@@ -78,4 +78,14 @@ public class ProdutoBO {
         }
         return lista;
     }
+    
+    public ProdutoDTO buscarPorID(Integer id) {
+        ProdutoDTO prod = new ProdutoDTO();
+        ProdutoDAO prodDao = new ProdutoDAO();
+        try {
+            prod = prodDao.buscarPorId(id);
+        } catch (PersistenciaException ex) {
+        }
+        return prod;
+    }
 }
