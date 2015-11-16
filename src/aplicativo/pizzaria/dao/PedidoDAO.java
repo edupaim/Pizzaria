@@ -8,9 +8,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /*
  * @author Edu
@@ -60,10 +59,9 @@ public class PedidoDAO implements GenericoDAO<PedidoDTO> {
         try {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, est);
-            ps.setInt(4, id);
+            ps.setInt(2, id);
             ps.execute();
         } catch (SQLException ex) {
-            ex.printStackTrace();
             throw new PersistenciaException(ex.getMessage(), ex);
         } finally {
             ConexaoUtil.fecharConexao(con);
@@ -77,16 +75,120 @@ public class PedidoDAO implements GenericoDAO<PedidoDTO> {
 
     @Override
     public List<PedidoDTO> listarTodos() throws PersistenciaException {
-        return null;
+        Connection con = ConexaoUtil.abrirConexao("ListarTodos");
+        List<PedidoDTO> lista = new ArrayList<>();
+        String sql = "select * from pedido ";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                PedidoDTO ped = new PedidoDTO();
+                ped.setId(rs.getInt(1));
+                ped.setData(rs.getString(2));
+                ped.setEstado(rs.getString(3));
+                lista.add(ped);
+            }
+        } catch (SQLException ex) {
+            throw new PersistenciaException(ex.getMessage(), ex);
+        } finally {
+            ConexaoUtil.fecharConexao(con);
+        }
+        return lista;
+    }
+    
+    public List<PedidoDTO> listarPendentes() throws PersistenciaException {
+        Connection con = ConexaoUtil.abrirConexao("ListarTodos");
+        List<PedidoDTO> lista = new ArrayList<>();
+        String sql = "select * from pedido where estado = ?";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, "Pendente");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                PedidoDTO ped = new PedidoDTO();
+                ped.setId(rs.getInt(1));
+                ped.setData(rs.getString(2));
+                ped.setEstado(rs.getString(3));
+                lista.add(ped);
+            }
+        } catch (SQLException ex) {
+            throw new PersistenciaException(ex.getMessage(), ex);
+        } finally {
+            ConexaoUtil.fecharConexao(con);
+        }
+        return lista;
+    }
+    
+    public List<PedidoDTO> listarEntregues() throws PersistenciaException {
+        Connection con = ConexaoUtil.abrirConexao("ListarTodos");
+        List<PedidoDTO> lista = new ArrayList<>();
+        String sql = "select * from pedido where estado = ?";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, "Entregue");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                PedidoDTO ped = new PedidoDTO();
+                ped.setId(rs.getInt(1));
+                ped.setData(rs.getString(2));
+                ped.setEstado(rs.getString(3));
+                lista.add(ped);
+            }
+        } catch (SQLException ex) {
+            throw new PersistenciaException(ex.getMessage(), ex);
+        } finally {
+            ConexaoUtil.fecharConexao(con);
+        }
+        return lista;
+    }
+    
+    public List<PedidoDTO> listarFinalizados() throws PersistenciaException {
+        Connection con = ConexaoUtil.abrirConexao("ListarTodos");
+        List<PedidoDTO> lista = new ArrayList<>();
+        String sql = "select * from pedido where estado = ?";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, "Finalizado");
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                PedidoDTO ped = new PedidoDTO();
+                ped.setId(rs.getInt(1));
+                ped.setData(rs.getString(2));
+                ped.setEstado(rs.getString(3));
+                lista.add(ped);
+            }
+        } catch (SQLException ex) {
+            throw new PersistenciaException(ex.getMessage(), ex);
+        } finally {
+            ConexaoUtil.fecharConexao(con);
+        }
+        return lista;
     }
 
     @Override
     public PedidoDTO buscarPorId(Integer id) throws PersistenciaException {
-        return null;
+        PedidoDTO ped = new PedidoDTO();
+        Connection con = ConexaoUtil.abrirConexao("BuscarId");
+        String sql = "select * from pedido where id_pedido = ? ";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                ped.setId(rs.getInt(1));
+                ped.setData(rs.getString(2));
+                ped.setEstado(rs.getString(3));
+                ped.setCliente(new ClienteDAO().buscarPorId(rs.getInt(4)));
+            }
+        } catch (SQLException ex) {
+            throw new PersistenciaException(ex.getMessage(), ex);
+        } finally {
+            ConexaoUtil.fecharConexao(con);
+        }
+        return ped;
     }
 
     @Override
     public void atualizar(Integer id, PedidoDTO obj) throws PersistenciaException {
     }
-
 }

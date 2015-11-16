@@ -9,12 +9,15 @@ import aplicativo.pizzaria.bo.ClienteBO;
 import aplicativo.pizzaria.bo.PedidoBO;
 import aplicativo.pizzaria.bo.ProdutoBO;
 import aplicativo.pizzaria.bo.UserBO;
+import aplicativo.pizzaria.dao.ItemDAO;
 import aplicativo.pizzaria.dto.ClienteDTO;
 import aplicativo.pizzaria.dto.EnderecoDTO;
 import aplicativo.pizzaria.dto.ItemPedido;
+import aplicativo.pizzaria.dto.PedidoDTO;
 import aplicativo.pizzaria.dto.ProdutoDTO;
 import aplicativo.pizzaria.dto.UserDTO;
 import aplicativo.pizzaria.exception.NegocioException;
+import aplicativo.pizzaria.exception.PersistenciaException;
 import aplicativo.pizzaria.main.Main;
 import aplicativo.pizzaria.util.MensagensUtil;
 import java.awt.Component;
@@ -57,6 +60,37 @@ public class MainFrame extends javax.swing.JFrame {
             MainFrame.this.atualizarTabelaUser();
             MainFrame.this.atualizarTabelaProduto();
             MainFrame.this.atualizarTabelaCliente();
+            MainFrame.this.atualizarTabelaBuscarCliente();
+            MainFrame.this.atualizarTabelaBuscaProduto();
+            MainFrame.this.atualizarTabelaPedPend();
+            MainFrame.this.atualizarTabelaPedFin();
+            MainFrame.this.atualizarTabelaEntPend();
+            MainFrame.this.atualizarTabelaEntFin();
+            if (Main.getUsuarioLogado().getTipo() == 1) {
+                Menu.remove(MenuUsuarios);
+                Menu.remove(MenuClientes);
+                Menu.remove(MenuProdutos);
+                Menu.remove(MenuEntreg);
+                Menu.remove(MenuPizza);
+                Menu.repaint();
+                Menu.validate();
+            } else if (Main.getUsuarioLogado().getTipo() == 2) {
+                Menu.remove(MenuUsuarios);
+                Menu.remove(MenuClientes);
+                Menu.remove(MenuProdutos);
+                Menu.remove(MenuAtend);
+                Menu.remove(MenuEntreg);
+                Menu.repaint();
+                Menu.validate();
+            } else if (Main.getUsuarioLogado().getTipo() == 3) {
+                Menu.remove(MenuUsuarios);
+                Menu.remove(MenuClientes);
+                Menu.remove(MenuProdutos);
+                Menu.remove(MenuPizza);
+                Menu.remove(MenuAtend);
+                Menu.repaint();
+                Menu.validate();
+            }
             iniThreadHora();
             Painel.removeAll();
         } else {
@@ -273,9 +307,10 @@ public class MainFrame extends javax.swing.JFrame {
             int i = 0;
             for (ClienteDTO cliente : lista) {
                 tbl.addRow(new String[1]);
-                TblBuscaCliente.setValueAt(cliente.getNome(), i, 0);
-                TblBuscaCliente.setValueAt(cliente.getCpf(), i, 1);
-                TblBuscaCliente.setValueAt(cliente.getNumero(), i, 2);
+                TblBuscaCliente.setValueAt(cliente.getId(), i, 0);
+                TblBuscaCliente.setValueAt(cliente.getNome(), i, 1);
+                TblBuscaCliente.setValueAt(cliente.getCpf(), i, 2);
+                TblBuscaCliente.setValueAt(cliente.getNumero(), i, 3);
                 i++;
             }
         } catch (NegocioException ex) {
@@ -300,6 +335,112 @@ public class MainFrame extends javax.swing.JFrame {
             }
         } else {
             MainFrame.this.atualizarTabelaBuscarCliente();
+        }
+    }
+
+    public void atualizarTabelaItensPedidos(List<ItemPedido> lista) {
+        if (lista != null) {
+            DefaultTableModel tbl = (DefaultTableModel) TblItensPend.getModel();
+            while (tbl.getRowCount() > 0) {
+                tbl.removeRow(0);
+            }
+            int i = 0;
+            for (ItemPedido pedido : lista) {
+                tbl.addRow(new String[1]);
+                TblItensPend.setValueAt(pedido.getProduto().getNome(), i, 0);
+                TblItensPend.setValueAt(pedido.getQuantidade(), i, 1);
+                i++;
+            }
+        } else {
+
+        }
+    }
+
+    private void atualizarTabelaPedPend() {
+        PedidoBO pedBo = new PedidoBO();
+        List<PedidoDTO> lista;
+        DefaultTableModel tbl = (DefaultTableModel) TblPedidosPend.getModel();
+        try {
+            lista = pedBo.listarPendentes();
+            while (tbl.getRowCount() > 0) {
+                tbl.removeRow(0);
+            }
+            int i = 0;
+            for (PedidoDTO ped : lista) {
+                tbl.addRow(new String[1]);
+                TblPedidosPend.setValueAt(ped.getId(), i, 0);
+                TblPedidosPend.setValueAt(ped.getData(), i, 1);
+                TblPedidosPend.setValueAt(ped.getEstado(), i, 2);
+                i++;
+            }
+        } catch (NegocioException ex) {
+            MensagensUtil.addMsg(MainFrame.this, ex.getMessage());
+        }
+    }
+
+    private void atualizarTabelaEntPend() {
+        PedidoBO pedBo = new PedidoBO();
+        List<PedidoDTO> lista;
+        DefaultTableModel tbl = (DefaultTableModel) TblEntregasPend.getModel();
+        try {
+            lista = pedBo.listarFinalizados();
+            while (tbl.getRowCount() > 0) {
+                tbl.removeRow(0);
+            }
+            int i = 0;
+            for (PedidoDTO ped : lista) {
+                tbl.addRow(new String[1]);
+                TblEntregasPend.setValueAt(ped.getId(), i, 0);
+                TblEntregasPend.setValueAt(ped.getData(), i, 1);
+                TblEntregasPend.setValueAt(ped.getEstado(), i, 2);
+                i++;
+            }
+        } catch (NegocioException ex) {
+            MensagensUtil.addMsg(MainFrame.this, ex.getMessage());
+        }
+    }
+
+    private void atualizarTabelaEntFin() {
+        PedidoBO pedBo = new PedidoBO();
+        List<PedidoDTO> lista;
+        DefaultTableModel tbl = (DefaultTableModel) TblPedidosEnt.getModel();
+        try {
+            lista = pedBo.listarEntregues();
+            while (tbl.getRowCount() > 0) {
+                tbl.removeRow(0);
+            }
+            int i = 0;
+            for (PedidoDTO ped : lista) {
+                tbl.addRow(new String[1]);
+                TblPedidosEnt.setValueAt(ped.getId(), i, 0);
+                TblPedidosEnt.setValueAt(ped.getData(), i, 1);
+                TblPedidosEnt.setValueAt(ped.getEstado(), i, 2);
+                i++;
+            }
+        } catch (NegocioException ex) {
+            MensagensUtil.addMsg(MainFrame.this, ex.getMessage());
+        }
+    }
+
+    private void atualizarTabelaPedFin() {
+        PedidoBO pedBo = new PedidoBO();
+        List<PedidoDTO> lista;
+        DefaultTableModel tbl = (DefaultTableModel) TblPedidosFina.getModel();
+        try {
+            lista = pedBo.listarFinalizados();
+            while (tbl.getRowCount() > 0) {
+                tbl.removeRow(0);
+            }
+            int i = 0;
+            for (PedidoDTO ped : lista) {
+                tbl.addRow(new String[1]);
+                TblPedidosFina.setValueAt(ped.getId(), i, 0);
+                TblPedidosFina.setValueAt(ped.getData(), i, 1);
+                TblPedidosFina.setValueAt(ped.getEstado(), i, 2);
+                i++;
+            }
+        } catch (NegocioException ex) {
+            MensagensUtil.addMsg(MainFrame.this, ex.getMessage());
         }
     }
 
@@ -446,9 +587,9 @@ public class MainFrame extends javax.swing.JFrame {
         TblBuscaProduto = new javax.swing.JTable();
         LabNome2 = new javax.swing.JLabel();
         Cliente = new javax.swing.JPanel();
-        NomeCliente = new javax.swing.JTextField();
+        NomeCliente = new javax.swing.JLabel();
         Numero = new javax.swing.JPanel();
-        NumCliente = new javax.swing.JTextField();
+        NumCliente = new javax.swing.JLabel();
         TxtQuantidadeItem = new javax.swing.JTextField();
         LabNome3 = new javax.swing.JLabel();
         ButAtualizarPL2 = new javax.swing.JButton();
@@ -576,6 +717,37 @@ public class MainFrame extends javax.swing.JFrame {
         TxtIdAC = new javax.swing.JTextField();
         ButExcluirAC = new javax.swing.JButton();
         ButAlterarAC = new javax.swing.JButton();
+        AbasPizzaiolo = new javax.swing.JTabbedPane();
+        Pedidos = new javax.swing.JPanel();
+        LabPP = new javax.swing.JLabel();
+        BUTFinalizar = new javax.swing.JButton();
+        ScrollPaneTab7 = new javax.swing.JScrollPane();
+        TblItensPend = new javax.swing.JTable();
+        ScrollPaneTab8 = new javax.swing.JScrollPane();
+        TblPedidosFina = new javax.swing.JTable();
+        LabNomeP3 = new javax.swing.JLabel();
+        ScrollPaneTab10 = new javax.swing.JScrollPane();
+        TblPedidosPend = new javax.swing.JTable();
+        LabNomeP4 = new javax.swing.JLabel();
+        BUTFinalizar1 = new javax.swing.JButton();
+        AbasEntregador = new javax.swing.JTabbedPane();
+        Entregas = new javax.swing.JPanel();
+        LabPP1 = new javax.swing.JLabel();
+        BUTFinalizar2 = new javax.swing.JButton();
+        ScrollPaneTab13 = new javax.swing.JScrollPane();
+        TblPedidosEnt = new javax.swing.JTable();
+        LabNomeP5 = new javax.swing.JLabel();
+        ScrollPaneTab14 = new javax.swing.JScrollPane();
+        TblEntregasPend = new javax.swing.JTable();
+        BUTFinalizar3 = new javax.swing.JButton();
+        TxtRuaCli = new javax.swing.JTextField();
+        TxtBairroCli = new javax.swing.JTextField();
+        TxtCidadeCli = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        TxtNomeCli = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
         ButSair = new javax.swing.JButton();
         ButLogout = new javax.swing.JButton();
@@ -833,7 +1005,7 @@ public class MainFrame extends javax.swing.JFrame {
                         .addGroup(CadastrarPedidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(TXTNomeBC, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
                             .addComponent(TXTNumBC, javax.swing.GroupLayout.Alignment.TRAILING)))
-                    .addComponent(ScrollPaneTab6, javax.swing.GroupLayout.DEFAULT_SIZE, 540, Short.MAX_VALUE)
+                    .addComponent(ScrollPaneTab6, javax.swing.GroupLayout.DEFAULT_SIZE, 678, Short.MAX_VALUE)
                     .addGroup(CadastrarPedidoLayout.createSequentialGroup()
                         .addGroup(CadastrarPedidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(LabCpfCC2)
@@ -881,7 +1053,7 @@ public class MainFrame extends javax.swing.JFrame {
                 .addComponent(BUTBuscarCliente)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ScrollPaneTab6, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(CadastrarPedidoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(LabNomeCC3)
                     .addComponent(TXTNomeACC, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -907,7 +1079,7 @@ public class MainFrame extends javax.swing.JFrame {
                     .addComponent(TXTCidadeACC, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(BUTCadastrarCliente)
-                .addContainerGap())
+                .addContainerGap(92, Short.MAX_VALUE))
         );
 
         AbasAtendente.addTab("Buscar Cliente", CadastrarPedido);
@@ -963,32 +1135,42 @@ public class MainFrame extends javax.swing.JFrame {
 
         Cliente.setBorder(javax.swing.BorderFactory.createTitledBorder("Cliente"));
 
-        NomeCliente.setEditable(false);
+        NomeCliente.setText("Nome");
 
         javax.swing.GroupLayout ClienteLayout = new javax.swing.GroupLayout(Cliente);
         Cliente.setLayout(ClienteLayout);
         ClienteLayout.setHorizontalGroup(
             ClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(NomeCliente, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
+            .addGroup(ClienteLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(NomeCliente)
+                .addContainerGap(199, Short.MAX_VALUE))
         );
         ClienteLayout.setVerticalGroup(
             ClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(NomeCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(ClienteLayout.createSequentialGroup()
+                .addComponent(NomeCliente)
+                .addGap(0, 6, Short.MAX_VALUE))
         );
 
         Numero.setBorder(javax.swing.BorderFactory.createTitledBorder("Número"));
 
-        NumCliente.setEditable(false);
+        NumCliente.setText("Número");
 
         javax.swing.GroupLayout NumeroLayout = new javax.swing.GroupLayout(Numero);
         Numero.setLayout(NumeroLayout);
         NumeroLayout.setHorizontalGroup(
             NumeroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(NumCliente, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
+            .addGroup(NumeroLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(NumCliente)
+                .addContainerGap(199, Short.MAX_VALUE))
         );
         NumeroLayout.setVerticalGroup(
             NumeroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(NumCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(NumeroLayout.createSequentialGroup()
+                .addComponent(NumCliente)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         LabNome3.setText("Quantidade");
@@ -1071,7 +1253,7 @@ public class MainFrame extends javax.swing.JFrame {
                         .addGroup(CompCadaPediLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(LabTipoP2)
                             .addComponent(LabTamP1))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 555, Short.MAX_VALUE)
                         .addGroup(CompCadaPediLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(BoxTipoAP, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(BoxTamAP, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -1080,10 +1262,6 @@ public class MainFrame extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(TxtNomeAP, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(ScrollPaneTab9, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(CompCadaPediLayout.createSequentialGroup()
-                        .addComponent(Cliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
-                        .addComponent(Numero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, CompCadaPediLayout.createSequentialGroup()
                         .addComponent(ButAtualizarPL3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -1100,8 +1278,11 @@ public class MainFrame extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(ButAtualizarPL5))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, CompCadaPediLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(ButAtualizarPL4)))
+                        .addComponent(Cliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(CompCadaPediLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(Numero, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(ButAtualizarPL4, javax.swing.GroupLayout.Alignment.TRAILING))))
                 .addContainerGap())
         );
 
@@ -1111,10 +1292,10 @@ public class MainFrame extends javax.swing.JFrame {
             CompCadaPediLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(CompCadaPediLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(CompCadaPediLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(Numero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(Cliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(CompCadaPediLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(Cliente, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(Numero, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(11, 11, 11)
                 .addGroup(CompCadaPediLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(LabTipoP2)
                     .addComponent(BoxTipoAP, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1138,12 +1319,12 @@ public class MainFrame extends javax.swing.JFrame {
                     .addComponent(TxtQuantidadeItem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ScrollPaneTab11, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(CompCadaPediLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(ButAtualizarPL2)
                     .addComponent(ButAtualizarPL3)
                     .addComponent(ButAtualizarPL6))
-                .addContainerGap())
+                .addContainerGap(14, Short.MAX_VALUE))
         );
 
         AbasAtendente.addTab("Cadastrar Pedido", CompCadaPedi);
@@ -1843,7 +2024,7 @@ public class MainFrame extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(TxtNomeCC, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(TxtNumCC, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 671, Short.MAX_VALUE)
+                            .addComponent(TxtNumCC, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 653, Short.MAX_VALUE)
                             .addComponent(TxtCpfCC, javax.swing.GroupLayout.Alignment.TRAILING)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, CadastroClienteLayout.createSequentialGroup()
                         .addGroup(CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -2071,6 +2252,351 @@ public class MainFrame extends javax.swing.JFrame {
 
         Painel.add(AbasClientes, "card4");
 
+        AbasPizzaiolo.setTabPlacement(javax.swing.JTabbedPane.LEFT);
+        AbasPizzaiolo.setPreferredSize(new java.awt.Dimension(500, 600));
+
+        LabPP.setText("Pedidos Finalizados");
+
+        BUTFinalizar.setText("Finalizar Pedido");
+        BUTFinalizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BUTFinalizarActionPerformed(evt);
+            }
+        });
+
+        ScrollPaneTab7.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+
+        TblItensPend.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Produto", "Quantidade"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        TblItensPend.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                TblItensPendMouseClicked(evt);
+            }
+        });
+        ScrollPaneTab7.setViewportView(TblItensPend);
+
+        ScrollPaneTab8.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+
+        TblPedidosFina.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ID", "Hora", "Estado"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        TblPedidosFina.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                TblPedidosFinaMouseClicked(evt);
+            }
+        });
+        ScrollPaneTab8.setViewportView(TblPedidosFina);
+
+        LabNomeP3.setText("Pedidos Pendentes");
+
+        ScrollPaneTab10.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+
+        TblPedidosPend.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ID", "Hora", "Estado"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        TblPedidosPend.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                TblPedidosPendMouseClicked(evt);
+            }
+        });
+        ScrollPaneTab10.setViewportView(TblPedidosPend);
+
+        LabNomeP4.setText("Itens do Pedido");
+
+        BUTFinalizar1.setText("Atualizar");
+        BUTFinalizar1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BUTFinalizar1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout PedidosLayout = new javax.swing.GroupLayout(Pedidos);
+        Pedidos.setLayout(PedidosLayout);
+        PedidosLayout.setHorizontalGroup(
+            PedidosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PedidosLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(PedidosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(ScrollPaneTab8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 724, Short.MAX_VALUE)
+                    .addComponent(ScrollPaneTab7)
+                    .addComponent(ScrollPaneTab10, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 724, Short.MAX_VALUE)
+                    .addGroup(PedidosLayout.createSequentialGroup()
+                        .addComponent(LabPP)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(BUTFinalizar))
+                    .addGroup(PedidosLayout.createSequentialGroup()
+                        .addComponent(LabNomeP4)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(PedidosLayout.createSequentialGroup()
+                        .addComponent(LabNomeP3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(BUTFinalizar1)))
+                .addContainerGap())
+        );
+        PedidosLayout.setVerticalGroup(
+            PedidosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PedidosLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(PedidosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabNomeP3)
+                    .addComponent(BUTFinalizar1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(ScrollPaneTab10, javax.swing.GroupLayout.DEFAULT_SIZE, 169, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(LabNomeP4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(ScrollPaneTab7, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(PedidosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(BUTFinalizar)
+                    .addComponent(LabPP))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(ScrollPaneTab8, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(20, 20, 20))
+        );
+
+        AbasPizzaiolo.addTab("Pedidos", Pedidos);
+
+        Painel.add(AbasPizzaiolo, "card5");
+
+        AbasEntregador.setTabPlacement(javax.swing.JTabbedPane.LEFT);
+        AbasEntregador.setPreferredSize(new java.awt.Dimension(500, 600));
+
+        LabPP1.setText("Pedidos Entregues");
+
+        BUTFinalizar2.setText("Finalizar Entrega");
+        BUTFinalizar2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BUTFinalizar2ActionPerformed(evt);
+            }
+        });
+
+        ScrollPaneTab13.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+
+        TblPedidosEnt.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ID", "Hora", "Estado"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        TblPedidosEnt.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                TblPedidosEntMouseClicked(evt);
+            }
+        });
+        ScrollPaneTab13.setViewportView(TblPedidosEnt);
+
+        LabNomeP5.setText("Entregas Pendentes");
+
+        ScrollPaneTab14.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+
+        TblEntregasPend.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ID", "Hora", "Estado"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        TblEntregasPend.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                TblEntregasPendMouseClicked(evt);
+            }
+        });
+        ScrollPaneTab14.setViewportView(TblEntregasPend);
+
+        BUTFinalizar3.setText("Atualizar");
+        BUTFinalizar3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BUTFinalizar3ActionPerformed(evt);
+            }
+        });
+
+        TxtRuaCli.setEditable(false);
+
+        TxtBairroCli.setEditable(false);
+
+        TxtCidadeCli.setEditable(false);
+
+        jLabel1.setText("Rua");
+
+        jLabel2.setText("Bairro");
+
+        jLabel3.setText("Cidade");
+
+        TxtNomeCli.setEditable(false);
+
+        jLabel4.setText("Cliente");
+
+        javax.swing.GroupLayout EntregasLayout = new javax.swing.GroupLayout(Entregas);
+        Entregas.setLayout(EntregasLayout);
+        EntregasLayout.setHorizontalGroup(
+            EntregasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(EntregasLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(EntregasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(ScrollPaneTab13, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 724, Short.MAX_VALUE)
+                    .addComponent(ScrollPaneTab14, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 724, Short.MAX_VALUE)
+                    .addGroup(EntregasLayout.createSequentialGroup()
+                        .addComponent(LabPP1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(BUTFinalizar2))
+                    .addGroup(EntregasLayout.createSequentialGroup()
+                        .addComponent(LabNomeP5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(BUTFinalizar3))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, EntregasLayout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(TxtCidadeCli, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, EntregasLayout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(TxtRuaCli, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, EntregasLayout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(TxtBairroCli, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, EntregasLayout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(TxtNomeCli, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+        );
+
+        EntregasLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {TxtBairroCli, TxtCidadeCli, TxtRuaCli});
+
+        EntregasLayout.setVerticalGroup(
+            EntregasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(EntregasLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(EntregasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(LabNomeP5)
+                    .addComponent(BUTFinalizar3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(ScrollPaneTab14, javax.swing.GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(EntregasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(TxtNomeCli, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(EntregasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(TxtRuaCli, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(EntregasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(TxtBairroCli, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(EntregasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(TxtCidadeCli, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addGap(18, 18, 18)
+                .addGroup(EntregasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(BUTFinalizar2)
+                    .addComponent(LabPP1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(ScrollPaneTab13, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(20, 20, 20))
+        );
+
+        AbasEntregador.addTab("Pedidos", Entregas);
+
+        Painel.add(AbasEntregador, "card5");
+
         ButSair.setText("Sair");
         ButSair.setToolTipText("");
         ButSair.addActionListener(new java.awt.event.ActionListener() {
@@ -2185,17 +2711,32 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_MenuAtendActionPerformed
 
     private void MenuPizzaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuPizzaActionPerformed
-        // TODO add your handling code here:
+        Painel.removeAll();
+        Painel.add(AbasPizzaiolo);
+        Painel.repaint();
+        Painel.validate();
     }//GEN-LAST:event_MenuPizzaActionPerformed
 
     private void MenuEntregActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuEntregActionPerformed
-        // TODO add your handling code here:
+        Painel.removeAll();
+        Painel.add(AbasEntregador);
+        Painel.repaint();
+        Painel.validate();
     }//GEN-LAST:event_MenuEntregActionPerformed
 
     private void ButAtualizarPL2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButAtualizarPL2ActionPerformed
         PedidoBO pedBo = new PedidoBO();
         try {
-            pedBo.cadastrar(null, null, clientePedindo, itensPedidos);
+            if (clientePedindo.getId() != null) {
+                pedBo.cadastrar(null, "Pendente", clientePedindo, itensPedidos);
+                itensPedidos = new ArrayList<>();
+                clientePedindo = new ClienteDTO();
+                atualizarTabelaItem(itensPedidos);
+                NomeCliente.setText("");
+                NumCliente.setText("");
+            } else {
+                MensagensUtil.addMsg(this, "Selecione um cliente.");
+            }
         } catch (NegocioException ex) {
             Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -2249,6 +2790,7 @@ public class MainFrame extends javax.swing.JFrame {
             MensagensUtil.addMsg(MainFrame.this, ex.getMessage());
         } finally {
             limparTodosCampos(rootPane);
+            atualizarTabelaBuscarCliente(null);
         }
     }//GEN-LAST:event_BUTCadastrarClienteActionPerformed
 
@@ -2296,10 +2838,14 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_ButAtualizarPL4ActionPerformed
 
     private void ButAtualizarPL3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButAtualizarPL3ActionPerformed
-        DefaultTableModel tbl = (DefaultTableModel) TblItens.getModel();
         int linha = TblItens.getSelectedRow();
-        tbl.removeRow(linha);
-        itensPedidos.remove(linha);
+        if (linha != -1) {
+            itensPedidos.remove(linha);
+            atualizarTabelaItem(itensPedidos);
+        } else {
+            MensagensUtil.addMsg(this, "Selecione um item na lista.");
+        }
+
     }//GEN-LAST:event_ButAtualizarPL3ActionPerformed
 
     private void TblItensMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TblItensMouseClicked
@@ -2581,6 +3127,64 @@ public class MainFrame extends javax.swing.JFrame {
         atualizarTabelaItem(itensPedidos);
     }//GEN-LAST:event_ButAtualizarPL6ActionPerformed
 
+    private void BUTFinalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BUTFinalizarActionPerformed
+        Integer linha = TblPedidosPend.getSelectedRow();
+        PedidoBO ped = new PedidoBO();
+        ped.finalizar((Integer) TblPedidosPend.getValueAt(linha, 0));
+        atualizarTabelaPedFin();
+        atualizarTabelaPedPend();
+    }//GEN-LAST:event_BUTFinalizarActionPerformed
+
+    private void TblItensPendMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TblItensPendMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_TblItensPendMouseClicked
+
+    private void TblPedidosFinaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TblPedidosFinaMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_TblPedidosFinaMouseClicked
+
+    private void TblPedidosPendMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TblPedidosPendMouseClicked
+        Integer linha = TblPedidosPend.getSelectedRow();
+        List<ItemPedido> lista;
+        ItemDAO itemDao = new ItemDAO();
+        try {
+            lista = itemDao.buscarPorIdPedido((Integer) TblPedidosPend.getValueAt(linha, 0));
+            atualizarTabelaItensPedidos(lista);
+        } catch (PersistenciaException ex) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_TblPedidosPendMouseClicked
+
+    private void BUTFinalizar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BUTFinalizar1ActionPerformed
+        atualizarTabelaPedPend();
+    }//GEN-LAST:event_BUTFinalizar1ActionPerformed
+
+    private void BUTFinalizar2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BUTFinalizar2ActionPerformed
+        Integer linha = TblEntregasPend.getSelectedRow();
+        PedidoBO ped = new PedidoBO();
+        ped.entregar((Integer) TblEntregasPend.getValueAt(linha, 0));
+        atualizarTabelaEntPend();
+        atualizarTabelaEntFin();
+    }//GEN-LAST:event_BUTFinalizar2ActionPerformed
+
+    private void TblPedidosEntMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TblPedidosEntMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_TblPedidosEntMouseClicked
+
+    private void TblEntregasPendMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TblEntregasPendMouseClicked
+        Integer linha = TblEntregasPend.getSelectedRow();
+        PedidoBO ped = new PedidoBO();
+        PedidoDTO pedido = ped.buscarPorID((Integer) TblEntregasPend.getValueAt(linha, 0));
+        TxtNomeCli.setText(pedido.getCliente().getNome());
+        TxtRuaCli.setText(pedido.getCliente().getEndereco().getRua());
+        TxtBairroCli.setText(pedido.getCliente().getEndereco().getBairro());
+        TxtCidadeCli.setText(pedido.getCliente().getEndereco().getCidade());
+    }//GEN-LAST:event_TblEntregasPendMouseClicked
+
+    private void BUTFinalizar3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BUTFinalizar3ActionPerformed
+        atualizarTabelaEntPend();
+    }//GEN-LAST:event_BUTFinalizar3ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -2615,6 +3219,8 @@ public class MainFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTabbedPane AbasAtendente;
     private javax.swing.JTabbedPane AbasClientes;
+    private javax.swing.JTabbedPane AbasEntregador;
+    private javax.swing.JTabbedPane AbasPizzaiolo;
     private javax.swing.JTabbedPane AbasProdutos;
     private javax.swing.JTabbedPane AbasUsuarios;
     private javax.swing.JPanel AlteraCliente;
@@ -2622,6 +3228,10 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JPanel AlteraUsuario;
     private javax.swing.JButton BUTBuscarCliente;
     private javax.swing.JButton BUTCadastrarCliente;
+    private javax.swing.JButton BUTFinalizar;
+    private javax.swing.JButton BUTFinalizar1;
+    private javax.swing.JButton BUTFinalizar2;
+    private javax.swing.JButton BUTFinalizar3;
     private javax.swing.JComboBox BoxTamAP;
     private javax.swing.JComboBox BoxTipoAP;
     private javax.swing.JPanel BuscaUsuario;
@@ -2659,6 +3269,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JPanel CadastroUsuario;
     private javax.swing.JPanel Cliente;
     private javax.swing.JPanel CompCadaPedi;
+    private javax.swing.JPanel Entregas;
     private javax.swing.JPanel Hora;
     private javax.swing.JPanel Infos;
     private javax.swing.JLabel LabCIdade;
@@ -2691,6 +3302,9 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel LabNomeCC3;
     private javax.swing.JLabel LabNomeP;
     private javax.swing.JLabel LabNomeP1;
+    private javax.swing.JLabel LabNomeP3;
+    private javax.swing.JLabel LabNomeP4;
+    private javax.swing.JLabel LabNomeP5;
     private javax.swing.JLabel LabNomePA;
     private javax.swing.JLabel LabNumCC;
     private javax.swing.JLabel LabNumCC1;
@@ -2698,6 +3312,8 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel LabNumCC3;
     private javax.swing.JLabel LabNumCC4;
     private javax.swing.JLabel LabNumCC5;
+    private javax.swing.JLabel LabPP;
+    private javax.swing.JLabel LabPP1;
     private javax.swing.JLabel LabRS;
     private javax.swing.JLabel LabRSA;
     private javax.swing.JLabel LabSenhaA;
@@ -2730,16 +3346,22 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JButton MenuPizza;
     private javax.swing.JButton MenuProdutos;
     private javax.swing.JButton MenuUsuarios;
-    private javax.swing.JTextField NomeCliente;
-    private javax.swing.JTextField NumCliente;
+    private javax.swing.JLabel NomeCliente;
+    private javax.swing.JLabel NumCliente;
     private javax.swing.JPanel Numero;
     private javax.swing.JPanel Painel;
+    private javax.swing.JPanel Pedidos;
     private javax.swing.JScrollPane ScrollPaneTab;
     private javax.swing.JScrollPane ScrollPaneTab1;
+    private javax.swing.JScrollPane ScrollPaneTab10;
     private javax.swing.JScrollPane ScrollPaneTab11;
+    private javax.swing.JScrollPane ScrollPaneTab13;
+    private javax.swing.JScrollPane ScrollPaneTab14;
     private javax.swing.JScrollPane ScrollPaneTab4;
     private javax.swing.JScrollPane ScrollPaneTab5;
     private javax.swing.JScrollPane ScrollPaneTab6;
+    private javax.swing.JScrollPane ScrollPaneTab7;
+    private javax.swing.JScrollPane ScrollPaneTab8;
     private javax.swing.JScrollPane ScrollPaneTab9;
     private javax.swing.JTextField TXTBairroACC;
     private javax.swing.JTextField TXTCidadeACC;
@@ -2752,13 +3374,20 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JTable TblBuscaCliente;
     private javax.swing.JTable TblBuscaProduto;
     private javax.swing.JTable TblCliente;
+    private javax.swing.JTable TblEntregasPend;
     private javax.swing.JTable TblItens;
+    private javax.swing.JTable TblItensPend;
+    private javax.swing.JTable TblPedidosEnt;
+    private javax.swing.JTable TblPedidosFina;
+    private javax.swing.JTable TblPedidosPend;
     private javax.swing.JTable TblProduto;
     private javax.swing.JTable TblUser;
     private javax.swing.JTable TblUserFiltro;
     private javax.swing.JPanel Tipo;
     private javax.swing.JTextField TxtBairroCC;
+    private javax.swing.JTextField TxtBairroCli;
     private javax.swing.JTextField TxtCidadeCC;
+    private javax.swing.JTextField TxtCidadeCli;
     private javax.swing.JTextField TxtCpfCC;
     private javax.swing.JTextField TxtCpfCC4;
     private javax.swing.JTextField TxtCpfCC5;
@@ -2778,6 +3407,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JTextField TxtNomeC;
     private javax.swing.JTextField TxtNomeCC;
     private javax.swing.JTextField TxtNomeCC1;
+    private javax.swing.JTextField TxtNomeCli;
     private javax.swing.JTextField TxtNomeP;
     private javax.swing.JTextField TxtNomePA;
     private javax.swing.JTextField TxtNumCC;
@@ -2785,6 +3415,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JPasswordField TxtNumCC3;
     private javax.swing.JTextField TxtQuantidadeItem;
     private javax.swing.JTextField TxtRuaCC;
+    private javax.swing.JTextField TxtRuaCli;
     private javax.swing.JPasswordField TxtSenhaA;
     private javax.swing.JPasswordField TxtSenhaC;
     private javax.swing.JPasswordField TxtSenhaN2A;
@@ -2795,6 +3426,10 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JTextField TxtValorPA;
     private javax.swing.JPanel Usuario;
     private javax.swing.JButton jButton1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JSeparator jSeparator1;
     // End of variables declaration//GEN-END:variables
 }

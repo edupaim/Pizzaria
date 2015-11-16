@@ -7,6 +7,8 @@ import aplicativo.pizzaria.dto.PedidoDTO;
 import aplicativo.pizzaria.exception.NegocioException;
 import aplicativo.pizzaria.exception.PersistenciaException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /*
  * @author Edu
@@ -45,6 +47,33 @@ public class PedidoBO {
         }
     }
 
+    public List<PedidoDTO> listarPendentes() throws NegocioException {
+        PedidoDAO pedidoDao = new PedidoDAO();
+        try {
+            return pedidoDao.listarPendentes();
+        } catch (PersistenciaException ex) {
+            throw new NegocioException(ex.getMessage());
+        }
+    }
+
+    public List<PedidoDTO> listarFinalizados() throws NegocioException {
+        PedidoDAO pedidoDao = new PedidoDAO();
+        try {
+            return pedidoDao.listarFinalizados();
+        } catch (PersistenciaException ex) {
+            throw new NegocioException(ex.getMessage());
+        }
+    }
+
+    public List<PedidoDTO> listarEntregues() throws NegocioException {
+        PedidoDAO pedidoDao = new PedidoDAO();
+        try {
+            return pedidoDao.listarEntregues();
+        } catch (PersistenciaException ex) {
+            throw new NegocioException(ex.getMessage());
+        }
+    }
+
     public boolean excluir(String id) throws NegocioException {
         PedidoDAO pedidoDao = new PedidoDAO();
         boolean resul = false;
@@ -65,6 +94,24 @@ public class PedidoBO {
         } catch (PersistenciaException ex) {
         }
         return ped;
+    }
+
+    public void finalizar(Integer id) {
+        PedidoDAO ped = new PedidoDAO();
+        try {
+            ped.atualizarEstado(id, "Finalizado");
+        } catch (PersistenciaException ex) {
+            Logger.getLogger(PedidoBO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void entregar(Integer id) {
+        PedidoDAO ped = new PedidoDAO();
+        try {
+            ped.atualizarEstado(id, "Entregue");
+        } catch (PersistenciaException ex) {
+            Logger.getLogger(PedidoBO.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
 }
