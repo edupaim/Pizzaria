@@ -105,6 +105,17 @@ public class MainFrame extends javax.swing.JFrame {
 
     public void atualizarTxtUsuario(Integer id) {
         TxtIdA.setText(String.valueOf(id));
+        UserBO user = new UserBO();
+        UserDTO u;
+        try {
+            u = user.busca(String.valueOf(id), null, null, null).get(0);
+            TxtNomeA.setText(u.getNome());
+            TxtLoginA.setText(u.getLogin());
+            TxtSenhaA.setText(u.getSenha());
+        } catch (NegocioException ex) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 
     public void atualizarTxtCliente(Integer id) {
@@ -2700,7 +2711,10 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_MenuClientesActionPerformed
 
     private void ButLimpar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButLimpar1ActionPerformed
-        // TODO add your handling code here:
+        Painel.removeAll();
+        Painel.add(AbasClientes);
+        Painel.repaint();
+        Painel.validate();
     }//GEN-LAST:event_ButLimpar1ActionPerformed
 
     private void MenuAtendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MenuAtendActionPerformed
@@ -2728,13 +2742,13 @@ public class MainFrame extends javax.swing.JFrame {
         PedidoBO pedBo = new PedidoBO();
         try {
             if (clientePedindo.getId() != null) {
-                if(itensPedidos.size()>0){
+                if (itensPedidos.size() > 0) {
                     pedBo.cadastrar(null, "Pendente", clientePedindo, itensPedidos);
-                itensPedidos = new ArrayList<>();
-                clientePedindo = new ClienteDTO();
-                atualizarTabelaItem(itensPedidos);
-                NomeCliente.setText("");
-                NumCliente.setText("");
+                    itensPedidos = new ArrayList<>();
+                    clientePedindo = new ClienteDTO();
+                    atualizarTabelaItem(itensPedidos);
+                    NomeCliente.setText("");
+                    NumCliente.setText("");
                 } else {
                     MensagensUtil.addMsg(this, "Selecione os produtos.");
                 }
@@ -3134,9 +3148,13 @@ public class MainFrame extends javax.swing.JFrame {
     private void BUTFinalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BUTFinalizarActionPerformed
         Integer linha = TblPedidosPend.getSelectedRow();
         PedidoBO ped = new PedidoBO();
-        ped.finalizar((Integer) TblPedidosPend.getValueAt(linha, 0));
-        atualizarTabelaPedFin();
-        atualizarTabelaPedPend();
+        if (linha != -1) {
+            ped.finalizar((Integer) TblPedidosPend.getValueAt(linha, 0));
+            atualizarTabelaPedFin();
+            atualizarTabelaPedPend();
+        } else {
+            MensagensUtil.addMsg(this, "Selecione um pedido.");
+        }
     }//GEN-LAST:event_BUTFinalizarActionPerformed
 
     private void TblItensPendMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TblItensPendMouseClicked
@@ -3166,9 +3184,13 @@ public class MainFrame extends javax.swing.JFrame {
     private void BUTFinalizar2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BUTFinalizar2ActionPerformed
         Integer linha = TblEntregasPend.getSelectedRow();
         PedidoBO ped = new PedidoBO();
-        ped.entregar((Integer) TblEntregasPend.getValueAt(linha, 0));
-        atualizarTabelaEntPend();
-        atualizarTabelaEntFin();
+        if (linha != -1) {
+            ped.entregar((Integer) TblEntregasPend.getValueAt(linha, 0));
+            atualizarTabelaEntPend();
+            atualizarTabelaEntFin();
+        } else {
+            MensagensUtil.addMsg(this, "Selecione um pedido.");
+        }
     }//GEN-LAST:event_BUTFinalizar2ActionPerformed
 
     private void TblPedidosEntMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TblPedidosEntMouseClicked

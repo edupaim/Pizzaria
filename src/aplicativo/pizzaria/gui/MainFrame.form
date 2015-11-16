@@ -1349,7 +1349,7 @@
                                   <EmptySpace max="32767" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="TxtNomeCC" alignment="1" min="-2" pref="200" max="-2" attributes="0"/>
-                                      <Component id="TxtNumCC" alignment="1" pref="669" max="32767" attributes="0"/>
+                                      <Component id="TxtNumCC" alignment="1" pref="670" max="32767" attributes="0"/>
                                       <Component id="TxtCpfCC" alignment="1" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
