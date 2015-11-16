@@ -68,7 +68,6 @@ public class MainFrame extends javax.swing.JFrame {
             MainFrame.this.atualizarTabelaEntFin();
             if (Main.getUsuarioLogado().getTipo() == 1) {
                 Menu.remove(MenuUsuarios);
-                Menu.remove(MenuClientes);
                 Menu.remove(MenuProdutos);
                 Menu.remove(MenuEntreg);
                 Menu.remove(MenuPizza);
@@ -1617,20 +1616,23 @@ public class MainFrame extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(TxtNomeCC, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(TxtNumCC, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 669, Short.MAX_VALUE)
-                            .addComponent(TxtCpfCC, javax.swing.GroupLayout.Alignment.TRAILING)))
+                            .addComponent(TxtCpfCC, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(TxtNumCC, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, CadastroClienteLayout.createSequentialGroup()
                         .addGroup(CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(LabCpfCC1)
                             .addComponent(LabNumCC1)
                             .addComponent(LabCIdade))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(306, 430, Short.MAX_VALUE)
                         .addGroup(CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(TxtRuaCC, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(TxtCidadeCC, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(TxtBairroCC, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
         );
+
+        CadastroClienteLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {TxtCpfCC, TxtNumCC});
+
         CadastroClienteLayout.setVerticalGroup(
             CadastroClienteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(CadastroClienteLayout.createSequentialGroup()
@@ -2712,7 +2714,6 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void ButLimpar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButLimpar1ActionPerformed
         Painel.removeAll();
-        Painel.add(AbasClientes);
         Painel.repaint();
         Painel.validate();
     }//GEN-LAST:event_ButLimpar1ActionPerformed

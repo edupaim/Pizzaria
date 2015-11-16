@@ -1349,8 +1349,8 @@
                                   <EmptySpace max="32767" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="TxtNomeCC" alignment="1" min="-2" pref="200" max="-2" attributes="0"/>
-                                      <Component id="TxtNumCC" alignment="1" pref="670" max="32767" attributes="0"/>
-                                      <Component id="TxtCpfCC" alignment="1" max="32767" attributes="0"/>
+                                      <Component id="TxtCpfCC" linkSize="25" alignment="1" min="-2" pref="125" max="-2" attributes="0"/>
+                                      <Component id="TxtNumCC" linkSize="25" alignment="1" min="-2" pref="125" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                               <Group type="102" alignment="1" attributes="0">
@@ -1359,7 +1359,7 @@
                                       <Component id="LabNumCC1" alignment="0" min="-2" max="-2" attributes="0"/>
                                       <Component id="LabCIdade" alignment="0" min="-2" max="-2" attributes="0"/>
                                   </Group>
-                                  <EmptySpace min="306" max="32767" attributes="0"/>
+                                  <EmptySpace min="306" pref="430" max="32767" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="TxtRuaCC" alignment="0" min="-2" pref="250" max="-2" attributes="0"/>
                                       <Component id="TxtCidadeCC" alignment="1" min="-2" pref="208" max="-2" attributes="0"/>
