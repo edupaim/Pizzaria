@@ -77,7 +77,7 @@ public class PedidoDAO implements GenericoDAO<PedidoDTO> {
     public List<PedidoDTO> listarTodos() throws PersistenciaException {
         Connection con = ConexaoUtil.abrirConexao("ListarTodos");
         List<PedidoDTO> lista = new ArrayList<>();
-        String sql = "select * from pedido ";
+        String sql = "select * from pedido order by data desc";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
@@ -96,59 +96,13 @@ public class PedidoDAO implements GenericoDAO<PedidoDTO> {
         return lista;
     }
     
-    public List<PedidoDTO> listarPendentes() throws PersistenciaException {
+    public List<PedidoDTO> listarTodos(String est) throws PersistenciaException {
         Connection con = ConexaoUtil.abrirConexao("ListarTodos");
         List<PedidoDTO> lista = new ArrayList<>();
-        String sql = "select * from pedido where estado = ?";
+        String sql = "select * from pedido where estado = ?  order by data desc";
         try {
             PreparedStatement ps = con.prepareStatement(sql);
-            ps.setString(1, "Pendente");
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                PedidoDTO ped = new PedidoDTO();
-                ped.setId(rs.getInt(1));
-                ped.setData(rs.getString(2));
-                ped.setEstado(rs.getString(3));
-                lista.add(ped);
-            }
-        } catch (SQLException ex) {
-            throw new PersistenciaException(ex.getMessage(), ex);
-        } finally {
-            ConexaoUtil.fecharConexao(con);
-        }
-        return lista;
-    }
-    
-    public List<PedidoDTO> listarEntregues() throws PersistenciaException {
-        Connection con = ConexaoUtil.abrirConexao("ListarTodos");
-        List<PedidoDTO> lista = new ArrayList<>();
-        String sql = "select * from pedido where estado = ?";
-        try {
-            PreparedStatement ps = con.prepareStatement(sql);
-            ps.setString(1, "Entregue");
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                PedidoDTO ped = new PedidoDTO();
-                ped.setId(rs.getInt(1));
-                ped.setData(rs.getString(2));
-                ped.setEstado(rs.getString(3));
-                lista.add(ped);
-            }
-        } catch (SQLException ex) {
-            throw new PersistenciaException(ex.getMessage(), ex);
-        } finally {
-            ConexaoUtil.fecharConexao(con);
-        }
-        return lista;
-    }
-    
-    public List<PedidoDTO> listarFinalizados() throws PersistenciaException {
-        Connection con = ConexaoUtil.abrirConexao("ListarTodos");
-        List<PedidoDTO> lista = new ArrayList<>();
-        String sql = "select * from pedido where estado = ?";
-        try {
-            PreparedStatement ps = con.prepareStatement(sql);
-            ps.setString(1, "Finalizado");
+            ps.setString(1, est);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 PedidoDTO ped = new PedidoDTO();

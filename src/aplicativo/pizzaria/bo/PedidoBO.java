@@ -6,6 +6,8 @@ import aplicativo.pizzaria.dto.ItemPedido;
 import aplicativo.pizzaria.dto.PedidoDTO;
 import aplicativo.pizzaria.exception.NegocioException;
 import aplicativo.pizzaria.exception.PersistenciaException;
+import java.text.SimpleDateFormat;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,6 +18,8 @@ import java.util.logging.Logger;
 public class PedidoBO {
 
     public boolean cadastrar(String data, String estado, ClienteDTO cliente, List<ItemPedido> listaItens) throws NegocioException {
+        GregorianCalendar gc = new GregorianCalendar();
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
         boolean resul = false;
         try {
             if (cliente == null) {
@@ -24,7 +28,7 @@ public class PedidoBO {
                 throw new NegocioException("Favor selecionar os itens do pedido.");
             } else {
                 PedidoDTO pedido = new PedidoDTO();
-                pedido.setData(data);
+                pedido.setData(sdf.format(gc.getTime()));
                 pedido.setEstado(estado);
                 pedido.setCliente(cliente);
                 pedido.setItens(listaItens);
@@ -50,7 +54,7 @@ public class PedidoBO {
     public List<PedidoDTO> listarPendentes() throws NegocioException {
         PedidoDAO pedidoDao = new PedidoDAO();
         try {
-            return pedidoDao.listarPendentes();
+            return pedidoDao.listarTodos("Pendente");
         } catch (PersistenciaException ex) {
             throw new NegocioException(ex.getMessage());
         }
@@ -59,7 +63,7 @@ public class PedidoBO {
     public List<PedidoDTO> listarFinalizados() throws NegocioException {
         PedidoDAO pedidoDao = new PedidoDAO();
         try {
-            return pedidoDao.listarFinalizados();
+            return pedidoDao.listarTodos("Finalizado");
         } catch (PersistenciaException ex) {
             throw new NegocioException(ex.getMessage());
         }
@@ -68,7 +72,7 @@ public class PedidoBO {
     public List<PedidoDTO> listarEntregues() throws NegocioException {
         PedidoDAO pedidoDao = new PedidoDAO();
         try {
-            return pedidoDao.listarEntregues();
+            return pedidoDao.listarTodos("Entregue");
         } catch (PersistenciaException ex) {
             throw new NegocioException(ex.getMessage());
         }
