@@ -30,7 +30,26 @@ public class ItemDAO implements GenericoDAO<ItemPedido> {
 
     @Override
     public List<ItemPedido> listarTodos() throws PersistenciaException {
-        return null;
+        List<ItemPedido> lista = new ArrayList<>();
+        ItemPedido ped;
+        Connection con = ConexaoUtil.abrirConexao("BuscarId");
+        String sql = "select * from produto_pedido";
+        try {
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                ped = new ItemPedido();
+                ProdutoDTO produto = new ProdutoDAO().buscarPorId(rs.getInt(2));
+                ped.setProduto(produto);
+                ped.setQuantidade(rs.getInt(4));
+                lista.add(ped);
+            }
+        } catch (SQLException ex) {
+            throw new PersistenciaException(ex.getMessage(), ex);
+        } finally {
+            ConexaoUtil.fecharConexao(con);
+        }
+        return lista;
     }
 
     @Override
@@ -56,7 +75,7 @@ public class ItemDAO implements GenericoDAO<ItemPedido> {
         return ped;
     }
     
-    public List<ItemPedido> buscarPorIdPedido(Integer id) throws PersistenciaException {
+    public List<ItemPedido> buscarPorPedido(Integer id) throws PersistenciaException {
         List<ItemPedido> lista = new ArrayList<>();
         ItemPedido ped;
         Connection con = ConexaoUtil.abrirConexao("BuscarId");

@@ -6,10 +6,10 @@
 package aplicativo.pizzaria.gui;
 
 import aplicativo.pizzaria.bo.ClienteBO;
+import aplicativo.pizzaria.bo.ItemBO;
 import aplicativo.pizzaria.bo.PedidoBO;
 import aplicativo.pizzaria.bo.ProdutoBO;
 import aplicativo.pizzaria.bo.UserBO;
-import aplicativo.pizzaria.dao.ItemDAO;
 import aplicativo.pizzaria.dto.ClienteDTO;
 import aplicativo.pizzaria.dto.EnderecoDTO;
 import aplicativo.pizzaria.dto.ItemPedido;
@@ -3168,12 +3168,12 @@ public class MainFrame extends javax.swing.JFrame {
     private void TblPedidosPendMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TblPedidosPendMouseClicked
         Integer linha = TblPedidosPend.getSelectedRow();
         List<ItemPedido> lista;
-        ItemDAO itemDao = new ItemDAO();
+        ItemBO itemBo = new ItemBO();
         try {
-            lista = itemDao.buscarPorIdPedido((Integer) TblPedidosPend.getValueAt(linha, 0));
+            lista = itemBo.buscarPorPedido((Integer) TblPedidosPend.getValueAt(linha, 0));
             atualizarTabelaItensPedidos(lista);
         } catch (PersistenciaException ex) {
-            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+            MensagensUtil.addMsg(this, ex.getMessage());
         }
     }//GEN-LAST:event_TblPedidosPendMouseClicked
 
